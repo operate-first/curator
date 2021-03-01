@@ -132,8 +132,3 @@ that will be added based on Koku research and the standard reports available on 
 
 In addition to showing, discrete values, Curator could contrast request and usage so users have a good idea of the management of their projects. The routes above have been implemented currently and the metrics have been included as future work.
 
-
-
-### Curator Reports on the UI
-
-The following visuals are based on what Curator would display on its frontend to the end user.
