@@ -3,7 +3,7 @@
 
 #### Purpose
 
-The purpose of this document is to explore OCP Metering projects/options to gain potential insights that help with identifying Curator project requirements. Additionally this document highlights the unique use cases that Curator provides in comparison with other OCP Metering Options
+The purpose of this document is to explore OCP Metering projects/options to gain potential insights that help with identifying Curator project requirements. Additionally this document highlights the unique use cases that Curator, a metering tool for a single cluster, provides in comparison with other OCP Metering Options. 
 
 
 #### Initial Research into Other Metering options :
