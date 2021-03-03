@@ -96,4 +96,4 @@ The four values are what are utilized in metrics displayed on the UI.
 
 # Curator Use Case
 
-This is particularly a metiring system built for instances in the MOC. The end users for Curator are researchers and academicians who are looking for monitoring and metering capabilities for their project. Metrics as of now are defined by resource usage by projects/namespaces as opposed to being translated into any other (financial) costs.
+This is particularly a metering system built for instances in the MOC. The end users for Curator are researchers and academicians who are looking for monitoring and metering capabilities for their project. Metrics as of now are defined by resource usage by projects/namespaces as opposed to being translated into any other (financial) costs.
