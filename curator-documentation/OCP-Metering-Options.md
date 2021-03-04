@@ -62,7 +62,7 @@ Observations:
 [ReportType.memory]: 'reports/openshift/memory/',
 [ReportType.volume]: 'reports/openshift/volumes/'
 ```
-The four values are what are utilized in metrics displayed on the UI.
+The four values are what are utilized in metrics displayed on the UI. These API endpoints each query the csv data retrieved by the backend. The costs endpoint involves Koku's cost model that we are bit consedering since Curator does not track metrics through cost. 
 
 
 # Koku Backend
