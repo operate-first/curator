@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dashboard tests should render default Dashboard component 1`] = `
+<Component>
+  <Component
+    headingLevel="h1"
+    size="lg"
+  >
+    Dashboard Page Title
+  </Component>
+  <Component>
+    <Component>
+       
+      <DemoProjectFilterForm />
+    </Component>
+  </Component>
+</Component>
+`;
