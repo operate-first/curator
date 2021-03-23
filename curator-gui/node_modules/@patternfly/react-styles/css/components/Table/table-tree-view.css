@@ -1,0 +1,62 @@
+.pf-c-table {
+  --pf-c-table__tree-view-main--indent--base: calc(var(--pf-global--spacer--md) * 2 + var(--pf-c-table__tree-view-icon--MinWidth));
+  --pf-c-table__tree-view-main--nested-indent--base: calc(var(--pf-c-table__tree-view-main--indent--base) - var(--pf-global--spacer--md));
+  --pf-c-table__tree-view-main--PaddingLeft: 0;
+  --pf-c-table__tree-view-main--MarginLeft: calc(var(--pf-c-table--cell--PaddingLeft) * -1);
+  --pf-c-table__tree-view-main--c-table__check--MarginRight: var(--pf-global--spacer--sm);
+  --pf-c-table__tree-view-icon--MinWidth: var(--pf-global--FontSize--md);
+  --pf-c-table__tree-view-icon--MarginRight: var(--pf-global--spacer--sm);
+  --pf-c-table--m-tree-view__toggle--Position: absolute;
+  --pf-c-table--m-tree-view__toggle--Left: var(--pf-c-table__tree-view-main--PaddingLeft);
+  --pf-c-table--m-tree-view__toggle--TranslateX: -100%;
+  --pf-c-table--m-tree-view--tr--aria-level-1__toggle--Position: static;
+  --pf-c-table--m-tree-view--tr--aria-level-1__toggle--TranslateX: 0;
+  --pf-c-table--m-tree-view__toggle__toggle-icon--MinWidth: var(--pf-global--FontSize--md); }
+  .pf-c-table.pf-m-tree-view > tbody > tr {
+    --pf-c-table--m-tree-view__toggle--Left: var(--pf-c-table__tree-view-main--PaddingLeft); }
+  .pf-c-table.pf-m-tree-view tr[aria-level="1"] {
+    --pf-c-table--m-tree-view__toggle--Position: var(--pf-c-table--m-tree-view--tr--aria-level-1__toggle--Position);
+    --pf-c-table--m-tree-view__toggle--TranslateX: var(--pf-c-table--m-tree-view--tr--aria-level-1__toggle--TranslateX); }
+  .pf-c-table.pf-m-tree-view tr[aria-level="2"] {
+    --pf-c-table__tree-view-main--PaddingLeft: calc(var(--pf-c-table__tree-view-main--nested-indent--base) * 1 + var(--pf-c-table__tree-view-main--indent--base)); }
+  .pf-c-table.pf-m-tree-view tr[aria-level="3"] {
+    --pf-c-table__tree-view-main--PaddingLeft: calc(var(--pf-c-table__tree-view-main--nested-indent--base) * 2 + var(--pf-c-table__tree-view-main--indent--base)); }
+  .pf-c-table.pf-m-tree-view tr[aria-level="4"] {
+    --pf-c-table__tree-view-main--PaddingLeft: calc(var(--pf-c-table__tree-view-main--nested-indent--base) * 3 + var(--pf-c-table__tree-view-main--indent--base)); }
+  .pf-c-table.pf-m-tree-view tr[aria-level="5"] {
+    --pf-c-table__tree-view-main--PaddingLeft: calc(var(--pf-c-table__tree-view-main--nested-indent--base) * 4 + var(--pf-c-table__tree-view-main--indent--base)); }
+  .pf-c-table.pf-m-tree-view tr[aria-level="6"] {
+    --pf-c-table__tree-view-main--PaddingLeft: calc(var(--pf-c-table__tree-view-main--nested-indent--base) * 5 + var(--pf-c-table__tree-view-main--indent--base)); }
+  .pf-c-table.pf-m-tree-view tr[aria-level="7"] {
+    --pf-c-table__tree-view-main--PaddingLeft: calc(var(--pf-c-table__tree-view-main--nested-indent--base) * 6 + var(--pf-c-table__tree-view-main--indent--base)); }
+  .pf-c-table.pf-m-tree-view tr[aria-level="8"] {
+    --pf-c-table__tree-view-main--PaddingLeft: calc(var(--pf-c-table__tree-view-main--nested-indent--base) * 7 + var(--pf-c-table__tree-view-main--indent--base)); }
+  .pf-c-table.pf-m-tree-view tr[aria-level="9"] {
+    --pf-c-table__tree-view-main--PaddingLeft: calc(var(--pf-c-table__tree-view-main--nested-indent--base) * 8 + var(--pf-c-table__tree-view-main--indent--base)); }
+  .pf-c-table.pf-m-tree-view tr[aria-level="10"] {
+    --pf-c-table__tree-view-main--PaddingLeft: calc(var(--pf-c-table__tree-view-main--nested-indent--base) * 9 + var(--pf-c-table__tree-view-main--indent--base)); }
+
+.pf-c-table__tree-view-main {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+  padding-left: var(--pf-c-table__tree-view-main--PaddingLeft);
+  margin-left: var(--pf-c-table__tree-view-main--MarginLeft);
+  text-align: left;
+  cursor: pointer; }
+  .pf-c-table__tree-view-main > .pf-c-table__toggle {
+    position: var(--pf-c-table--m-tree-view__toggle--Position);
+    left: var(--pf-c-table--m-tree-view__toggle--Left);
+    transform: translateX(var(--pf-c-table--m-tree-view__toggle--TranslateX)); }
+    .pf-c-table__tree-view-main > .pf-c-table__toggle .pf-c-table__toggle-icon {
+      min-width: var(--pf-c-table--m-tree-view__toggle__toggle-icon--MinWidth); }
+  .pf-c-table__tree-view-main > .pf-c-table__check {
+    margin-right: var(--pf-c-table__tree-view-main--c-table__check--MarginRight); }
+
+.pf-c-table__tree-view-content {
+  display: flex; }
+
+.pf-c-table__tree-view-icon {
+  min-width: var(--pf-c-table__tree-view-icon--MinWidth);
+  margin-right: var(--pf-c-table__tree-view-icon--MarginRight); }
