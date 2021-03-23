@@ -60,9 +60,9 @@
     "@patternfly/react-styles": "^4.1.1",
     "@patternfly/react-table": "^2.28.50",
     "axios": "^0.21.1",
-    "oauth2-client-js": "0.0.15",
     "express": "^4.13.4",
     "moment": "^2.29.1",
+    "oauth2-client-js": "0.0.15",
     "react-router-dom": "^5.0.1",
     "react-router-last-location": "^2.0.1"
   }
