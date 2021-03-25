@@ -5,6 +5,7 @@ import { SimpleInputGroups } from '@app/DateComponent/DateComponent';
 import { Button, FormGroup, InputGroup, TextInput } from '@patternfly/react-core';
 import SearchToolBar from '@app/SearchToolbar/SearchToolBar';
 import * as moment from 'moment';
+import 'moment-timezone'
 
 type myProps = {};
 type myState = {
@@ -32,6 +33,7 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
   constructor(myProps) {
     super(myProps);
 
+    var timeZone = "America/New_York";
     const startDate = new Date();
     startDate.setHours(new Date().getHours() - 1);
     startDate.setMinutes(0);
@@ -47,12 +49,12 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
 
 
     if (minutes <= 15) {
-      var formattedstartdatestr = moment(d).subtract(2, 'hours').subtract(minutes, 'minutes').format('hh:mm');
-      var formattedenddatestr = moment(d).subtract(1, 'hours').subtract(minutes, 'minutes').format('hh:mm');
+      var formattedstartdatestr = moment(d).subtract(2, 'hours').subtract(minutes, 'minutes').tz(timeZone).format('HH:mm');
+      var formattedenddatestr = moment(d).subtract(1, 'hours').subtract(minutes, 'minutes').tz(timeZone).format('HH:mm');
     }
     else {
-      var formattedstartdatestr = moment(d).subtract(1, 'hours').subtract(minutes, 'minutes').format('hh:mm');
-      var formattedenddatestr = moment(d).subtract(minutes, 'minutes').format('hh:mm');
+      var formattedstartdatestr = moment(d).subtract(1, 'hours').subtract(minutes, 'minutes').tz(timeZone).format('HH:mm');
+      var formattedenddatestr = moment(d).subtract(minutes, 'minutes').tz(timeZone).format('HH:mm');
     }
 
     this.state = {
@@ -115,8 +117,9 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
   };
 
   setStartHrs = (hrs: string) => {
-    var hrsMints = hrs.split(":")
-    console.log(hrsMints)
+    var hrsMints = hrs.split(":");
+    console.log("HERE")
+    console.log(hrsMints);
     const date = new Date(this.state.startDate);
     date.setHours(parseInt(hrsMints[0]));
     date.setMinutes(parseInt(hrsMints[1]));
@@ -206,6 +209,8 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
                     name="textInput"
                     id="Start Hrs"
                     type="time"
+                    min="00:00"
+                    max="24:00"
                     aria-label="Input Time"
                     onChange={value => { this.setStartHrs(value); }}
                     value={this.state.startHrs}
