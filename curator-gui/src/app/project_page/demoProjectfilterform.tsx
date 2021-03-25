@@ -118,8 +118,7 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
 
   setStartHrs = (hrs: string) => {
     var hrsMints = hrs.split(":");
-    console.log("HERE")
-    console.log(hrsMints);
+    // console.log(hrsMints);
     const date = new Date(this.state.startDate);
     date.setHours(parseInt(hrsMints[0]));
     date.setMinutes(parseInt(hrsMints[1]));
@@ -209,8 +208,6 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
                     name="textInput"
                     id="Start Hrs"
                     type="time"
-                    min="00:00"
-                    max="24:00"
                     aria-label="Input Time"
                     onChange={value => { this.setStartHrs(value); }}
                     value={this.state.startHrs}
