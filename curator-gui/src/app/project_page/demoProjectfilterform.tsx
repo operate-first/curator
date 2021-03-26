@@ -107,13 +107,6 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
 
   changeToggle = () => {
     this.callAPI(true);
-    console.log(this.state.startHrs)
-    // const conditionalRender: number = this.state.conditionalRender;
-    // this.setState({
-    //   ...this.state,
-    //   changingDate: false,
-    //   conditionalRender: conditionalRender + 1
-    // });
   };
 
   setStartHrs = (hrs: string) => {
@@ -129,13 +122,13 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
       startHrs: hrs,
       startDate: new Date(date)
     });
-    console.log({ debug: hrs })
+    // console.log({ debug: hrs })
 
   };
 
   setEndHrs = (hrs: string) => {
 
-    console.log({ debug: hrs })
+    // console.log({ debug: hrs })
 
     var hrsMints = hrs.split(":")
     const date = new Date(this.state.endDate);
@@ -190,19 +183,18 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
         <Form>
           <Grid>
             <GridItem span={6}>
-              <SimpleInputGroups changeDate={this.setStartDate} dateType="StartDate" key="StartDate" />
+              <SimpleInputGroups changeDate={this.setStartDate} dateType="Start Date" key="StartDate" />
               {/* {convertDateToUTC(this.state.startDate).toISOString()} */}
             </GridItem>
             <GridItem span={6}>
-              <SimpleInputGroups changeDate={this.setEndDate} dateType="EndDate" key="EndDate" />
+              <SimpleInputGroups changeDate={this.setEndDate} dateType="End Date" key="EndDate" />
             </GridItem>
           </Grid>
           <Grid>
             <GridItem span={6}>
               {/* Time element for start and end hours for data filter. Using default patternfly components */}
-              <FormGroup label="Start Hrs" isRequired
+              <FormGroup label="Start Hours" isRequired
                 fieldId="Start Hrs">
-                <InputGroup className="timergroup">
 
                   <TextInput
                     name="textInput"
@@ -212,14 +204,12 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
                     onChange={value => { this.setStartHrs(value); }}
                     value={this.state.startHrs}
                   />
-                  </InputGroup>
               </FormGroup>
             </GridItem>
             <GridItem span={6}>
               {/* Time element for start and end hours for data filter. Using default patternfly components */}
-              <FormGroup label="End Hrs" isRequired
+              <FormGroup label="End Hours" isRequired
                 fieldId="End Hrs">
-                <InputGroup className="timergroup">
                   <TextInput
                     name="textInput"
                     id="End Hrs"
@@ -228,25 +218,12 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
                     onChange={value => { this.setEndHrs(value); }}
                     value={this.state.endHrs}
                   />
-                </InputGroup>
               </FormGroup>
             </GridItem>
           </Grid>
-          <Grid>
-            <ActionGroup>
-              <GridItem span={6}>
-                <Button onClick={() => this.changeToggle()}>Search</Button>
-              </GridItem>
-            </ActionGroup>
-          </Grid>
+
           <Grid>
             <GridItem span={11} rowSpan={8}>
-              {/* <ProjectListTable
-              changingDate={this.state.changingDate}
-              renderCount={this.state.conditionalRender}
-              startDate={new Date(convertDateToUTC(this.state.startDate))}
-              endDate={new Date(convertDateToUTC(this.state.endDate))}
-            /> */}
               {this.state.isLoaded && this.renderTable()}
               {!this.state.isLoaded && this.state.err !== null && <div>{JSON.stringify(this.state.err["response"]["data"]["error"]["message"])}</div>}
             </GridItem>

@@ -29,7 +29,7 @@ class Dashboard extends React.Component<{}, DashboardState> {
     return (
       <PageSection>
         <Title headingLevel="h1" size="lg">
-          Dashboard Page Title
+          Custom Report
         </Title>
 
         <Stack>

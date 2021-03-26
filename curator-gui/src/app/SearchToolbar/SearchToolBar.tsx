@@ -30,14 +30,6 @@ class SearchToolBar extends React.Component<myProps, myState> {
     };
   }
 
-  // static getDerivedStateFromProps(props: myProps , state: myState){
-  //     console.log(props);
-  //    return({
-  //       mainData: props.data,
-  //       displayData: props.data,
-  //       filterTag: ''
-  //     })
-  //   }
 
   UNSAFE_componentWillReceiveProps(nextProps: myProps) {
     this.setState({
@@ -50,20 +42,9 @@ class SearchToolBar extends React.Component<myProps, myState> {
   render() {
     return (
       <React.Fragment>
-        <Toolbar id="toolbar"><ToolbarContent>
-          <ToolbarItem>
-            <InputGroup>
-              <TextInput name="textInput1" id="textInput1" type="search" aria-label="search input" value={this.state.filterTag} onChange={(filterTag) => this.search(filterTag)} />
-              <Button variant={ButtonVariant.control} aria-label="search button for search input">
-                <SearchIcon />
-              </Button>
-              <Button aria-label="search button for search input close icon" onClick={() => this.reset()}> <CloseIcon /> </Button>
-            </InputGroup>
-          </ToolbarItem>
-        </ToolbarContent>
-        </Toolbar>
-        {console.log(this.state.displayData)}
-        {console.log(this.props.columnTitle)}
+
+        {/*console.log(this.state.displayData)*/}
+        {/*console.log(this.props.columnTitle)*/}
         <DashboardTable tableData={this.state.displayData} columnTitle={this.props.columnTitle} />
       </React.Fragment>
     );
