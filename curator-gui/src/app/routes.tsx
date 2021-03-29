@@ -62,9 +62,9 @@ const routes: IAppRoute[] = [
   {
     component: Dashboard,
     exact: true,
-    label: 'Dashboard',
+    label: 'Custom Report',
     path: '/',
-    title: 'OCP Metering | Main Dashboard'
+    title: 'Curator | Custom Report'
   },
   // {
   //   component: Openshift,

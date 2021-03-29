@@ -32,27 +32,14 @@ class DashboardTable extends React.Component<DashboardTableProps, DashboardTable
             <Link to={`/projectlist/${dataRow['namespace']}`} key={`/projectlist/${dataRow['namespace']}`}>
               {dataRow['namespace']}
             </Link>
-          </BodyCell>,
-          // dataRow['namespace'],
-          dataRow['activationTime']
-          // dataRow['node'],
-          // dataRow['periodStart'].toISOString(),
-          // dataRow['periodEnd'].toISOString(),
-          // dataRow['pod'],
-          // dataRow['podUsageCpuCoreSeconds']
+          </BodyCell>
         ]
       });
     })
 
     this.state = {
       columns: [
-        myProps.columnTitle['namespace'],
-        myProps.columnTitle['activationTime']
-        // myProps.columnTitle['node'],
-        // myProps.columnTitle['periodStart'],
-        // myProps.columnTitle['periodEnd'],
-        // myProps.columnTitle['pod'],
-        // myProps.columnTitle['podUsageCpuCoreSeconds']
+        myProps.columnTitle['namespace']
       ],
       rows: rowData
     };
@@ -73,10 +60,7 @@ class DashboardTable extends React.Component<DashboardTableProps, DashboardTable
             <Link to={`/projectlist/${dataRow['namespace']}`} key={`/projectlist/${dataRow['namespace']}`}>
               {dataRow['namespace']}
             </Link>
-          </BodyCell>,
-          dataRow['activationTime']
-          // dataRow['periodStart'].toISOString(),
-          // dataRow['periodEnd'].toISOString(),
+          </BodyCell>
         ]
       });
     });

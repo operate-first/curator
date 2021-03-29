@@ -84,7 +84,6 @@ class LoginPage extends React.Component<LoginProps, LoginState, ResetPasswordSta
     const query = window.location.search;
     if (query.includes('code')) { // CILogon has returned with code
       // remove query & CILogon state from URL, without reloading page
-      console.log('hi')
       const code = new URLSearchParams(query).get('code');
       const urlWithoutQuery = window.location.protocol + "//" + window.location.host + window.location.pathname
       window.history.pushState({ path: urlWithoutQuery }, '', urlWithoutQuery);
