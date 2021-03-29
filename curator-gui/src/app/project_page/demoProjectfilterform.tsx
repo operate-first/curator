@@ -22,7 +22,6 @@ type myState = {
 };
 export type dataObject = {
   namespace: string;
-  activationTime: number;
 };
 
 const convertDateToUTC = (date: Date) => {
@@ -94,8 +93,7 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
         const tableData: Array<dataObject> = [];
         res.data.forEach(clusterInfo => {
           tableData.push({
-            namespace: clusterInfo['namespace'],
-            activationTime: clusterInfo['activation_time']
+            namespace: clusterInfo['namespace']
           });
         });
         this.setState({ ...this.state, isLoaded: true, clusterData: tableData });
@@ -163,8 +161,7 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
 
   renderTable = () => {
     const columnTitle = {
-      namespace: 'Namespace',
-      activationTime: 'Project Active period'
+      namespace: 'Namespace'
     };
 
     return (
@@ -221,7 +218,13 @@ class DemoProjectFilterForm extends React.Component<myProps, myState> {
               </FormGroup>
             </GridItem>
           </Grid>
-
+          <Grid>
+              <ActionGroup>
+                <GridItem span={6}>
+                  <Button onClick={() => this.changeToggle()}>Search</Button>
+                </GridItem>
+              </ActionGroup>
+            </Grid>
           <Grid>
             <GridItem span={11} rowSpan={8}>
               {this.state.isLoaded && this.renderTable()}
