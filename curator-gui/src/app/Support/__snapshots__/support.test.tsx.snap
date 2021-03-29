@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Support tests should render default Support component 1`] = `
+<Component>
+  <Component
+    variant="full"
+  >
+    <Component
+      icon={[Function]}
+    />
+    <Component
+      headingLevel="h1"
+      size="lg"
+    >
+      Empty State (Stub Support Module)
+    </Component>
+    <Component>
+      This represents an the empty state pattern in Patternfly 4. Hopefully it's simple enough to use but flexible enough to meet a variety of needs.
+    </Component>
+    <Component
+      variant="primary"
+    >
+      Primary Action
+    </Component>
+    <Component>
+      <Component
+        variant="link"
+      >
+        Multiple
+      </Component>
+      <Component
+        variant="link"
+      >
+        Action Buttons
+      </Component>
+      <Component
+        variant="link"
+      >
+        Can
+      </Component>
+      <Component
+        variant="link"
+      >
+        Go here
+      </Component>
+      <Component
+        variant="link"
+      >
+        In the secondary
+      </Component>
+      <Component
+        variant="link"
+      >
+        Action area
+      </Component>
+    </Component>
+  </Component>
+</Component>
+`;

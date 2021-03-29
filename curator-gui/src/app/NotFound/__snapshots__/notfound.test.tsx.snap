@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NotFound tests should render default NotFound component 1`] = `
+<Component>
+  <Component
+    title="404! This view hasn't been created yet."
+    variant="danger"
+  />
+  <br />
+  <NavLink
+    className="pf-c-nav__link"
+    to="/"
+  >
+    Take me home
+  </NavLink>
+</Component>
+`;
