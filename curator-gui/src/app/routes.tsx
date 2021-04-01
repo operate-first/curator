@@ -6,7 +6,7 @@ import { accessibleRouteChangeHandler } from '@app/utils/utils';
 import { Dashboard } from '@app/Dashboard/Dashboard';
 import { NotFound } from '@app/NotFound/NotFound';
 // import { Openshift } from '@app/Openshift/Openshift';
-// import { Reports } from '@app/Reports/Reports'
+import { Reports } from '@app/Reports/Reports'
 
 import { useDocumentTitle } from '@app/utils/useDocumentTitle';
 import { LastLocationProvider, useLastLocation } from 'react-router-last-location';
@@ -60,6 +60,14 @@ export interface IAppRoute {
 
 const routes: IAppRoute[] = [
   {
+    component: Reports,
+    exact: true,
+    isAsync: true,
+    label: 'Reports',
+    path: '/reports',
+    title: 'OCP Metering | Reports Page'
+  },
+  {
     component: Dashboard,
     exact: true,
     label: 'Custom Report',
@@ -81,14 +89,6 @@ const routes: IAppRoute[] = [
   //   label: 'Support',
   //   path: '/support',
   //   title: 'OCP Metering | Support Page'
-  // },
-  // {
-  //   component: Reports,
-  //   exact: true,
-  //   isAsync: true,
-  //   label: 'Reports',
-  //   path: '/reports',
-  //   title: 'OCP Metering | Reports Page'
   // },
 ];
 

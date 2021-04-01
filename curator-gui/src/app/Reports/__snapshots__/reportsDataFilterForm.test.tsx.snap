@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Reports Page Filter Form tests should render default Reports page filter form component 1`] = `
+<Fragment>
+  <Component>
+    <div>
+      Select a date range to view available Daily, Weekly, and Monthly reports.
+    </div>
+    <Component>
+      <Component
+        span={8}
+      >
+        <SimpleInputGroups
+          changeDate={[Function]}
+          dateType="StartDate"
+          key="StartDate"
+        />
+      </Component>
+    </Component>
+    <Component>
+      <Component
+        span={6}
+      >
+        <CsvDownload
+          data={null}
+        >
+          Download as CSV
+        </CsvDownload>
+      </Component>
+    </Component>
+    <Component>
+      <Component
+        span={8}
+      >
+        <ReportTypeDropdown
+          ReportType="standard"
+          setReportType={[Function]}
+        />
+      </Component>
+    </Component>
+    <Component>
+      <Component
+        span={8}
+      >
+        <ReportFrequencyDropdown
+          ReportFrequency="day"
+          setReportFrequency={[Function]}
+        />
+      </Component>
+    </Component>
+    <Component>
+      <Component>
+        <Component
+          span={6}
+        >
+          <Component
+            onClick={[Function]}
+          >
+            Submit
+          </Component>
+        </Component>
+      </Component>
+    </Component>
+    <Component>
+      <Component
+        rowSpan={8}
+        span={10}
+      />
+    </Component>
+  </Component>
+</Fragment>
+`;

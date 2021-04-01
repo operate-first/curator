@@ -1,0 +1,125 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReportsList tests should render default DashboardTable component 1`] = `
+<div>
+  <Component
+    aria-label="Compact Table"
+    caption="List of reports"
+    cells={
+      Array [
+        "Report Name",
+        "Pod CPU Usage in Seconds",
+        "Network Usage in Megabits per Second",
+        "Memory Usage in Gigabytes",
+      ]
+    }
+    key="dataTable"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            <BodyCell>
+              <Link
+                to="/projectlist/openshift-monitoring"
+              >
+                openshift-monitoring
+              </Link>
+            </BodyCell>,
+            21.1,
+            12,
+            0,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <BodyCell>
+              <Link
+                to="/projectlist/hello-world"
+              >
+                hello-world
+              </Link>
+            </BodyCell>,
+            13.4,
+            5,
+            0,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <BodyCell>
+              <Link
+                to="/projectlist/myproject"
+              >
+                myproject
+              </Link>
+            </BodyCell>,
+            22.4,
+            0,
+            0,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <BodyCell>
+              <Link
+                to="/projectlist/sample-project"
+              >
+                sample-project
+              </Link>
+            </BodyCell>,
+            33.5,
+            6,
+            0,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <BodyCell>
+              <Link
+                to="/projectlist/sample-project-1"
+              >
+                sample-project-1
+              </Link>
+            </BodyCell>,
+            16.1,
+            7,
+            0,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <BodyCell>
+              <Link
+                to="/projectlist/sample-project-2"
+              >
+                sample-project-2
+              </Link>
+            </BodyCell>,
+            17.4,
+            8,
+            0,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <BodyCell>
+              <Link
+                to="/projectlist/sample-project-3"
+              >
+                sample-project-3
+              </Link>
+            </BodyCell>,
+            15.5,
+            9,
+            0,
+          ],
+        },
+      ]
+    }
+    variant="compact"
+  >
+    <TableHeader />
+    <TableBody />
+  </Component>
+</div>
+`;

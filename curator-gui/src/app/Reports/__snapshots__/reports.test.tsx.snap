@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Reports tests should render default Reports component 1`] = `
+<Component>
+  <Component
+    headingLevel="h1"
+    size="lg"
+  >
+    Reports
+  </Component>
+  <Component>
+    <Component>
+      <ReportsDataFilterForm />
+    </Component>
+  </Component>
+</Component>
+`;
