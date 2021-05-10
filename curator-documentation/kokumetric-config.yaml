@@ -1,0 +1,200 @@
+# This is the koku-metric-operator configuration file.
+# From the OpenShift Container Platform web console, select Operators > Installed Operators > koku-metrics-operator > KokuMetricsConfig yaml file. 
+# Replace the configuration in the source section with empty brackets.
+# Replace the configuration in the authentication section with empty brackets.
+# After that select the KokuMetricsConfig you created.
+# Koku-metrics-operator will generate an initial report after it is configured, generated reports will be listed under packaged_files.
+
+apiVersion: koku-metrics-cfg.openshift.io/v1beta1
+kind: KokuMetricsConfig
+metadata:
+  creationTimestamp: '2021-04-29T19:12:55Z'
+  generation: 1
+  managedFields:
+    - apiVersion: koku-metrics-cfg.openshift.io/v1beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:spec':
+          .: {}
+          'f:api_url': {}
+          'f:authentication':
+            .: {}
+            'f:type': {}
+          'f:packaging':
+            .: {}
+            'f:max_reports_to_store': {}
+            'f:max_size_MB': {}
+          'f:prometheus_config':
+            .: {}
+            'f:service_address': {}
+            'f:skip_tls_verification': {}
+          'f:source':
+            .: {}
+            'f:check_cycle': {}
+            'f:create_source': {}
+            'f:sources_path': {}
+          'f:upload':
+            .: {}
+            'f:ingress_path': {}
+            'f:upload_cycle': {}
+            'f:upload_toggle': {}
+            'f:validate_cert': {}
+      manager: Mozilla
+      operation: Update
+      time: '2021-04-29T19:12:55Z'
+    - apiVersion: koku-metrics-cfg.openshift.io/v1beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:status':
+          'f:clusterID': {}
+          'f:storage':
+            .: {}
+            'f:volume_mounted': {}
+            'f:volume_type': {}
+          'f:persistent_volume_claim':
+            .: {}
+            'f:apiVersion': {}
+            'f:kind': {}
+            'f:metadata':
+              .: {}
+              'f:name': {}
+            'f:spec':
+              .: {}
+              'f:accessModes': {}
+              'f:resources':
+                .: {}
+                'f:requests':
+                  .: {}
+                  'f:storage': {}
+              'f:storageClassName': {}
+              'f:volumeMode': {}
+              'f:volumeName': {}
+          'f:reports':
+            .: {}
+            'f:data_collected': {}
+            'f:last_hour_queried': {}
+            'f:report_month': {}
+          'f:authentication':
+            .: {}
+            'f:type': {}
+          .: {}
+          'f:packaging':
+            .: {}
+            'f:last_successful_packaging_time': {}
+            'f:max_reports_to_store': {}
+            'f:max_size_MB': {}
+            'f:number_reports_stored': {}
+            'f:packaged_files': {}
+          'f:source':
+            .: {}
+            'f:check_cycle': {}
+            'f:create_source': {}
+            'f:last_check_time': {}
+            'f:sources_path': {}
+          'f:upload':
+            .: {}
+            'f:ingress_path': {}
+            'f:last_successful_upload_time': {}
+            'f:upload': {}
+            'f:upload_cycle': {}
+            'f:upload_wait': {}
+            'f:validate_cert': {}
+          'f:api_url': {}
+          'f:prometheus':
+            .: {}
+            'f:last_query_start_time': {}
+            'f:last_query_success_time': {}
+            'f:prometheus_configured': {}
+            'f:prometheus_connected': {}
+            'f:service_address': {}
+            'f:skip_tls_verification': {}
+          'f:operator_commit': {}
+      manager: manager
+      operation: Update
+      time: '2021-04-29T19:13:29Z'
+  name: kokumetricscfg-sample-v1beta1
+  namespace: koku-metrics-operator
+  resourceVersion: '28192449'
+  selfLink: >-
+    /apis/koku-metrics-cfg.openshift.io/v1beta1/namespaces/koku-metrics-operator/kokumetricsconfigs/kokumetricscfg-sample-v1beta1
+  uid: 54b744bc-56c1-4d2f-bdbf-52a251c9530e
+spec:
+  api_url: 'https://cloud.redhat.com'
+  authentication:
+    type: token
+  packaging:
+    max_reports_to_store: 30
+    max_size_MB: 100
+  prometheus_config:
+    service_address: 'https://thanos-querier.openshift-monitoring.svc:9091'
+    skip_tls_verification: false
+  source:
+    check_cycle: 1440
+    create_source: false
+    sources_path: /api/sources/v1.0/
+  upload:
+    ingress_path: /api/ingress/v1/upload
+    upload_cycle: 360
+    upload_toggle: false # If you don't want to upload reports to cloud.redhat.com set this toggle to false.
+    validate_cert: true
+status:
+  upload:
+    ingress_path: /api/ingress/v1/upload
+    last_successful_upload_time: null
+    upload: false
+    upload_cycle: 360 # Specify the time between report generation in minutes using upload_cycle.
+    upload_wait: 0
+    validate_cert: true
+  packaging:
+    last_successful_packaging_time: '2021-05-03T19:34:39Z'
+    max_reports_to_store: 30  # Specify the maximum number of reports to store using max_reports_to_store.
+    max_size_MB: 100
+    number_reports_stored: 4
+    packaged_files:
+      - >-
+        /tmp/koku-metrics-operator-reports/upload/20210429T191329-cost-mgmt.tar.gz
+      - >-
+        /tmp/koku-metrics-operator-reports/upload/20210430T011449-cost-mgmt.tar.gz
+      - >-
+        /tmp/koku-metrics-operator-reports/upload/20210430T071608-cost-mgmt.tar.gz
+      - >-
+        /tmp/koku-metrics-operator-reports/upload/20210430T131728-cost-mgmt.tar.gz
+  prometheus:
+    last_query_start_time: '2021-05-03T23:00:24Z'
+    last_query_success_time: '2021-05-03T23:00:24Z'
+    prometheus_configured: true
+    prometheus_connected: true
+    service_address: 'https://thanos-querier.openshift-monitoring.svc:9091'
+    skip_tls_verification: false
+  api_url: 'https://cloud.redhat.com'
+  operator_commit: d37e6d6fd90d65b0d6794347f5fe00a472ce9d33
+  clusterID: 26e16305-3e6d-4c87-aca8-10bc6b49f1aa
+  authentication:
+    type: token
+  source:
+    check_cycle: 1440
+    create_source: false
+    last_check_time: null
+    sources_path: /api/sources/v1.0/
+  storage:
+    volume_mounted: true
+    volume_type: >-
+      &PersistentVolumeClaimVolumeSource{ClaimName:koku-metrics-operator-data,ReadOnly:false,}
+  reports:
+    data_collected: true
+    last_hour_queried: '2021-05-03 22:00:00 - 2021-05-03 22:59:59'
+    report_month: '05'
+  persistent_volume_claim:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: koku-metrics-operator-data
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 20Gi   # Specify the desired storage. If not specified, the operator will create a default persistent volume claim with 10Gi of storage.
+      storageClassName: hostpath-provisioner
+      volumeMode: Filesystem
+      volumeName: pvc-9edaa9d5-5b3b-4bd6-9210-5856ba859a9d
