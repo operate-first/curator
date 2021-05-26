@@ -24,12 +24,12 @@ The project is being incubated in the [Operate First](https://www.operate-first.
 + Utilization notification system. (September 2021)
 + Synchronized data backup. (September 2021)
 + CSV format sharable reports. (Late August 2021)
++ Expand functionalities for multi-cluster OCP deployments. (Late 2021)
 
 ### Generate reports
-+ Update the configuration for the koku-metrics-operator using the [YAML file](https://github.com/operate-first/curator/blob/main/curator-documentation/kokumetric-config.yaml).
-+ Download the report locally using the [rsync command](https://github.com/operate-first/curator/blob/main/curator-documentation/kokumetric-report.yaml). 
++ Update the configuration for the koku-metrics-operator using the [YAML file](https://github.com/operate-first/curator/blob/main/Documentation/config/kokumetric-config.yaml).
++ Download the report locally using the [rsync command](https://github.com/operate-first/curator/blob/main/Documentation/config/kokumetric-report.yaml). 
 
 ### Communication
-E-mail : curator@redhat.com
-Red Hat GChat : [Curator Project](https://mail.google.com/chat/u/0/#chat/space/AAAAnkClSoU)
+E-mail : curator@redhat.com Red Hat GChat : [Curator Project](https://mail.google.com/chat/u/0/#chat/space/AAAAnkClSoU)
 

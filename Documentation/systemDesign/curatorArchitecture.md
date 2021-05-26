@@ -1,7 +1,7 @@
 
 # Curator Architecture
 
-![](CuratorDiagram.png)
+![](curatorArchitecture.png)
 *Figure 1: Curator front-end with data collection through koku-metrics-operator.*
 
 ### More on koku-metrics-operator
