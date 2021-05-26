@@ -33,5 +33,3 @@ The project is being incubated in the [Operate First](https://www.operate-first.
 E-mail : curator@redhat.com
 Red Hat GChat : [Curator Project](https://mail.google.com/chat/u/0/#chat/space/AAAAnkClSoU)
 
-Red Hat GChat : [Curator Project](https://mail.google.com/chat/u/0/#chat/space/AAAAnkClSoU)
-
