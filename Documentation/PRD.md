@@ -1,9 +1,8 @@
+# **Curator Project**
 
-# **Open Cloud Curator (OCC)**
-
-# Project Requirements Document (PRD)
-##### Document revision v0.1
-##### May 12, 2021
+# Product Requirements Document (PRD)
+##### Document revision v0.2
+##### May 26, 2021i
 
 ## **Introduction**
 ### Background
@@ -103,13 +102,13 @@ Account - The account option will provide the option to view the associated proj
 - Define project/namespace.
 - Design UI mockups.
 - Develop UI.
-- Install data gatherer using Koku Metrics operator.
-- Build persistent storage.
+- Install koku-metrics-operator and collect data.
+- Build persistent storage and SQL server.
 - Build authentication and mapping of users to resources.
 - Integrate metering platform with the OCP system.
 - Deploy the metering system on OCP.
 - Invite users (~20) to test the system on an OCP instance for a month.
-- Deploy the application on production OCP in MOC.
+- Deploy the application on production OCP in MOC and Operate First.
 - Track metering usage, proactively solicit more input from users, and maintain metering software and system until handoff to production MOC DevOps team.
 
 ### **Out of scope or later phases**
