@@ -1,0 +1,46 @@
+.co-actions {
+  align-items: flex-start; // Keep dropdown menu positioned correctly when titles wrap
+  display: flex;
+  @media(max-width: $screen-xs){
+    align-items: flex-end;
+    flex-direction: column;
+  }
+}
+
+@media(max-width: $screen-xs){
+  .co-action-buttons__btn {
+    margin-bottom: 10px;
+  }
+}
+
+.co-action-buttons__btn, // btn along with drowdown actions
+.co-actions-menu {
+  margin-left: 10px;
+}
+
+.co-m-nav-title {
+  margin-top: $grid-gutter-width;
+  padding: 0 ($grid-gutter-width / 2) 0;
+  @media (min-width: $grid-float-breakpoint) {
+    padding-left: $grid-gutter-width;
+    padding-right: $grid-gutter-width;
+  }
+  &--row {
+    @media (max-width: $screen-xs-max) {
+      margin-bottom: 30px;
+    }
+    @media (min-width: $screen-sm) {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+  &--detail {
+    border-bottom: 1px solid $color-grey-background-border;
+    flex-shrink: 0; // do not allow to shrink
+  }
+  // Positioned after --detail to take precedence, since they will be a siblings
+  &--breadcrumbs {
+    margin-top: 0;
+  }
+}

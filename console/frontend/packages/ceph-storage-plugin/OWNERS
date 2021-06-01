@@ -1,0 +1,14 @@
+reviewers:
+  - afreen23
+  - bipuladh
+  - cloudbehl
+  - rawagner
+  - shyRozen
+approvers:
+  - afreen23
+  - bipuladh
+  - cloudbehl
+  - rawagner
+  - shyRozen
+labels:
+  - component/ceph

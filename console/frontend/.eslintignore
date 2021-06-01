@@ -1,0 +1,11 @@
+.yarn
+__coverage__
+**/node_modules
+**/dist
+gui_test_screenshots
+*.min.js
+public/lib
+Godeps
+@types
+dynamic-demo-plugin
+packages/console-dynamic-plugin-sdk/schema

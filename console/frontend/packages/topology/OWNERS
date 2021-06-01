@@ -1,0 +1,23 @@
+reviewers:
+  - andrewballantyne
+  - abhinandan13jan
+  - debsmita1
+  - divyanshiGupta
+  - christianvogt
+  - invincibleJai
+  - jeff-phillips-18
+  - jerolimov
+  - karthikjeeyar
+  - nemesis09
+  - rohitkrai03
+  - rottencandy
+  - sahil143
+  - vikram-raj
+approvers:
+  - andrewballantyne
+  - christianvogt
+  - invincibleJai
+  - jerolimov
+  - rohitkrai03
+labels:
+  - component/topology
