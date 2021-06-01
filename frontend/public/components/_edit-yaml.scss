@@ -1,0 +1,55 @@
+.yaml-editor {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex: 1;
+  flex-direction: column;
+  @media (min-width: $grid-float-breakpoint) {
+    margin-left: $grid-gutter-width;
+    margin-right: $grid-gutter-width;
+    padding-top: $grid-gutter-width;
+  }
+}
+
+.yaml-editor__buttons {
+  background: white;
+  border-top: 1px solid #ddd;
+  padding: 20px ($grid-gutter-width / 2);
+  margin-top: auto;
+  z-index: 10;
+  @media (min-width: $grid-float-breakpoint) {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.yaml-editor__header {
+  border-bottom: 1px solid #ddd;
+  padding: 20px 15px;
+  @media(min-width: $screen-sm-min) {
+    padding-left: 31px; // left alignment with namespace selector text
+  }
+}
+
+.yaml-editor__header-text {
+  margin: 0;
+}
+
+.yaml-editor__link {
+  display: inline-block;
+}
+
+.yaml-editor__links {
+  position: absolute;
+  top: 5px;
+  right: 0;
+  z-index: 1;
+  @media(max-width: $screen-sm-max) {
+    display: none;
+  }
+}
+
+// This can't be customized in a theme, so use CSS.
+.yaml-editor .monaco-editor .margin .current-line {
+  background-color: var(--pf-global--BackgroundColor--dark-200);
+}

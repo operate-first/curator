@@ -1,0 +1,33 @@
+export enum AllPodStatus {
+  Running = 'Running',
+  NotReady = 'Not Ready',
+  Warning = 'Warning',
+  Empty = 'Empty',
+  Failed = 'Failed',
+  Pending = 'Pending',
+  Succeeded = 'Succeeded',
+  Terminating = 'Terminating',
+  Unknown = 'Unknown',
+  ScaledTo0 = 'Scaled to 0',
+  Idle = 'Idle',
+  AutoScaledTo0 = 'Autoscaled to 0',
+  ScalingUp = 'Scaling Up',
+  CrashLoopBackOff = 'CrashLoopBackOff',
+}
+
+export const podColor = {
+  [AllPodStatus.Running]: '#0066CC',
+  [AllPodStatus.NotReady]: '#519DE9',
+  [AllPodStatus.Warning]: '#F0AB00',
+  [AllPodStatus.Empty]: '#FFFFFF',
+  [AllPodStatus.Failed]: '#CC0000',
+  [AllPodStatus.Pending]: '#8BC1F7',
+  [AllPodStatus.Succeeded]: '#519149',
+  [AllPodStatus.Terminating]: '#002F5D',
+  [AllPodStatus.Unknown]: '#A18FFF',
+  [AllPodStatus.ScaledTo0]: '#FFFFFF',
+  [AllPodStatus.Idle]: '#FFFFFF',
+  [AllPodStatus.AutoScaledTo0]: '#FFFFFF',
+  [AllPodStatus.ScalingUp]: '#FFFFFF',
+  [AllPodStatus.CrashLoopBackOff]: '#CC0000',
+};

@@ -1,0 +1,13 @@
+.co-resource-sidebar-item {
+  border-top: 1px solid #ccc;
+  padding: ($line-height-computed / 2) 0 $line-height-computed;
+
+  &:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+}
+
+.co-resource-sidebar-item__img {
+  margin: $line-height-computed 0;
+}
