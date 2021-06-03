@@ -1,5 +1,10 @@
 # **Curator**
 
+## Release Information
+Version 0.2 06/09/2021
++ Dowload raw data of OCP infrastructure utilization.
++ Automation of storing infrastructure utilization data in a S3-compatible persistent volume.
+
 ## About
 An infrastructure consumption showback project for OCP. The curator project retrieves infrastructure utilization as raw data using [koku-metrics-operator](https://github.com/project-koku/koku-metrics-operator).
 
@@ -9,9 +14,9 @@ The project is being incubated in the [Operate First](https://www.operate-first.
 
 ### Functionalities
 + Download raw data of OCP infrastructure utilization. (v0.1 - 05/26/2021)
++ Automation of storing infrastructure utilization data in a S3-compatible persistent volume.
 
 ### Planned development
-+ Automation of storing infrastructure utilization data in a S3-compatible persistent volume. (v0.2 - 06/09/2021)
 + Generation of the system reports for daily, weekly and monthly infrastructure utilization. (v0.3 - 06/23/2021)
 + Pre-defined SQL query support for the infrastructure utilization data. (v0.4 - 07/07/2021)
 + Custom SQL query support for the infrastructure utilization data. (v0.4 - 07/07/2021)
