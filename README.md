@@ -1,5 +1,10 @@
 # **Curator**
 
+## Release Information
+Version 0.1
+05/26/2021
++ Download raw data of OCP infrastructure utilization.
+
 ## About
 An infrastructure consumption showback project for OCP. The curator project retrieves infrastructure utilization as raw data using [koku-metrics-operator](https://github.com/project-koku/koku-metrics-operator).
 
