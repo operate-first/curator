@@ -12,6 +12,7 @@ import { connectToFlags, flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
 import { SearchPage } from './search';
+import { Curator } from './curator';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { AsyncComponent, LoadingBox } from './utils';
 import { namespacedPrefixes } from './utils/link';
@@ -194,6 +195,8 @@ const AppContents: React.FC<{}> = () => {
             <Redirect from="/overview/all-namespaces" to="/dashboards" />
             <Redirect from="/overview/ns/:ns" to="/k8s/cluster/projects/:ns/workloads" />
             <Route path="/overview" exact component={NamespaceRedirect} />
+
+            <Route path="/curator" exact component={Curator} />
 
             <LazyRoute
               path="/api-explorer"

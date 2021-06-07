@@ -188,6 +188,17 @@ const AdminNav = () => {
       />
 
       <NavSection
+        id="curator-section"
+        title="Curator"
+      >
+        <HrefLink
+          id="curator"
+          href="/curator"
+          name={'Curator'}
+        />
+      </NavSection>
+
+      <NavSection
         id="networking"
         title={t('public~Networking')}
         data-quickstart-id="qs-nav-networking"
