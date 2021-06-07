@@ -1,0 +1,431 @@
+[
+  {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "developer-catalog",
+      "name": "%devconsole~Developer Catalog%",
+      "insertBefore": "git-repository"
+    }
+  },
+  {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "git-repository",
+      "name": "%devconsole~Git Repository%",
+      "insertBefore": "container-images",
+      "insertAfter": "developer-catalog"
+    }
+  },
+  {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "container-images",
+      "name": "%devconsole~Container images%",
+      "insertBefore": "serverless",
+      "insertAfter": "git-repository"
+    }
+  },
+  {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "local-machine",
+      "name": "%devconsole~From Local Machine%",
+      "insertBefore": "pipelines",
+      "insertAfter": "serverless"
+    }
+  },
+  {
+    "type": "dev-console.add/action-group",
+    "properties": {
+      "id": "samples",
+      "name": "%devconsole~Samples%",
+      "insertAfter": "pipelines"
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "import-from-samples",
+      "groupId": "samples",
+      "href": "/samples",
+      "label": "%devconsole~Samples%",
+      "description": "%devconsole~Create an Application from a code sample%",
+      "icon": { "$codeRef": "icons.samplesIconElement" },
+      "accessReview": [
+        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
+        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "import-from-git",
+      "groupId": "git-repository",
+      "href": "/import",
+      "label": "%devconsole~From Git%",
+      "description": "%devconsole~Import code from your Git repository to be built and deployed%",
+      "icon": { "$codeRef": "icons.gitIconSVG" },
+      "accessReview": [
+        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
+        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "import-from-devfile",
+      "groupId": "git-repository",
+      "href": "/import?importType=devfile",
+      "label": "%devconsole~From Devfile%",
+      "description": "%devconsole~Import your Devfile from your Git repository to be built and deployed%",
+      "icon": { "$codeRef": "icons.devfileIconSVG" },
+      "accessReview": [
+        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
+        { "group": "apps", "resource": "deployments", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "deploy-image",
+      "groupId": "container-images",
+      "href": "/deploy-image",
+      "label": "%devconsole~Container images%",
+      "description": "%devconsole~Deploy an existing Image from an Image registry or Image stream tag%",
+      "icon": { "$codeRef": "icons.deployIconElement" },
+      "accessReview": [
+        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
+        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreamimports", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "import-from-dockerfile",
+      "groupId": "git-repository",
+      "href": "/import?importType=docker",
+      "label": "%devconsole~From Dockerfile%",
+      "description": "%devconsole~Import your Dockerfile from your Git repository to be built and deployed%",
+      "icon": { "$codeRef": "icons.dockerfileIconSVG" },
+      "accessReview": [
+        { "group": "build.openshift.io", "resource": "buildconfigs", "verb": "create" },
+        { "group": "image.openshift.io", "resource": "imagestreams", "verb": "create" },
+        { "group": "apps.openshift.io", "resource": "deploymentconfigs", "verb": "create" },
+        { "group": "", "resource": "secrets", "verb": "create" },
+        { "group": "route.openshift.io", "resource": "routes", "verb": "create" },
+        { "group": "", "resource": "services", "verb": "create" }
+      ]
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "import-yaml",
+      "groupId": "local-machine",
+      "href": "/k8s/ns/:namespace/import",
+      "label": "%devconsole~Import YAML%",
+      "description": "%devconsole~Create resources from their YAML or JSON definitions%",
+      "icon": { "$codeRef": "icons.yamlIconSVG" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "dev-catalog",
+      "groupId": "developer-catalog",
+      "href": "/catalog",
+      "label": "%devconsole~All services%",
+      "description": "%devconsole~Browse the catalog to discover, deploy and connect to services%",
+      "icon": { "$codeRef": "icons.devCatalogIconElement" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "dev-catalog-databases",
+      "groupId": "developer-catalog",
+      "href": "/catalog?category=databases",
+      "label": "%devconsole~Database%",
+      "description": "%devconsole~Browse the catalog to discover database services to add to your Application%",
+      "icon": { "$codeRef": "icons.databaseCatalogIconElement" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "operator-backed",
+      "groupId": "developer-catalog",
+      "href": "/catalog?catalogType=OperatorBackedService",
+      "label": "%devconsole~Operator Backed%",
+      "description": "%devconsole~Browse the catalog to discover and deploy operator managed services%",
+      "icon": { "$codeRef": "icons.operatorCatalogIconElement" }
+    }
+  },
+  {
+    "type": "dev-console.add/action",
+    "properties": {
+      "id": "upload-jar",
+      "groupId": "local-machine",
+      "href": "/upload-jar",
+      "label": "%devconsole~Upload JAR file%",
+      "description": "%devconsole~Upload a JAR file from your local desktop to OpenShift%",
+      "icon": { "$codeRef": "icons.uploadJarIconElement" }
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "BuilderImage",
+      "title": "%devconsole~Builder Images%",
+      "catalogDescription": "%devconsole~Browse for container images that support a particular language or framework. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%devconsole~**Builder Images** are container images that build source code for a particular language or framework.%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "BuilderImage",
+      "provider": { "$codeRef": "catalog.builderImageProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "Template",
+      "title": "%devconsole~Templates%",
+      "catalogDescription": "%devconsole~Browse for templates that can deploy services, create builds, or create any resources the template enables. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%devconsole~**Templates** are sets of objects for creating services, build configurations, and anything you have permission to create within a Project.%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "Template",
+      "provider": { "$codeRef": "catalog.templateProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "Devfile",
+      "title": "%devconsole~Devfiles%",
+      "catalogDescription": "%devconsole~Browse for devfiles that support a particular language or framework. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%devconsole~**Devfiles** are sets of objects for creating services, build configurations, and anything you have permission to create within a Project.%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "Devfile",
+      "provider": { "$codeRef": "catalog.devfileProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "Sample",
+      "title": "%devconsole~Samples%"
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "samples-catalog",
+      "type": "Sample",
+      "provider": { "$codeRef": "catalog.builderImageSamplesProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "samples-catalog",
+      "type": "Sample",
+      "provider": { "$codeRef": "catalog.devfileSamplesProvider" }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.file-upload",
+    "properties": {
+      "fileExtensions": ["jar"],
+      "handler": { "$codeRef": "fileUpload.jarFileUploadHandler" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "add",
+      "perspective": "dev",
+      "section": "top",
+      "name": "%devconsole~+Add%",
+      "href": "/add",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-add",
+        "data-test-id": "+Add-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "topology",
+      "perspective": "dev",
+      "section": "top",
+      "name": "%devconsole~Topology%",
+      "href": "/topology",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-topology",
+        "data-test-id": "topology-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "monitoring",
+      "perspective": "dev",
+      "section": "top",
+      "name": "%devconsole~Monitoring%",
+      "href": "/dev-monitoring",
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-monitoring",
+        "data-tour-id": "tour-monitoring-nav",
+        "data-test-id": "monitoring-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "search",
+      "perspective": "dev",
+      "section": "top",
+      "name": "%devconsole~Search%",
+      "href": "/search",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-search",
+        "data-tour-id": "tour-search-nav",
+        "data-test-id": "search-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "project",
+      "perspective": "dev",
+      "section": "resources",
+      "name": "%devconsole~Project%",
+      "href": "/project-details",
+      "namespaced": true,
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-project",
+        "data-test-id": "project-details-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "builds",
+      "perspective": "dev",
+      "section": "resources",
+      "name": "%devconsole~Builds%",
+      "insertBefore": ["helm", "pipelines"],
+      "model": {
+        "kind": "BuildConfig",
+        "version": "v1",
+        "group": "build.openshift.io"
+      },
+      "dataAttributes": {
+        "data-quickstart-id": "qs-nav-builds",
+        "data-test-id": "build-header"
+      }
+    },
+    "flags": {
+      "required": ["OPENSHIFT"]
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "top",
+      "perspective": "dev"
+    }
+  },
+  {
+    "type": "console.navigation/section",
+    "properties": {
+      "id": "resources",
+      "perspective": "dev"
+    }
+  }
+]

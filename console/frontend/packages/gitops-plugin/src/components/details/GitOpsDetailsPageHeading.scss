@@ -1,0 +1,11 @@
+.odc-gitops-details-page-heading {
+  &__repo {
+    align-items: center;
+    font-weight: bold;
+    font-size: 12px;
+  }
+
+  h1 {
+    margin-bottom: var(--pf-global--spacer--sm);
+  }
+}

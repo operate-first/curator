@@ -1,0 +1,32 @@
+@import '../../../../../../topology/src/components/topology-utils';
+
+$border-color: var(--pf-global--BorderColor--light-100);
+.odc-pipeline-vis-task {
+  fill: white;
+  stroke: $border-color;
+  stroke-width: 1;
+  cursor: default;
+
+  &.is-selected {
+    stroke: $interactive-stroke-color;
+    stroke-width: 2;
+  }
+  &.is-linked {
+    cursor: pointer;
+  }
+  &--icon-spin {
+    transform-origin: 16.7px 15.1px;
+  }
+}
+
+.odc-pipeline-vis-task-text {
+  cursor: default;
+  dominant-baseline: middle;
+
+  &.is-text-center {
+    text-anchor: middle;
+  }
+  &.is-linked {
+    cursor: pointer;
+  }
+}

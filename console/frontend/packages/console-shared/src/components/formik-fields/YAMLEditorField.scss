@@ -1,0 +1,21 @@
+@import '~@patternfly/patternfly/sass-utilities/all';
+
+.osc-yaml-editor {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: row;
+
+  &__editor {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+  }
+  &__sidebar {
+    display: flex;
+    flex: 1 0 0;
+    margin-left: 20px;
+    @media screen and (max-width: $pf-global--breakpoint--lg) {
+      display: none;
+    }
+  }
+}

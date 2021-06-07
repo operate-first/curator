@@ -1,0 +1,20 @@
+// All PF3 css imports here are needed for react-console
+
+// Bootstrap Core variables and mixins
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
+
+// Patternfly Core variables and mixins
+@import "~patternfly/dist/sass/patternfly/variables";
+@import "~patternfly/dist/sass/patternfly/bootstrap-mixin-overrides";
+@import "~patternfly/dist/sass/patternfly/mixins";
+@import "~patternfly-react/dist/sass/patternfly-react";
+
+// Console StyleSheets
+@import "~xterm/css/xterm.css";
+
+// Note(yaacov): Workaround bootstrap issue, checkbox and radio buttons are not alligned with input label
+// hack should be removed once bootstrap is fixed
+input[type="radio"], input[type="checkbox"] {
+    margin-top: 1px !important;
+}
