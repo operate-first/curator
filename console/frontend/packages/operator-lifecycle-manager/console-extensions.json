@@ -1,0 +1,57 @@
+[
+  {
+    "type": "console.catalog/item-type",
+    "properties": {
+      "type": "OperatorBackedService",
+      "title": "%olm~Operator Backed%",
+      "catalogDescription": "%olm~Browse for a variety of managed services that are installed by cluster administrators. Cluster administrators can customize the content made available in the catalog.%",
+      "typeDescription": "%olm~**Operator backed** includes a variety of services managed by Kubernetes controllers.%",
+      "groupings": [
+        {
+          "label": "Operators",
+          "attribute": "operatorName"
+        }
+      ]
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
+    }
+  },
+  {
+    "type": "console.catalog/item-provider",
+    "properties": {
+      "catalogId": "dev-catalog",
+      "type": "OperatorBackedService",
+      "provider": { "$codeRef": "utils.catalogCSVProvider" }
+    },
+    "flags": {
+      "required": ["OPERATOR_LIFECYCLE_MANAGER"]
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "operatorhub",
+      "section": "operators",
+      "name": "%olm~OperatorHub%",
+      "href": "/operatorhub"
+    },
+    "flags": {
+      "required": ["CAN_LIST_PACKAGE_MANIFEST", "CAN_LIST_OPERATOR_GROUP"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-ns",
+    "properties": {
+      "id": "operators",
+      "section": "operators",
+      "name": "%olm~Installed Operators%",
+      "model": {
+        "kind": "ClusterServiceVersion",
+        "version": "v1alpha1",
+        "group": "operators.coreos.com"
+      },
+      "startsWith": ["operators.coreos.com", "clusterserviceversions"]
+    }
+  }
+]

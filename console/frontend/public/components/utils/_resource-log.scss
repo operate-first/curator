@@ -1,0 +1,12 @@
+.resource-log {
+  height: 100%;
+  width: 100%;
+}
+
+.resource-log--fullscreen {
+  .co-toolbar {
+    background-color: $color-pf-white;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}

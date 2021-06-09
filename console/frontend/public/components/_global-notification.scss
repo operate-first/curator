@@ -1,0 +1,39 @@
+$global-notification-text: $color-pf-white;
+
+.co-global-notification {
+  background-color: $color-pf-blue-400;
+  color: $global-notification-text;
+  padding: 4px ($grid-gutter-width / 2);
+  text-align: center;
+
+  @media(min-width: $grid-float-breakpoint) {
+    padding: 6px $grid-gutter-width;
+  }
+
+  + .co-global-notification {
+    margin-top: 1px;
+  }
+
+  a {
+    color: $global-notification-text;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .close {
+    margin-left: 10px;
+  }
+}
+
+.co-global-notification__text {
+  margin: 0;
+}
+
+.co-global-notification__impersonate-name {
+  font-weight: var(--pf-global--FontWeight--bold);
+}
+
+.co-global-notification__impersonate-kind {
+  font-weight: var(--pf-global--FontWeight--bold);
+  padding-right: 20px;
+}

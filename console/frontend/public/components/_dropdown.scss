@@ -1,0 +1,264 @@
+@import '~@patternfly/patternfly/sass-utilities/scss-variables';
+
+$color-bookmarker--hover: $color-pf-black-500;
+$color-bookmarker: $color-pf-black-400;
+$dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--hover--BackgroundColor
+
+.btn-dropdown__content-wrap {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.dropdown .co-m-resource-icon {
+  margin-left: 2px;
+}
+
+.dropdown--full-width {
+  &,
+  .pf-c-dropdown__toggle {
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+.dropdown-button--icon-only {
+  height: 34.5px !important; // default form element height
+  margin-left: -1px;
+  min-width: auto !important;
+  .pf-c-dropdown__toggle-icon {
+    margin: 0 !important;
+  }
+}
+
+.dropdown__disabled {
+  color: $dropdown-link-disabled-color;
+  cursor: not-allowed;
+}
+
+.dropdown-menu__divider {
+  background-color: $color-pf-black-200;
+  height: 1px;
+  flex-grow: 1;
+  margin: 9px 0;
+  overflow: hidden;
+}
+
+.dropdown-menu__header {
+  color: $color-pf-black-600;
+  flex-grow: 1;
+  font-size: ($font-size-base - 1);
+  padding: 3px 10px;
+  text-transform: uppercase;
+}
+
+.dropdown-menu__filter {
+  padding: 5px var(--pf-c-dropdown__menu-item--PaddingRight) 10px;
+}
+
+.dropdown-menu--text-wrap {
+  max-width: 100%;
+  li {
+    a,
+    button {
+      @include co-break-word;
+      white-space: normal;
+    }
+  }
+}
+
+.favorite {
+  color: gold;
+}
+
+.co-namespace-bar {
+  border-bottom: 1px solid $color-grey-background-border;
+  padding: 0 15px;
+  white-space: nowrap;
+
+  @media (min-width: $grid-float-breakpoint) {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  &__items {
+    align-items: center;
+    display: flex;
+
+    .pf-m-plain {
+      color: inherit;
+      padding: 4px 0 2px !important;
+
+      @media(min-width: $grid-float-breakpoint) {
+        padding-bottom: 10px !important;
+        padding-top: 11px !important;
+      }
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.co-namespace-selector {
+  margin-right: 20px;
+  max-width: 60%;
+
+  .pf-c-dropdown__toggle.pf-m-plain {
+    font-size: ($font-size-base + 1);
+    padding: 2px 0 !important;
+
+    &:not(:disabled) {
+      color: inherit;
+    }
+
+    @media (min-width: $grid-float-breakpoint) {
+      font-size: ($font-size-base + 2);
+      padding-bottom: 9px !important;
+      padding-top: 9px !important;
+    }
+
+    &__titlePrefix {
+      margin-right: 6px;
+    }
+  }
+}
+
+
+// Custom dropdown menu rules for namespace-selector & resource-item that don't use the default pf4 styles
+.co-namespace-selector .dropdown-menu__autocomplete-filter {
+  li {
+    display: flex;
+    padding: 0;
+    &:focus {
+      outline: none;
+    }
+    &.active a {
+      background-color: var(--pf-global--BackgroundColor--200);
+    }
+    a {
+      cursor: pointer;
+      flex-grow: 1;
+      width: 100%;
+      &.disabled {
+        color: var(--pf-global--Color--dark-200);
+        cursor: not-allowed;
+        &:active,
+        &:focus,
+        &:hover {
+          background-color: inherit;
+          border-color: transparent;
+          color: var(--pf-global--Color--dark-200) !important;
+        }
+      }
+      &.next-to-bookmark {
+        padding-left: 5px
+      }
+    }
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.co-namespace-selector__menu.pf-c-dropdown__menu {
+  margin: -5px 0 0;
+  max-width: 100%;
+  min-width: 210px;
+
+  @media (min-width: $grid-float-breakpoint) {
+    min-width: 325px;
+  }
+
+  a {
+    white-space: nowrap;
+    width: auto;
+  }
+
+  .dropdown__selected {
+    background-color: inherit;
+    color: inherit;
+  }
+  // Mimic PatternFly4 dropdown-menu visual states.
+  // Since namespace selector has multiple <a> tags within each list item,
+  // target the <li> except the one containing the list divider.
+  li {
+    &:not(.co-namespace-selector__divider):hover {
+      background-color: $dropdown-background--hover;
+      color: $dropdown-link-hover-color;
+      position: relative;
+    }
+    > a {
+      padding: 6px;
+      text-decoration: none;
+      &.bookmarker {
+        display: inline-block;
+        padding-right: 5px;
+        padding-left: var(--pf-c-dropdown__menu-item--PaddingLeft);
+        color: $color-bookmarker;
+        flex: 0;
+        &:hover {
+          background-color: $dropdown-background--hover;
+          color: $color-bookmarker--hover;
+        }
+        &:focus {
+          background-color: $dropdown-background--hover;
+        }
+      }
+      &.next-to-bookmark {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+.dropdown-menu__autocomplete-filter {
+  max-height: 60vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+// TEMP fix until https://github.com/patternfly/patternfly-next/issues/1543 is fixed upstream
+.pf-c-app-launcher__menu-item {
+  &:focus,
+  &:hover {
+    color: var(--pf-global--Color--dark-100);
+  }
+}
+
+.pf-c-dropdown__menu {
+  list-style: none;
+  -webkit-overflow-scrolling: touch;
+  @media (min-width: $pf-global--breakpoint--md) {
+    &.pf-m-align-right-on-md {
+      right: 0;
+    }
+
+  }
+}
+
+.pf-c-dropdown__toggle {
+  max-width: 100%;
+}
+
+.pf-c-dropdown__toggle .pf-c-dropdown__toggle-icon {
+  flex: 0 0 auto; // so arrow doesn't shrink
+}
+
+.pf-c-dropdown__toggle-text {
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  .co-resource-item__resource-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

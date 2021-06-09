@@ -1,0 +1,35 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: backup-to-bucket
+spec:
+  schedule: '@hourly'  # You can use " schedule: '* * * * *' " to run this cron job instantly
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+            - name: koku-metrics-operator-data
+              persistentVolumeClaim:
+                claimName: koku-metrics-operator-data
+            - name: backup-scripts
+              configMap:
+                name: backup-scripts
+          containers:
+            - name: mc
+              image: docker.io/minio/mc #you can also use different client to do this
+              envFrom:
+                - secretRef:
+                    name: backup-credentials
+                - configMapRef:
+                    name: backup-config
+              command:
+                - sh
+                - /scripts/run-backup.sh
+              volumeMounts:
+                - name: backup-scripts
+                  mountPath: /scripts
+                - name: koku-metrics-operator-data
+                  mountPath: /tmp/koku-metrics-operator-data  #koku meterics operator storage path 
+          restartPolicy: Never
+          concurrencyPolicy: Forbidden
