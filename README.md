@@ -65,6 +65,21 @@ repository and accidentally expose your credentials.
 [docker image]: https://hub.docker.com/r/minio/mc/
 [s3cmd]: https://s3tools.org/s3cmd
 
+### Planned development
++ Generation of the system reports for daily, weekly and monthly infrastructure utilization. (v0.3 - 06/23/2021)
++ Pre-defined SQL query support for the infrastructure utilization data. (v0.4 - 07/07/2021)
++ Custom SQL query support for the infrastructure utilization data. (v0.4 - 07/07/2021)
++ Access for the cluster admin to view the system generated reports in the OCP console. (v0.5 - 07/21/2021)
++ Access for the cluster admin to run SQL queries on the infrastructure utilization data in the OCP console. (v0.5 - 07/21/2021)
+
+### Development being considered
++ Access for the end-users to view the system generated reports of the projects they are running on OCP through the OCP console. (Late August 2021)
++ Access for the end-users to run SQL queries on the infrastructure utilization data of the projects they are running on OCP through the OCP console. (Late August 2021)
++ Utilization notification system. (September 2021)
++ Synchronized data backup. (September 2021)
++ CSV format sharable reports. (Late August 2021)
++ Expand functionalities for multi-cluster OCP deployments. (Late 2021)
+
 ### Communication
 E-mail : curator@redhat.com Red Hat GChat : [Curator Project](https://mail.google.com/chat/u/0/#chat/space/AAAAnkClSoU)
 
