@@ -1,9 +1,11 @@
+# Sample config should look like this.
 # This is the koku-metric-operator configuration file.
 # From the OpenShift Container Platform web console, select Operators > Installed Operators > koku-metrics-operator > KokuMetricsConfig yaml file. 
 # Replace the configuration in the source section with empty brackets.
 # Replace the configuration in the authentication section with empty brackets.
 # After that select the KokuMetricsConfig you created.
 # Koku-metrics-operator will generate an initial report after it is configured, generated reports will be listed under packaged_files.
+# You will be able to see generated reports in "packaging" section
 
 apiVersion: koku-metrics-cfg.openshift.io/v1beta1
 kind: KokuMetricsConfig
@@ -152,13 +154,7 @@ status:
     number_reports_stored: 4
     packaged_files:
       - >-
-        /tmp/koku-metrics-operator-reports/upload/20210429T191329-cost-mgmt.tar.gz
-      - >-
-        /tmp/koku-metrics-operator-reports/upload/20210430T011449-cost-mgmt.tar.gz
-      - >-
-        /tmp/koku-metrics-operator-reports/upload/20210430T071608-cost-mgmt.tar.gz
-      - >-
-        /tmp/koku-metrics-operator-reports/upload/20210430T131728-cost-mgmt.tar.gz
+        /tmp/koku-metrics-operator-reports/upload/20210429T191329-cost-mgmt.tar.gz 
   prometheus:
     last_query_start_time: '2021-05-03T23:00:24Z'
     last_query_success_time: '2021-05-03T23:00:24Z'
