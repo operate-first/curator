@@ -31,5 +31,20 @@ spec:
                   mountPath: /scripts
                 - name: koku-metrics-operator-data
                   mountPath: /tmp/koku-metrics-operator-data  #koku meterics operator storage path 
+            - name: unzip
+              image: docker.io/python:3.7-slim
+              envFrom:
+                - secretRef:
+                    name: backup-credentials
+                - configMapRef:
+                    name: backup-config
+              command:
+                - sh
+                - /scripts/unzip-backup.sh
+              volumeMounts:
+                - name: backup-scripts
+                  mountPath: /scripts
+                - name: koku-metrics-operator-data
+                  mountPath: /tmp/koku-metrics-operator-data
           restartPolicy: Never
           concurrencyPolicy: Forbidden
