@@ -198,7 +198,7 @@ const AppContents: React.FC<{}> = () => {
 
             <Route path="/curator/main" exact component={Curator} />
             <Route path="/curator/raw-data" exact component={CuratorRawData} />
-
+        
             <LazyRoute
               path="/api-explorer"
               exact
