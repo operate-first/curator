@@ -1,0 +1,25 @@
+.curator-raw-data-wrap {
+  padding: 20px;
+
+  .title {
+    margin-bottom: 20px;
+  }
+
+  .pf-c-breadcrumb {
+    padding-top: 0;
+  }
+
+  .pf-c-toolbar__content-section {
+    justify-content: space-between;
+  }
+
+  .folder-link {
+    color: var(--pf-global--link--Color);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--pf-global--link--Color--hover);
+      text-decoration: underline;
+    }
+  }
+}
