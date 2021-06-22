@@ -187,15 +187,9 @@ const AdminNav = () => {
         data-quickstart-id="qs-nav-serverless"
       />
 
-      <NavSection
-        id="curator-section"
-        title="Curator"
-      >
-        <HrefLink
-          id="curator"
-          href="/curator"
-          name={'Curator'}
-        />
+      <NavSection id="curator-section" title="Curator">
+        <HrefLink id="curator" href="/curator/main" name={'Curator'} />
+        <HrefLink id="curator-raw-data" href="/curator/raw-data" name={'Raw Data'} />
       </NavSection>
 
       <NavSection
