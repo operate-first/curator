@@ -49,12 +49,11 @@ const FolderBrowser = (props: FolderBrowserProps) => {
     : folders.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   let rows = visibleFolders.map(({ path, files }) => {
-    const folderName = path.split('/')[1]; // cut out "raw-csv" folder
     const folderManifest = manifests[path];
     return {
       cells: [
         <span className="folder-link" key={path} onClick={() => setCurrentFolder(path)}>
-          {folderName}
+          {path}
         </span>,
         files.length,
         folderManifest ? formatDate(folderManifest.start) : 'Loading..',

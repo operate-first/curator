@@ -8,12 +8,12 @@ import { FolderBrowser } from './folder-browser';
 import { CuratorRawDataFolder, getCuratorFolders } from './curator-raw-data-api';
 
 const CuratorRawData = () => {
-  const [folders, setFileStructure] = React.useState<CuratorRawDataFolder[]>();
+  const [folders, setFolders] = React.useState<CuratorRawDataFolder[]>();
   const [currentFolder, setCurrentFolder] = React.useState<string>();
 
   React.useEffect(() => {
     if (!folders) {
-      getCuratorFolders().then(setFileStructure);
+      getCuratorFolders().then(setFolders);
     }
   }, [folders]);
 
@@ -31,7 +31,7 @@ const CuratorRawData = () => {
       {currentFolder && (
         <FileBrowser
           files={files}
-          title={currentFolder.split('/')[1]}
+          title={currentFolder}
           handleBack={() => {
             setCurrentFolder(null);
           }}

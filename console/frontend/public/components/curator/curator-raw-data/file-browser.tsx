@@ -24,11 +24,10 @@ const FileBrowser = (props: FileBrowserProps) => {
 
   const columns = ['File Name'];
   const rows = visibleFiles.map((file) => {
-    const fileName = file.split('/')[2];
     return {
       cells: [
         <span className="folder-link" key={file} onClick={() => downloadCuratorFile(file)}>
-          {fileName}
+          {file}
         </span>,
       ],
     };

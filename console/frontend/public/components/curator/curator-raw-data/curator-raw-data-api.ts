@@ -1,4 +1,4 @@
-const RAW_DATA_URL = 'https://kzn-swift.massopen.cloud/swift/v1/koku-backup';
+const RAW_DATA_URL = 'https://kzn-swift.massopen.cloud/swift/v1/unzipbucket/';
 
 export interface CuratorRawDataFolder {
   path: string;
@@ -14,13 +14,15 @@ async function getFileList() {
 
 export async function getCuratorFolders(): Promise<CuratorRawDataFolder[]> {
   const files = await getFileList();
-  const csvFolderPaths = files.filter(
-    (file) => file.startsWith('raw-csv') && file.endsWith('mgmt/'),
-  );
-  const csvFiles = files.filter((file) => file.startsWith('raw-csv') && file.endsWith('.csv'));
+  const manifests = files.filter((file) => file.endsWith('manifest.json'));
+  const csvFiles = files.filter((file) => file.endsWith('.csv'));
+  const folderPaths = manifests.map((path) => path.split('/')[0]); // each folder has one manifest
   const folders = [];
-  for (const path of csvFolderPaths) {
-    const filesInFolder = csvFiles.filter((file) => file.includes(path));
+  for (const path of folderPaths) {
+    const filesInFolder = csvFiles
+      .filter((file) => file.includes(path))
+      .map((filePath) => filePath.split('/')[1]); // remove folder from file name
+
     folders.push({ path, files: filesInFolder });
   }
   return folders;
@@ -34,7 +36,7 @@ export function downloadCuratorFile(file: string) {
 }
 
 export async function getCuratorFolderManifest(path: string) {
-  const url = `${RAW_DATA_URL}/${path}manifest.json`;
+  const url = `${RAW_DATA_URL}${path}/manifest.json`;
   const data = await fetch(url).then((r) => r.json());
   return data;
 }
