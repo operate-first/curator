@@ -14,7 +14,7 @@ The project is being incubated in the [Operate First](https://www.operate-first.
 
 ### Functionalities
 + Download raw data of OCP infrastructure utilization. (v0.1 - 05/26/2021)
-+ Automation of storing infrastructure utilization data in a S3-compatible persistent volume.
++ Automation of storing infrastructure utilization data in an S3-compatible persistent volume.
 
 
 ### Backup a directory to an S3 bucket
