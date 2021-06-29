@@ -15,7 +15,7 @@ spec:
             - name: backup-scripts
               configMap:
                 name: backup-scripts
-         containers:
+          containers:
             - name: s3sync
               image: surbhi0129/unzip-bucket:latest 
               envFrom:
