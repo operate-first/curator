@@ -11,6 +11,7 @@ configMapGenerator:
   - name: backup-scripts
     files:
       - scripts/unzip_backup.py
+      - scripts/run-backup.sh
   - name: backup-config
     envs:
       - Documentation/config/config.env  #Path to your configuration file
