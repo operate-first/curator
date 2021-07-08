@@ -1,9 +1,10 @@
 # **Curator**
 
 ## Release Information
-Version 0.2 06/09/2021
+Version 0.3 07/08/2021
 + Dowload raw data of OCP infrastructure utilization.
-+ Automation of storing infrastructure utilization data in a S3-compatible persistent volume.
++ Automation of storing infrastructure utilization data in an S3-compatible persistent volume.
++ Unzipped metrics are being stored in an S3-compatible volume.
 
 ## About
 An infrastructure consumption showback project for OCP. The curator project retrieves infrastructure utilization as raw data using [koku-metrics-operator](https://github.com/project-koku/koku-metrics-operator).
@@ -15,7 +16,7 @@ The project is being incubated in the [Operate First](https://www.operate-first.
 ### Functionalities
 + Download raw data of OCP infrastructure utilization. (v0.1 - 05/26/2021)
 + Automation of storing infrastructure utilization data in an S3-compatible persistent volume. (v0.2 - 06/09/2021)
-+ Generation of the system reports for daily, weekly and monthly infrastructure utilization.
+
 
 ### Backup a directory to an S3 bucket
 This collection of manifests will deploy a Cron job that periodically runs a pod that backs up up a local (to the pod) directory
@@ -70,10 +71,10 @@ repository and accidentally expose your credentials.
 [s3cmd]: https://s3tools.org/s3cmd
 
 ### Planned development
-+ Pre-defined SQL query support for the infrastructure utilization data. (v0.4 - 07/07/2021)
-+ Custom SQL query support for the infrastructure utilization data. (v0.4 - 07/07/2021)
-+ Access for the cluster admin to view the system generated reports in the OCP console. (v0.5 - 07/21/2021)
-+ Access for the cluster admin to run SQL queries on the infrastructure utilization data in the OCP console. (v0.5 - 07/21/2021)
++ Pre-defined SQL query support for the infrastructure utilization data. (v0.4 - 07/21/2021)
++ Custom SQL query support for the infrastructure utilization data. (v0.4 - 07/21/2021)
++ Access for the cluster admin to view the system generated reports in the OCP console. (v0.5 - 08/04/2021)
++ Access for the cluster admin to run SQL queries on the infrastructure utilization data in the OCP console. (v0.5 - 08/04/2021)
 
 ### Development being considered
 + Access for the end-users to view the system generated reports of the projects they are running on OCP through the OCP console. (Late August 2021)
@@ -84,5 +85,5 @@ repository and accidentally expose your credentials.
 + Expand functionalities for multi-cluster OCP deployments. (Late 2021)
 
 ### Communication
-E-mail : curator@redhat.com Red Hat GChat : [Curator Project](https://mail.google.com/chat/u/0/#chat/space/AAAAnkClSoU)
+E-mail : curator@redhat.com Red Hat GChat : [Curator Project](https://join.slack.com/t/operatefirst/shared_invite/zt-o2gn4wn8-O39g7sthTAuPCvaCNRnLww)
 
