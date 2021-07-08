@@ -26,6 +26,9 @@ to an S3 bucket using the [MinIO Client][] (`mc`).
 ### Configuration
 1. Copy `credentials-example.env` to `credentials.env`
    and update it with your bucket credentials. 
+   
+   We will pull all environment variable into a secret generator which results in secrets. 
+   That secret is being deployed and imported into OpenShift.
 
 2. Update `config.env`. The following configuration variables are
    required:
@@ -33,7 +36,8 @@ to an S3 bucket using the [MinIO Client][] (`mc`).
      - `BACKUP_SRC` -- the path to the directory you want to back up
      - `BACKUP_DST` -- the bucket name and path for backup destination
      - `S3_ENDPOINT` -- your S3 API endpoint
-
+     - `BUCKET_NAME` -- the bucket name for unzipped files
+  
    Optionally, you may set:
 
      - `MC_GLOBAL_FLAGS` -- flags passed to all invocations of the

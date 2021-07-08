@@ -45,6 +45,6 @@ spec:
                 - name: backup-scripts
                   mountPath: /scripts
                 - name: koku-metrics-operator-data
-                  mountPath: /tmp/koku-metrics-operator-data     
+                  mountPath: /tmp/koku-metrics-operator-data
           restartPolicy: Never
           concurrencyPolicy: Forbidden
