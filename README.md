@@ -26,6 +26,7 @@ to an S3 bucket using the [MinIO Client][] (`mc`).
 ### Configuration
 1. Copy `credentials-example.env` to `credentials.env`
    and update it with your bucket credentials. 
+   
    We will pull all environment variable into a secret generator which results in secrets. 
    That secret is being deployed and imported into OpenShift.
 
