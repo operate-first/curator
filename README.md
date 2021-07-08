@@ -18,6 +18,7 @@ The project is being incubated in the [Operate First](https://www.operate-first.
 + Automation of storing infrastructure utilization data in an S3-compatible persistent volume. (v0.2 - 06/09/2021)
 
 
+
 ### Backup a directory to an S3 bucket
 This collection of manifests will deploy a Cron job that periodically runs a pod that backs up up a local (to the pod) directory
 to an S3 bucket using the [MinIO Client][] (`mc`).
@@ -71,10 +72,12 @@ repository and accidentally expose your credentials.
 [s3cmd]: https://s3tools.org/s3cmd
 
 ### Planned development
+
 + Pre-defined SQL query support for the infrastructure utilization data. (v0.4 - 07/21/2021)
 + Custom SQL query support for the infrastructure utilization data. (v0.4 - 07/21/2021)
 + Access for the cluster admin to view the system generated reports in the OCP console. (v0.5 - 08/04/2021)
 + Access for the cluster admin to run SQL queries on the infrastructure utilization data in the OCP console. (v0.5 - 08/04/2021)
+
 
 ### Development being considered
 + Access for the end-users to view the system generated reports of the projects they are running on OCP through the OCP console. (Late August 2021)
