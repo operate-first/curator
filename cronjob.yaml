@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: backup-to-bucket
 spec:
-  schedule: '@hourly'  # You can use " schedule: '* * * * *' " to run this cron job instantly
+  schedule: '* */6 * * *'  # This job will run a minute past 6 hours. You can also use " schedule: '* * * * *' " to run this cron job instantly
   jobTemplate:
     spec:
       template:
@@ -16,8 +16,23 @@ spec:
               configMap:
                 name: backup-scripts
           containers:
+            - name: s3sync
+              image: quay.io/operate-first/curator-s3-sync:latest
+              envFrom:
+                - secretRef:
+                    name: backup-credentials
+                - configMapRef:
+                    name: backup-config
+              command:
+                - python3
+                - /scripts/unzip_backup.py
+              volumeMounts:
+                - name: backup-scripts
+                  mountPath: /scripts
+                - name: koku-metrics-operator-data
+                  mountPath: /tmp/koku-metrics-operator-data  #koku meterics operator storage path
             - name: mc
-              image: docker.io/minio/mc #you can also use different client to do this
+              image: docker.io/minio/mc
               envFrom:
                 - secretRef:
                     name: backup-credentials
@@ -30,6 +45,6 @@ spec:
                 - name: backup-scripts
                   mountPath: /scripts
                 - name: koku-metrics-operator-data
-                  mountPath: /tmp/koku-metrics-operator-data  #koku meterics operator storage path 
+                  mountPath: /tmp/koku-metrics-operator-data
           restartPolicy: Never
           concurrencyPolicy: Forbidden
