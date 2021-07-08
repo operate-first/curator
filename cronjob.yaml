@@ -17,7 +17,7 @@ spec:
                 name: backup-scripts
           containers:
             - name: s3sync
-              image: quay.io/operate-first/curator-s3-sync:latest 
+              image: quay.io/operate-first/curator-s3-sync:latest
               envFrom:
                 - secretRef:
                     name: backup-credentials
