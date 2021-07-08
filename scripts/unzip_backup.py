@@ -7,7 +7,8 @@ import tarfile
 from botocore.exceptions import ClientError
 
 
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")  # dir of the metrics files
+#get all the environment variables
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")  
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 BUCKET_NAME= os.environ.get("BUCKET_NAME")
 
@@ -18,8 +19,8 @@ conn = boto.s3.connection.S3Connection(aws_access_key_id=AWS_ACCESS_KEY_ID, aws_
 bucket = conn.get_bucket(BUCKET_NAME)
 
 
-backup_src = os.environ.get("BACKUP_SRC")  # dir of the metrics files
-unzip_dir =  os.environ.get("UNZIP_DIR") # dir of the metrics files
+backup_src = os.environ.get("BACKUP_SRC")  
+unzip_dir =  os.environ.get("UNZIP_DIR")
 
 
 if not os.path.exists(unzip_dir):
