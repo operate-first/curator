@@ -5,6 +5,7 @@ import boto.s3.connection
 import shutil
 import tarfile
 from botocore.exceptions import ClientError
+import psycopg2
 
 
 #get all the environment variables
@@ -46,6 +47,33 @@ except ClientError as ex:
     # file not found 
     #  Create the history file
     print(ex)
+
+def add_csv(f):
+    """
+        Add the csv rows into database
+    """
+    try:
+        conn = psycopg2.connect(database="<database-name>", user='<user-name>', password='password', host='<host-number>', port= '<port-number>')
+
+        cursor = conn.cursor()
+        
+        cursor.copy_from(f, 's3csv', sep=',')
+
+        conn.commit()
+        count = cursor.rowcount
+        print(count, "Record inserted successfully")
+    except Exception as ex:
+        print(ex)
+
+def push_csv_to_db(extracted_csv_path):
+	 for bsubdir, bdirs, csvfiles in os.walk(extracted_csv_path)):
+        for csvf in csvfiles:
+        	 csv_full_path = os.path.join(bsubdir, csvf)
+        	 with open(csv_full_path, 'r') as f:
+        	 	
+                # Notice that we don't need the `csv` module.
+                 next(f) # Skip the header row.
+                 add_csv(f)
    
 
 
@@ -54,6 +82,7 @@ def gunzip(file_path, output_path):
         file = tarfile.open(file_path)
         file.extractall(output_path)
         file.close()
+        push_csv_to_db(output_path)
     except Exception as ex:
         print("Error is occured while extract the file {} and the error is {}".format(file_path,ex))
 
