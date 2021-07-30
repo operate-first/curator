@@ -39,6 +39,10 @@ to an S3 bucket using the [MinIO Client][] (`mc`).
      - `BACKUP_DST` -- the bucket name and path for backup destination
      - `S3_ENDPOINT` -- your S3 API endpoint
      - `BUCKET_NAME` -- the bucket name for unzipped files
+
+    Also provide information for all database related variable in `config.env` listed below.
+
+       `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, `HOST_NAME`, `PORT_NUMBER`
   
    Optionally, you may set:
 
