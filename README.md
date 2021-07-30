@@ -23,7 +23,10 @@ The project is being incubated in the [Operate First](https://www.operate-first.
 This collection of manifests will deploy a Cron job that periodically runs a pod that backs up up a local (to the pod) directory
 to an S3 bucket using the [MinIO Client][] (`mc`).
 
-[minio client]: https://docs.min.io/docs/minio-client-complete-guide.html
+[minio client]: https://docs.min.io/docs/minio-client-complete-guide.html\
+
+### Generate Report
+To generate a report manually, run the `generate_report()` PostgreSQL function on the database. The function takes a single argument specifying the time period over which to aggregate the collected data, which can be either *day*, *week*, or *month*. For instance, to generate a report for the current week, run `generate_report('week')`.
 
 ### Configuration
 1. Copy `credentials-example.env` to `credentials.env`
