@@ -86,11 +86,10 @@ repository and accidentally expose your credentials.
 ### Development being considered
 + Access for the end-users to view the system generated reports of the projects they are running on OCP through the OCP console. (Late August 2021)
 + Access for the end-users to run SQL queries on the infrastructure utilization data of the projects they are running on OCP through the OCP console. (Late August 2021)
-+ Utilization notification system. (September 2021)
-+ Synchronized data backup. (September 2021)
-+ CSV format sharable reports. (Late August 2021)
-+ Expand functionalities for multi-cluster OCP deployments. (Late 2021)
++ Utilization notification system. 
++ Synchronized data backup. 
++ CSV format sharable reports. 
++ Expand functionalities for multi-cluster OCP deployments.
 
 ### Communication
 E-mail : curator@redhat.com Red Hat GChat : [Curator Project](https://join.slack.com/t/operatefirst/shared_invite/zt-o2gn4wn8-O39g7sthTAuPCvaCNRnLww)
-

@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: monthreport
+spec:
+  schedule: "0 0 1 * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: monthreport
+            image: busybox
+            imagePullPolicy: IfNotPresent
+            command:
+            - psql -U databaseUser -d sampledb -c 'SELECT generate_report(\'month\');'
+          restartPolicy: OnFailure

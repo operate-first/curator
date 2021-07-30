@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: dayreport
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: dayreport
+            image: busybox
+            imagePullPolicy: IfNotPresent
+            command:
+            - psql -U user50S -d sampledb -c 'SELECT generate_report(\'day\');'
+          restartPolicy: OnFailure
