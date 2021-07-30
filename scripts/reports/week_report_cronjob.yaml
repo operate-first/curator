@@ -13,5 +13,5 @@ spec:
             image: busybox
             imagePullPolicy: IfNotPresent
             command:
-            - psql -U user50S -d sampledb -c 'SELECT generate_reporot(\'week\');'
+            - psql -U user50S -d sampledb -c 'SELECT generate_report(\'week\');'
           restartPolicy: OnFailure
