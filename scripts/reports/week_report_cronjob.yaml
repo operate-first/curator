@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: weekreport
+spec:
+  schedule: "0 0 * * 0"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: weekreport
+            image: busybox
+            imagePullPolicy: IfNotPresent
+            command:
+            - psql -U user50S -d sampledb -c 'SELECT generate_reporot(\'week\');'
+          restartPolicy: OnFailure

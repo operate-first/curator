@@ -1,0 +1,55 @@
+-- This function generates a report based on a given frequency
+-- This file should only be run once, in order to register the function
+
+CREATE OR REPLACE FUNCTION generate_report (frequency report_frequency)
+  returns integer
+  as $$
+  declare
+    interval_start_date timestamp;
+    interval_end_date timestamp;
+  begin
+  	if frequency = 'day' then
+    	interval_start_date := date_trunc('day', current_date);
+        interval_end_date := date_trunc('day', current_date) + '23 hours 59 minutes';
+    end if;
+  	if frequency = 'week' then
+        interval_start_date := (date_trunc('week', current_date) + '-1 days')::date;
+        interval_end_date := (date_trunc('week', current_date) + '5 days')::date;
+    end if;
+    if frequency = 'month' then
+    	interval_start_date := date_trunc('month', current_date);
+        interval_end_date := date_trunc('month', current_date) + '1 month';
+    end if;
+    EXECUTE '
+      INSERT INTO
+        reports (
+          frequency,
+          interval_start,
+          pod_usage_cpu_core_seconds,
+          pod_request_cpu_core_seconds,
+          pod_limit_cpu_core_seconds,
+          pod_usage_memory_byte_seconds,
+          pod_request_memory_byte_seconds,
+          pod_limit_memory_byte_seconds,
+          node_capacity_cpu_cores,
+          node_capacity_cpu_core_seconds,
+          node_capacity_memory_bytes,
+          node_capacity_memory_byte_second
+        )
+      SELECT
+        ' || quote_literal(frequency) || ' as frequency,
+        ' || quote_literal(interval_start_date) ||' as interval_start,
+        SUM(pod_usage_cpu_core_seconds) as pod_usage_cpu_core_seconds,
+        SUM(pod_request_cpu_core_seconds) as pod_request_cpu_core_seconds,
+        SUM(pod_limit_cpu_core_seconds) as pod_limit_cpu_core_seconds,
+        SUM(pod_usage_memory_byte_seconds) as pod_usage_memory_byte_seconds,
+        SUM(pod_request_memory_byte_seconds) as pod_request_memory_byte_seconds,
+        SUM(pod_limit_memory_byte_seconds) as pod_limit_memory_byte_seconds,
+        SUM(node_capacity_cpu_cores) as node_capacity_cpu_cores,
+        SUM(node_capacity_cpu_core_seconds) as  node_capacity_cpu_core_seconds,
+        SUM(node_capacity_memory_bytes) as  node_capacity_memory_bytes,
+        SUM(node_capacity_memory_byte_seconds) as  node_capacity_memory_byte_seconds
+      FROM logs_2
+      WHERE interval_start between ' || quote_literal(interval_start_date) || ' and ' || quote_literal(interval_end_date) || ';';
+  return 0;
+end; $$ LANGUAGE plpgsql

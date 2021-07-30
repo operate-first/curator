@@ -1,0 +1,2 @@
+"frequency","interval_start","pod_usage_cpu_core_seconds","pod_request_cpu_core_seconds","pod_limit_cpu_core_seconds","pod_usage_memory_byte_seconds","pod_request_memory_byte_seconds","pod_limit_memory_byte_seconds","node_capacity_cpu_cores","node_capacity_cpu_core_seconds","node_capacity_memory_bytes","node_capacity_memory_byte_second"
+"week","2021-07-25 00:00:00","98267.753429","408888","303480","2123023454208000","1003504232448000","557110329753600","51648","185932800","344717072375808","1240981460552910000"
