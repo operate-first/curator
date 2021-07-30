@@ -1,10 +1,12 @@
 # **Curator**
 
 ## Release Information
-Version 0.3 07/08/2021
+Version 0.4 07/30/2021
 + Dowload raw data of OCP infrastructure utilization.
 + Automation of storing infrastructure utilization data in an S3-compatible persistent volume.
 + Unzipped metrics are being stored in an S3-compatible volume.
++ Pre-defined SQL query support for the infrastructure utilization data. 
++ Custom SQL query support for the infrastructure utilization data. 
 
 ## About
 An infrastructure consumption showback project for OCP. The curator project retrieves infrastructure utilization as raw data using [koku-metrics-operator](https://github.com/project-koku/koku-metrics-operator).
@@ -16,7 +18,8 @@ The project is being incubated in the [Operate First](https://www.operate-first.
 ### Functionalities
 + Download raw data of OCP infrastructure utilization. (v0.1 - 05/26/2021)
 + Automation of storing infrastructure utilization data in an S3-compatible persistent volume. (v0.2 - 06/09/2021)
-
++ Pre-defined SQL query support for the infrastructure utilization data. (v0.4 - 07/30/2021)
++ Custom SQL query support for the infrastructure utilization data. (v0.4 - 07/30/2021)
 
 
 ### Backup a directory to an S3 bucket
@@ -24,6 +27,9 @@ This collection of manifests will deploy a Cron job that periodically runs a pod
 to an S3 bucket using the [MinIO Client][] (`mc`).
 
 [minio client]: https://docs.min.io/docs/minio-client-complete-guide.html
+
+### Generate Report
+To generate a report manually, run the `generate_report()` PostgreSQL function on the database. The function takes a single argument specifying the time period over which to aggregate the collected data, which can be either *day*, *week*, or *month*. For instance, to generate a report for the current week, run `generate_report('week')`.
 
 ### Configuration
 1. Copy `credentials-example.env` to `credentials.env`
@@ -73,10 +79,8 @@ repository and accidentally expose your credentials.
 
 ### Planned development
 
-+ Pre-defined SQL query support for the infrastructure utilization data. (v0.4 - 07/21/2021)
-+ Custom SQL query support for the infrastructure utilization data. (v0.4 - 07/21/2021)
-+ Access for the cluster admin to view the system generated reports in the OCP console. (v0.5 - 08/04/2021)
-+ Access for the cluster admin to run SQL queries on the infrastructure utilization data in the OCP console. (v0.5 - 08/04/2021)
++ Access for the cluster admin to view the system generated reports in the OCP console. 
++ Access for the cluster admin to run SQL queries on the infrastructure utilization data in the OCP console. 
 
 
 ### Development being considered
