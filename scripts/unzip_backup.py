@@ -68,6 +68,7 @@ def add_csv_data(sql_query):
         conn = psycopg2.connect(database=database_name, user=database_user,
                                 password=database_password, host=database_host_name, port=port) #postgres database connection string
 
+
         cursor = conn.cursor()
 
         cursor.execute(sql_query)

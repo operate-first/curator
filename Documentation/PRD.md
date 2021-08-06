@@ -2,7 +2,7 @@
 
 # Product Requirements Document (PRD)
 ##### Document revision v0.2
-##### May 26, 2021i
+##### May 26, 2021
 
 ## **Introduction**
 ### Background
@@ -68,6 +68,7 @@ Account - The account option will provide the option to view the associated proj
 - As an administrator of the Open Cloud, I should be able to view the resource consumption of the entire OpenShift instance for any past time by logging in to the metering system.
 - As an administrator of the Open Cloud, I should be able to view the resource consumption of the entire OpenShift instance for all the projects between any particular time frame.
 - As an administrator of the Open Cloud, I should be able to view the automatically prepared daily, weekly and monthly resource reports of the entire OpenShift instance and for all projects in the instance.
+- As an administrator of the Open Cloud, I should be able to access the infrastructure utilization of all the projects in the OpenShift instance to build a billing system.
 - As a user of the Open Cloud, I should be able to view the resource consumption reports for daily, weekly and monthly reports in the OpenShift  instance for all the projects that are tied to my account.
 - As a user of the Open Cloud, I should be able to view the resource consumption reports for any particular time frame in the OpenShift instance for all the projects that are tied to my account.
 - As an administrator of the Open Cloud, I should be able to do any metering system operation that a user can do.
