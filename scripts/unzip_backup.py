@@ -13,11 +13,12 @@ import csv
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")  
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 BUCKET_NAME= os.environ.get("BUCKET_NAME")
+S3_HOST_NAME= os.environ.get("S3_HOST_NAME")
 
 
 
 conn = boto.s3.connection.S3Connection(aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, port=443,
-                                       host="kzn-swift.massopen.cloud", is_secure=True, calling_format=boto.s3.connection.OrdinaryCallingFormat())
+                                       host=S3_HOST_NAME, is_secure=True, calling_format=boto.s3.connection.OrdinaryCallingFormat())
 bucket = conn.get_bucket(BUCKET_NAME)
 
 
@@ -28,7 +29,7 @@ unzip_dir =  os.environ.get("UNZIP_DIR")
 database_name = os.environ.get("DATABASE_NAME")
 database_user=os.environ.get("DATABASE_USER")
 database_password=os.environ.get("DATABASE_PASSWORD")
-host_name=os.environ.get("HOST_NAME")
+database_host_name=os.environ.get("DATABASE_HOST_NAME")
 port=os.environ.get("PORT_NUMBER")
 
 
@@ -65,7 +66,7 @@ def add_csv_data(sql_query):
     """
     try:
         conn = psycopg2.connect(database=database_name, user=database_user,
-                                password=database_password, host=host_name, port=port) #postgres database connection string
+                                password=database_password, host=database_host_name, port=port) #postgres database connection string
 
         cursor = conn.cursor()
 
@@ -94,10 +95,10 @@ def push_csv_to_db(extracted_csv_path):
                     reader = csv.reader(f)
 
                     for row in reader:
-                        report_period_start = row[0].replace(" +0000 UTC", "")
-                        report_period_end = row[1].replace(" +0000 UTC", "")
-                        interval_start = row[2].replace(" +0000 UTC", "")
-                        interval_end = row[3].replace(" +0000 UTC", "")
+                        report_period_start = row[0].replace(" UTC", "")
+                        report_period_end = row[1].replace(" UTC", "")
+                        interval_start = row[2].replace(" UTC", "")
+                        interval_end = row[3].replace(" UTC", "")
 
                         if table_name_local == "0":
                             table_name_sql = "logs_0"
