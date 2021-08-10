@@ -96,10 +96,10 @@ def push_csv_to_db(extracted_csv_path):
                     reader = csv.reader(f)
 
                     for row in reader:
-                        report_period_start = row[0].replace(" UTC", "")
-                        report_period_end = row[1].replace(" UTC", "")
-                        interval_start = row[2].replace(" UTC", "")
-                        interval_end = row[3].replace(" UTC", "")
+                        report_period_start = row[0].replace(" +0000 UTC", "")
+                        report_period_end = row[1].replace(" +0000 UTC", "")
+                        interval_start = row[2].replace(" +0000 UTC", "")
+                        interval_end = row[3].replace(" +0000 UTC", "")
 
                         if table_name_local == "0":
                             table_name_sql = "logs_0"
