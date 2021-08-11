@@ -40,7 +40,12 @@ To generate a report manually, run the `generate_report()` PostgreSQL function o
      - `BACKUP_SRC` -- the path to the directory you want to back up
      - `BACKUP_DST` -- the bucket name and path for backup destination
      - `S3_ENDPOINT` -- your S3 API endpoint
+     - `BUCKET_NAME` -- the bucket name for unzipped files
 
+    Also provide information for all database related variable in `config.env` listed below.
+
+       `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, `HOST_NAME`, `PORT_NUMBER`
+ 
    Optionally, you may set:
 
      - `MC_GLOBAL_FLAGS` -- flags passed to all invocations of the

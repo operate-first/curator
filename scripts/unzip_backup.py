@@ -14,6 +14,7 @@ USE_S3 = os.environ.get("USE_S3")
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")  
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 BUCKET_NAME= os.environ.get("BUCKET_NAME")
+S3_HOST_NAME= os.environ.get("S3_HOST_NAME")
 
 conn = None
 bucket = None
@@ -37,7 +38,7 @@ unzip_dir =  os.environ.get("UNZIP_DIR")
 database_name = os.environ.get("DATABASE_NAME")
 database_user=os.environ.get("DATABASE_USER")
 database_password=os.environ.get("DATABASE_PASSWORD")
-host_name=os.environ.get("HOST_NAME")
+database_host_name=os.environ.get("DATABASE_HOST_NAME")
 port=os.environ.get("PORT_NUMBER")
 
 
@@ -74,7 +75,8 @@ def add_csv_data(sql_query):
     """
     try:
         conn = psycopg2.connect(database=database_name, user=database_user,
-                                password=database_password, host=host_name, port=port) #postgres database connection string
+                                password=database_password, host=database_host_name, port=port) #postgres database connection string
+
 
         cursor = conn.cursor()
 
