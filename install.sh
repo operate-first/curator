@@ -1,6 +1,9 @@
 #!/bin/bash          
 
 # INSTALLATION SCRIPT
+# This script prompts the user for configuration values,
+# and sets the config.env file accordingly
+# It also moves the correct cronjob file into the root
 
 echo 'Welcome to Curator!'
 echo 'Warning: this will overwrite existing configuration'
@@ -47,3 +50,4 @@ fi
 
 echo ''
 echo 'Curator configuration complete!'
+echo '-> Note: to update the configuration, edit Documentation/config/config.env'
