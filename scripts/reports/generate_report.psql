@@ -4,6 +4,10 @@
 -- update table reports to add new column for namespace
 -- ALTER TABLE reports
 -- ADD COLUMN namespace TEXT;
+--
+-- Define type report_frequency
+-- CREATE TYPE report_frequency AS ENUM ('day', 'week', 'month');
+
 CREATE OR REPLACE FUNCTION generate_report (frequency report_frequency)
   returns integer
   as $$
