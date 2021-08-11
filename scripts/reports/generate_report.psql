@@ -28,7 +28,7 @@ CREATE OR REPLACE FUNCTION generate_report (frequency report_frequency)
         reports (
           frequency,
           interval_start,
-          namesapce,
+          namespace,
           pod_usage_cpu_core_seconds,
           pod_request_cpu_core_seconds,
           pod_limit_cpu_core_seconds,
@@ -56,6 +56,23 @@ CREATE OR REPLACE FUNCTION generate_report (frequency report_frequency)
         SUM(node_capacity_memory_byte_seconds::double precision) as  node_capacity_memory_byte_seconds
       FROM logs_2
       WHERE interval_start between ' || quote_literal(interval_start_date) || ' and ' || quote_literal(interval_end_date) || '
-      GROUP BY namespace;';
+      GROUP BY namespace
+      UNION
+      SELECT
+        ' || quote_literal(frequency) || ' as frequency,
+        ' || quote_literal(interval_start_date) ||' as interval_start,
+        ''TOTAL'' as namespace,
+        SUM(pod_usage_cpu_core_seconds::double precision) as pod_usage_cpu_core_seconds,
+        SUM(pod_request_cpu_core_seconds::double precision) as pod_request_cpu_core_seconds,
+        SUM(pod_limit_cpu_core_seconds::double precision) as pod_limit_cpu_core_seconds,
+        SUM(pod_usage_memory_byte_seconds::double precision) as pod_usage_memory_byte_seconds,
+        SUM(pod_request_memory_byte_seconds::double precision) as pod_request_memory_byte_seconds,
+        SUM(pod_limit_memory_byte_seconds::double precision) as pod_limit_memory_byte_seconds,
+        SUM(node_capacity_cpu_cores::double precision) as node_capacity_cpu_cores,
+        SUM(node_capacity_cpu_core_seconds::double precision) as  node_capacity_cpu_core_seconds,
+        SUM(node_capacity_memory_bytes::double precision) as  node_capacity_memory_bytes,
+        SUM(node_capacity_memory_byte_seconds::double precision) as  node_capacity_memory_byte_seconds
+      FROM logs_2
+      WHERE interval_start between ' || quote_literal(interval_start_date) || ' and ' || quote_literal(interval_end_date) || '';
   return 0;
 end; $$ LANGUAGE plpgsql
