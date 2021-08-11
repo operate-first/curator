@@ -5,6 +5,9 @@ DIE() {
 	exit 1
 }
 
+ # this script usually won't be run at all if AWS backup is disabled; 
+ # this check ensures it stops if it is run manually
+[ "$USE_AWS" ] || DIE "AWS Backup Disabled"
 [ "$S3_ENDPOINT" ] || DIE "missing S3_ENDPOINT"
 [ "$AWS_SECRET_ACCESS_KEY" ] || DIE "missing AWS_SECRET_ACCESS_KEY"
 [ "$AWS_ACCESS_KEY_ID" ] || DIE "missing AWS_ACCESS_KEY_ID"
