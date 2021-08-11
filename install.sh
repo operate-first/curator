@@ -29,21 +29,20 @@ read -p '- Database Port: ' db_portnumber
 echo "USE_S3=${use_s3}
 BACKUP_SRC=${backup_src}
 UNZIP_DIR=${unzip_dir}
-BUCKET_NAME=${bucket_name}
 BACKUP_DST=${backup_dst}
-S3_ENDPOINT=${s3_endpoint}
 DATABASE_NAME=${db_name}
 DATABASE_USER=${db_user_name}
 DATABASE_PASSWORD=${db_password}
 HOST_NAME=${db_hostname}
-PORT_NUMBER=${db_portnumber}
-" > ./Documentation/config/config.env
+PORT_NUMBER=${db_portnumber}" > ./Documentation/config/config.env
 
 if [ $use_s3_raw = "y" ]
 then
-  cp ./Documentation/config/cron/cronjob-s3.yaml ./cronjob.yaml
+    echo "S3_ENDPOINT=${s3_endpoint}
+BUCKET_NAME=${bucket_name}" >> ./Documentation/config/config.env
+    cp ./Documentation/config/cron/cronjob-s3.yaml ./cronjob.yaml
 else
-  cp ./Documentation/config/cron/cronjob-nos3.yaml ./cronjob.yaml
+    cp ./Documentation/config/cron/cronjob-nos3.yaml ./cronjob.yaml
 fi
 
 echo ''
