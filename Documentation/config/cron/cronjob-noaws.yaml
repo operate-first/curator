@@ -1,0 +1,35 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: backup-to-bucket
+spec:
+  schedule: '* */6 * * *'  # This job will run a minute past 6 hours. You can also use " schedule: '* * * * *' " to run this cron job instantly
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+            - name: koku-metrics-operator-data
+              persistentVolumeClaim:
+                claimName: koku-metrics-operator-data
+            - name: backup-scripts
+              configMap:
+                name: backup-scripts
+          containers:
+            - name: s3sync
+              image: quay.io/operate-first/curator-s3-sync:latest
+              envFrom:
+                - secretRef:
+                    name: backup-credentials
+                - configMapRef:
+                    name: backup-config
+              command:
+                - python3
+                - /scripts/unzip_backup.py
+              volumeMounts:
+                - name: backup-scripts
+                  mountPath: /scripts
+                - name: koku-metrics-operator-data
+                  mountPath: /tmp/koku-metrics-operator-data  #koku meterics operator storage path
+          restartPolicy: Never
+          concurrencyPolicy: Forbidden
