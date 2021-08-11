@@ -10,7 +10,7 @@ import csv
 
 
 #get all the environment variables
-USE_AWS = os.environ.get("USE_AWS")
+USE_S3 = os.environ.get("USE_S3")
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")  
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 BUCKET_NAME= os.environ.get("BUCKET_NAME")
@@ -18,7 +18,7 @@ BUCKET_NAME= os.environ.get("BUCKET_NAME")
 conn = None
 bucket = None
 
-if USE_AWS:
+if USE_S3:
     conn = boto.s3.connection.S3Connection(
         aws_access_key_id=AWS_ACCESS_KEY_ID, 
         aws_secret_access_key=AWS_SECRET_ACCESS_KEY, 
@@ -45,7 +45,7 @@ if not os.path.exists(unzip_dir):
     os.makedirs(unzip_dir)
 # # Download the history file from s3 bucket
 
-if USE_AWS:
+if USE_S3:
     try:
         key = bucket.get_key('history.txt')
         if key is None:
@@ -190,7 +190,7 @@ try:
                 if not os.path.exists(unzip_folder_dir):
                     os.makedirs(unzip_folder_dir)
                 gunzip(backup_full_path, unzip_folder_dir)
-                if USE_AWS:
+                if USE_S3:
                     for usubdir, udirs, ufiles in os.walk(unzip_folder_dir):
                         for uf in ufiles:
                             unzip_full_path = os.path.join(usubdir, uf)
@@ -203,7 +203,7 @@ try:
 except Exception as ex:
     print("An error is occured while unzip the files into unzip directory {}".format(ex))
 
-if USE_AWS:
+if USE_S3:
     try:
         with open(os.path.join(unzip_dir, 'history.txt'), mode='a+') as h_f:
             h_f.write(newly_unzipped_files)

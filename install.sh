@@ -5,11 +5,11 @@
 echo 'Welcome to Curator!'
 echo 'Warning: this will overwrite existing configuration'
 
-echo '== AWS Configuration =='
-read -p '- Use AWS Store? (y/n) ' use_aws_raw
+echo '== S3 Configuration =='
+read -p '- Use S3 Storage? (y/n) ' use_s3_raw
 
-if [ $use_aws_raw = "y" ] ;then
-    use_aws=true
+if [ $use_s3_raw = "y" ] ;then
+    use_s3=true
     read -p '- S3 Endpoint: ' s3_endpoint
     read -p '- S3 Bucket Name: ' bucket_name
 fi
@@ -26,7 +26,7 @@ read -p '- Database Password: ' db_password
 read -p '- Database Host: ' db_hostname
 read -p '- Database Port: ' db_portnumber
 
-echo "USE_AWS=${use_aws}
+echo "USE_S3=${use_s3}
 BACKUP_SRC=${backup_src}
 UNZIP_DIR=${unzip_dir}
 BUCKET_NAME=${bucket_name}
@@ -39,11 +39,11 @@ HOST_NAME=${db_hostname}
 PORT_NUMBER=${db_portnumber}
 " > ./Documentation/config/config.env
 
-if [ $use_aws_raw = "y" ]
+if [ $use_s3_raw = "y" ]
 then
-  cp ./Documentation/config/cron/cronjob-aws.yaml ./cronjob.yaml
+  cp ./Documentation/config/cron/cronjob-s3.yaml ./cronjob.yaml
 else
-  cp ./Documentation/config/cron/cronjob-noaws.yaml ./cronjob.yaml
+  cp ./Documentation/config/cron/cronjob-nos3.yaml ./cronjob.yaml
 fi
 
 echo ''
