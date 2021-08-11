@@ -66,7 +66,6 @@ if USE_S3:
         #  Create the history file
         print(ex)
 
-
 #Push all data to database
 
 def add_csv_data(sql_query):
