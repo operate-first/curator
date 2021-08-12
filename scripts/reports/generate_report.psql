@@ -1,6 +1,25 @@
 -- This function generates a report based on a given frequency
 -- This file should only be run once, in order to register the function
 
+-- Define schema for table report:
+-- create table reports(
+--          frequency TEXT,
+--          interval_start TEXT,
+--          namespace TEXT,
+--          pod_usage_cpu_core_time TEXT,
+--          pod_request_cpu_core_time TEXT,
+--          pod_limit_cpu_core_time TEXT,
+--          pod_usage_memory_byte_seconds TEXT,
+--          pod_request_memory_byte_seconds TEXT,
+--          pod_limit_memory_byte_seconds TEXT,
+--          node_capacity_cpu_cores double precision,
+--          node_capacity_cpu_core_time TEXT,
+--          node_capacity_memory_bytes TEXT,
+--          node_capacity_memory_byte_second TEXT
+--        );
+
+-- Define type report_frequency
+-- CREATE TYPE report_frequency AS ENUM ('day', 'week', 'month');
 CREATE OR REPLACE FUNCTION generate_report (frequency report_frequency)
   returns integer
   as $$
