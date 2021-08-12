@@ -25,31 +25,51 @@ CREATE OR REPLACE FUNCTION generate_report (frequency report_frequency)
         reports (
           frequency,
           interval_start,
-          pod_usage_cpu_core_seconds,
-          pod_request_cpu_core_seconds,
-          pod_limit_cpu_core_seconds,
+          namespace,
+          pod_usage_cpu_core_time,
+          pod_request_cpu_core_time,
+          pod_limit_cpu_core_time,
           pod_usage_memory_byte_seconds,
           pod_request_memory_byte_seconds,
           pod_limit_memory_byte_seconds,
           node_capacity_cpu_cores,
-          node_capacity_cpu_core_seconds,
+          node_capacity_cpu_core_time,
           node_capacity_memory_bytes,
           node_capacity_memory_byte_second
         )
       SELECT
         ' || quote_literal(frequency) || ' as frequency,
         ' || quote_literal(interval_start_date) ||' as interval_start,
-        SUM(pod_usage_cpu_core_seconds::double precision) as pod_usage_cpu_core_seconds,
-        SUM(pod_request_cpu_core_seconds::double precision) as pod_request_cpu_core_seconds,
-        SUM(pod_limit_cpu_core_seconds::double precision) as pod_limit_cpu_core_seconds,
-        SUM(pod_usage_memory_byte_seconds::double precision) as pod_usage_memory_byte_seconds,
-        SUM(pod_request_memory_byte_seconds::double precision) as pod_request_memory_byte_seconds,
-        SUM(pod_limit_memory_byte_seconds::double precision) as pod_limit_memory_byte_seconds,
-        SUM(node_capacity_cpu_cores::double precision) as node_capacity_cpu_cores,
-        SUM(node_capacity_cpu_core_seconds::double precision) as  node_capacity_cpu_core_seconds,
-        SUM(node_capacity_memory_bytes::double precision) as  node_capacity_memory_bytes,
-        SUM(node_capacity_memory_byte_seconds::double precision) as  node_capacity_memory_byte_seconds
+        namespace,
+        TO_CHAR((SUM(pod_usage_cpu_core_seconds::double precision)      || '' second'')::interval, '||'''HH24:MI:SS.MS'''||')          as pod_usage_cpu_core_time,
+        TO_CHAR((SUM(pod_request_cpu_core_seconds::double precision)    || '' second'')::interval, '||'''HH24:MI:SS.MS'''||')          as pod_request_cpu_core_time,
+        TO_CHAR((SUM(pod_limit_cpu_core_seconds::double precision)      || '' second'')::interval, '||'''HH24:MI:SS.MS'''||')          as pod_limit_cpu_core_time,
+        pg_size_pretty(SUM(pod_usage_memory_byte_seconds::double precision)::numeric)                                                   as pod_usage_memory_byte_seconds,
+        pg_size_pretty(SUM(pod_request_memory_byte_seconds::double precision)::numeric)                                                 as pod_request_memory_byte_seconds,
+        pg_size_pretty(SUM(pod_limit_memory_byte_seconds::double precision)::numeric)                                                   as pod_limit_memory_byte_seconds,
+        SUM(node_capacity_cpu_cores::double precision)                                                                                  as node_capacity_cpu_cores,
+        TO_CHAR((SUM(node_capacity_cpu_core_seconds::double precision)  || '' second'')::interval, '||'''HH24:MI:SS.MS'''||')          as node_capacity_cpu_core_time,
+        pg_size_pretty(SUM(node_capacity_memory_bytes::double precision)::numeric)                                                      as node_capacity_memory_bytes,
+        pg_size_pretty(SUM(node_capacity_memory_byte_seconds::double precision)::numeric)                                               as node_capacity_memory_byte_second
       FROM logs_2
-      WHERE interval_start between ' || quote_literal(interval_start_date) || ' and ' || quote_literal(interval_end_date) || ';';
+      WHERE interval_start between ' || quote_literal(interval_start_date) || ' and ' || quote_literal(interval_end_date) || '
+      GROUP BY namespace
+      UNION
+  	  SELECT
+        ' || quote_literal(frequency) || ' as frequency,
+        ' || quote_literal(interval_start_date) ||' as interval_start,
+        ''TOTAL'' as namespace,
+        TO_CHAR((SUM(pod_usage_cpu_core_seconds::double precision)      || '' second'')::interval, '||'''HH24:MI:SS.MS'''||')          as pod_usage_cpu_core_time,
+        TO_CHAR((SUM(pod_request_cpu_core_seconds::double precision)    || '' second'')::interval, '||'''HH24:MI:SS.MS'''||')          as pod_request_cpu_core_time,
+        TO_CHAR((SUM(pod_limit_cpu_core_seconds::double precision)      || '' second'')::interval, '||'''HH24:MI:SS.MS'''||')          as pod_limit_cpu_core_time,
+        pg_size_pretty(SUM(pod_usage_memory_byte_seconds::double precision)::numeric)                                                   as pod_usage_memory_byte_seconds,
+        pg_size_pretty(SUM(pod_request_memory_byte_seconds::double precision)::numeric)                                                 as pod_request_memory_byte_seconds,
+        pg_size_pretty(SUM(pod_limit_memory_byte_seconds::double precision)::numeric)                                                   as pod_limit_memory_byte_seconds,
+        SUM(node_capacity_cpu_cores::double precision)                                                                                  as node_capacity_cpu_cores,
+        TO_CHAR((SUM(node_capacity_cpu_core_seconds::double precision)  || '' second'')::interval, '||'''HH24:MI:SS.MS'''||')          as node_capacity_cpu_core_time,
+        pg_size_pretty(SUM(node_capacity_memory_bytes::double precision)::numeric)                                                      as node_capacity_memory_bytes,
+        pg_size_pretty(SUM(node_capacity_memory_byte_seconds::double precision)::numeric)                                               as node_capacity_memory_byte_second
+      FROM logs_2
+      WHERE interval_start between ' || quote_literal(interval_start_date) || ' and ' || quote_literal(interval_end_date) || '';
   return 0;
 end; $$ LANGUAGE plpgsql
