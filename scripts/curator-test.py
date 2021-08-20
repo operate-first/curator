@@ -1,12 +1,12 @@
 import os
 import unittest
-from unzip_backup import backup_src, unzip_dir, get_history_file, gunzip, push_csv_to_db, move_unzipped_files_into_s3
+from unzip_backup import backup_src, unzip_dir, get_history_file, gunzip, push_csv_to_db, move_unzipped_files_into_s3, update_history_data, get_history_data
 
 
 class TestUnzipBackup(unittest.TestCase):
     def __init__(self, methodName: str) -> None:
         super().__init__(methodName=methodName)
-        # pass name of the file which will be stored inside the 'backup_src' folder
+        # pass a name of the file which will be stored inside the 'backup_src' folder
         filename = "xyz.tar.gz"
         self.backup_full_path = os.path.join(backup_src, filename)
         self.file_folder = filename.split(".")[0]
@@ -21,7 +21,7 @@ class TestUnzipBackup(unittest.TestCase):
         self.assertEqual(True, is_exists)
 
     def test_gunzip(self):
-        gunzip(self.backup_full_path, self.unzip_folder_dir,False)
+        gunzip(self.backup_full_path, self.unzip_folder_dir, False)
         unzipped_files = os.listdir(self.unzip_folder_dir)
         # the files should be present inside unzipped folder. So, the # of files should be > 0
         self.assertGreater(len(unzipped_files), 0)
@@ -30,6 +30,17 @@ class TestUnzipBackup(unittest.TestCase):
         row_count = push_csv_to_db(self.unzip_folder_dir)
         # the records should be inserted and the count should be > 0
         self.assertGreater(row_count, 0)
+
+    def test_get_history_data(self):
+        history_data = get_history_data(self.unzip_folder_dir)
+        # the records should be inserted and the count should be > 0
+        self.assertNotEqual(history_data, "")
+
+    def test_update_history_data(self):
+        query = "UPDATE HISTORY set filenames={}".format("test data")
+        is_updated = update_history_data()
+        # the records should be inserted and the count should be > 0
+        self.assertTrue(is_updated)
 
     def test_move_unzipped_files_into_s3(self):
         moved_files_count = move_unzipped_files_into_s3(
@@ -41,4 +52,3 @@ class TestUnzipBackup(unittest.TestCase):
 # Run the unit tests.
 if __name__ == '__main__':
     unittest.main()
-    
