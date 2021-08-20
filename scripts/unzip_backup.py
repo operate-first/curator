@@ -12,6 +12,7 @@ import csv
 AWS_ACCESS_KEY_ID = os.environ.get(
     "AWS_ACCESS_KEY_ID")  # dir of the metrics files
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
 
 conn = boto.s3.connection.S3Connection(
@@ -27,11 +28,13 @@ bucket = conn.get_bucket(BUCKET_NAME)
 backup_src = os.environ.get("BACKUP_SRC")  # dir of the metrics files
 unzip_dir = os.environ.get("UNZIP_DIR")  # dir of the metrics files
 database_name = os.environ.get("DATABASE_NAME")
+
 database_user = os.environ.get("DATABASE_USER")
 database_password = os.environ.get("DATABASE_PASSWORD")
 host_name = os.environ.get("HOST_NAME")
 port = os.environ.get("PORT_NUMBER")
 has_s3_access = os.environ.get("HAS_S3_ACCESS")
+
 
 if not os.path.exists(unzip_dir):
     os.makedirs(unzip_dir)
@@ -124,6 +127,7 @@ def add_csv_data(sql_query):
             host=host_name,
             port=port,
         )
+
 
         cursor = conn.cursor()
 
