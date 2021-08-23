@@ -11,21 +11,22 @@ spec:
       configMap:
         name: backup-scripts
   containers:
-    - name: s3sync
-      image: quay.io/operate-first/curator-s3-sync:latest
-      envFrom:
-        - secretRef:
-            name: backup-credentials
-        - configMapRef:
-            name: backup-config
-      command:
-        - python3
-        - /scripts/curator-test.py
-      volumeMounts:
-        - name: backup-scripts
-          mountPath: /scripts
-        - name: testcase
-          mountPath: /tmp/koku-metrics-operator-data/upload  #koku meterics operator storage path
+# # run python testcase locally
+#    - name: s3sync
+#      image: quay.io/operate-first/curator-s3-sync:latest
+#      envFrom:
+#        - secretRef:
+#            name: backup-credentials
+#        - configMapRef:
+#            name: backup-config
+#      command:
+#        - python3
+#        - /scripts/curator-test.py
+#      volumeMounts:
+#        - name: backup-scripts
+#          mountPath: /scripts
+#        - name: testcase
+#          mountPath: /tmp/koku-metrics-operator-data/upload  #koku meterics operator storage path
     - name: postgres
       image: docker.io/library/postgres:latest
       envFrom:

@@ -1,7 +1,7 @@
 import os
 import unittest
 import sys
-from unzip_backup import backup_src, unzip_dir, gunzip, push_csv_to_db
+from unzip_backup import backup_src, unzip_dir, gunzip, push_csv_to_db, move_unzipped_files_into_s3, get_history_data
 import csv
 
 class TestUnzipBackup(unittest.TestCase):
@@ -14,12 +14,6 @@ class TestUnzipBackup(unittest.TestCase):
         self.unzip_folder_dir = os.path.join(unzip_dir, self.file_folder)
         if not os.path.exists(self.unzip_folder_dir):
             os.makedirs(self.unzip_folder_dir)
-
-    # def test_get_history_file(self):
-    #     get_history_file()
-    #     is_exists = os.path.exists(os.path.join(unzip_dir, 'history.txt'))
-    #     # check whether the history file is downloaded and present in the directory. this will confirm us whether able to connect with boto s3
-    #     self.assertEqual(True, is_exists)
 
     def test_gunzip(self):
         gunzip(self.backup_full_path, self.unzip_folder_dir, push_to_db=False)
@@ -37,6 +31,13 @@ class TestUnzipBackup(unittest.TestCase):
             with open(os.path.join(self.unzip_folder_dir, csv_file), 'r') as f:
                 total_rows += len(list(csv.reader(f))) - 1  # exclude header
         self.assertEqual(total_rows, row_count)
+
+    # def test_get_history_file(self):
+    #     unzipped_file_hist = get_history_data().split("\n")
+    #     # check whether the history file is downloaded and present in the directory. this will confirm us whether able to connect with boto s3
+    #     for bsubdir, bdirs, bfiles in os.walk(backup_src):
+    #         for bf in bfiles:
+    #             self.assertEqual(True, bf in unzipped_file_hist)
 
     # def test_move_unzipped_files_into_s3(self):
     #     moved_files_count = move_unzipped_files_into_s3(
