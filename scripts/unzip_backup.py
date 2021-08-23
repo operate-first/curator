@@ -53,14 +53,14 @@ try:
     else:
         key.get_contents_to_filename(os.path.join(unzip_dir,'history.txt'))
 except ClientError as ex:
-    # file not found 
+    # file not found
     #  Create the history file
     print(ex)
 
 
 #Push all data to database
 
-def add_csv_data(sql_query):
+def add_csv_data(sql_query) -> int:
     """
         Add the csv rows into database
     """
@@ -75,12 +75,15 @@ def add_csv_data(sql_query):
         conn.commit()
         count = cursor.rowcount
         print(count, "Record inserted successfully into table")
+        return count
     except Exception as ex:
         print(ex)
+        return 0
 
 
 #Iterating to all csv files in unzipped folder and pusing them to it's respective database table.
-def push_csv_to_db(extracted_csv_path):
+def push_csv_to_db(extracted_csv_path) -> int:
+    row_cnt = 0
     for bsubdir, bdirs, csvfiles in os.walk(extracted_csv_path):
         for csvf in csvfiles:
             if csvf.endswith(".csv"):
@@ -149,58 +152,60 @@ def push_csv_to_db(extracted_csv_path):
                             query = """INSERT INTO {}(report_period_start, report_period_end, interval_start, interval_end, namespace, pod, persistentvolumeclaim, persistentvolume, storageclass, persistentvolumeclaim_capacity_bytes, persistentvolumeclaim_capacity_byte_seconds, volume_request_storage_byte_seconds, persistentvolumeclaim_usage_byte_seconds, persistentvolume_labels, persistentvolumeclaim_labels) VALUES('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')""".format(
                                 table_name_sql, report_period_start, report_period_end, interval_start, interval_end, namespace, pod, persistentvolumeclaim, persistentvolume, storageclass, persistentvolumeclaim_capacity_bytes, persistentvolumeclaim_capacity_byte_seconds, volume_request_storage_byte_seconds, persistentvolumeclaim_usage_byte_seconds, persistentvolume_labels, persistentvolumeclaim_labels)
 
-                        add_csv_data(query)
+                        row_cnt += add_csv_data(query)
+    return row_cnt
 
 
-def gunzip(file_path, output_path):
+def gunzip(file_path, output_path, push_to_db=True):
     try:
         file = tarfile.open(file_path)
         file.extractall(output_path)
         file.close()
-        push_csv_to_db(output_path)
+        if push_to_db:
+            push_csv_to_db(output_path)
     except Exception as ex:
         print("Error is occured while extract the file {} and the error is {}".format(
             file_path, ex))
 
+if __name__ == '__main__':
+    # Read the unzipped files history details
+    newly_unzipped_files = ""
+    unzipped_file_hist = ""
+    try:
+        with open(os.path.join(unzip_dir, 'history.txt'), mode='r') as h_f:
+            unzipped_file_hist = h_f.read()
+    except Exception as ex:
+        print("An error is occured while read the history file {}".format(ex))
 
-# Read the unzipped files history details
-newly_unzipped_files = ""
-unzipped_file_hist = ""
-try:
-    with open(os.path.join(unzip_dir, 'history.txt'), mode='r') as h_f:
-        unzipped_file_hist = h_f.read()
-except Exception as ex:
-    print("An error is occured while read the history file {}".format(ex))
+    try:
+        for bsubdir, bdirs, bfiles in os.walk(backup_src):
+            for bf in bfiles:
+                if bf.endswith(".gz") and not bf in unzipped_file_hist:
+                    backup_full_path = os.path.join(bsubdir, bf)
+                    file_folder = bf.split(".")[0]
+                    unzip_folder_dir = os.path.join(unzip_dir, file_folder)
+                    if not os.path.exists(unzip_folder_dir):
+                        os.makedirs(unzip_folder_dir)
+                    gunzip(backup_full_path, unzip_folder_dir)
+                    for usubdir, udirs, ufiles in os.walk(unzip_folder_dir):
+                        for uf in ufiles:
+                            unzip_full_path = os.path.join(usubdir, uf)
+                            uk = bucket.new_key(os.path.join(file_folder,uf))
+                            uk.set_contents_from_filename(unzip_full_path)
+                            print(unzip_full_path)
+                    newly_unzipped_files = "{}{}\n".format(newly_unzipped_files, bf)
 
-try:
-    for bsubdir, bdirs, bfiles in os.walk(backup_src):
-        for bf in bfiles:
-            if bf.endswith(".gz") and not bf in unzipped_file_hist:
-                backup_full_path = os.path.join(bsubdir, bf)
-                file_folder = bf.split(".")[0]
-                unzip_folder_dir = os.path.join(unzip_dir, file_folder)
-                if not os.path.exists(unzip_folder_dir):
-                    os.makedirs(unzip_folder_dir)
-                gunzip(backup_full_path, unzip_folder_dir)
-                for usubdir, udirs, ufiles in os.walk(unzip_folder_dir):
-                    for uf in ufiles:
-                        unzip_full_path = os.path.join(usubdir, uf)
-                        uk = bucket.new_key(os.path.join(file_folder,uf))
-                        uk.set_contents_from_filename(unzip_full_path)
-                        print(unzip_full_path)
-                newly_unzipped_files = "{}{}\n".format(newly_unzipped_files, bf)
-                
-                shutil.rmtree(unzip_folder_dir)
-except Exception as ex:
-    print("An error is occured while unzip the files into unzip directory {}".format(ex))
+                    shutil.rmtree(unzip_folder_dir)
+    except Exception as ex:
+        print("An error is occured while unzip the files into unzip directory {}".format(ex))
 
-try:
-    with open(os.path.join(unzip_dir, 'history.txt'), mode='a+') as h_f:
-        h_f.write(newly_unzipped_files)
+    try:
+        with open(os.path.join(unzip_dir, 'history.txt'), mode='a+') as h_f:
+            h_f.write(newly_unzipped_files)
 
-    hk = bucket.new_key('history.txt')
-    # # upload the history files with newly unzipped folders
-    hk.set_contents_from_filename(os.path.join(unzip_dir, 'history.txt'))
-    os.remove(os.path.join(unzip_dir,'history.txt'))
-except Exception as ex:
-    print("Error is occured while push the updated history files into s3 {}".format(ex))
+        hk = bucket.new_key('history.txt')
+        # # upload the history files with newly unzipped folders
+        hk.set_contents_from_filename(os.path.join(unzip_dir, 'history.txt'))
+        os.remove(os.path.join(unzip_dir,'history.txt'))
+    except Exception as ex:
+        print("Error is occured while push the updated history files into s3 {}".format(ex))
