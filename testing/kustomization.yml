@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: koku-metrics-operator
+commonLabels:
+  app: test-backup
+
+resources:
+  - testS3.yaml
+
+configMapGenerator:
+  - name: backup-scripts
+    files:
+      - scripts/test-backup.sh
+      - scripts/test-database.sh
+#      - scripts/curator-test.py
+  - name: backup-config
+    envs:
+      - config/config.env  #Path to your configuration file
+#  - name: testcase
+#    files:
+#      - testing/testdata/20210616T125440-cost-mgmt.tar.gz
+
+secretGenerator:
+  - name: backup-credentials
+    envs:
+      - credentials/credentials_example.env
