@@ -104,7 +104,6 @@ def get_history_data():
         cursor.execute("select file_names from history")
         history = cursor.fetchone()
         history=history[0]
-        print(history)
 
         cursor.close()
         conn.close()
