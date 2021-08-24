@@ -103,6 +103,8 @@ def get_history_data():
 
         cursor.execute("select file_names from history")
         history = cursor.fetchone()
+        history=history[0]
+        print(history)
 
         cursor.close()
         conn.close()
@@ -260,7 +262,7 @@ def push_csv_to_db(extracted_csv_path):
                                     persistentvolumeclaim_labels,
                                 )
 
-                            rowcount = add_csv_data(query)
+                            rowcount+= add_csv_data(query)
     except Exception as ex:
         print("An error is occured {0}".format(ex))
     return rowcount
@@ -271,8 +273,8 @@ def gunzip(file_path, output_path, is_push_db=True):
         file = tarfile.open(file_path)
         file.extractall(output_path)
         file.close()
-        if is_push_db:
-            push_csv_to_db(output_path)
+        # if is_push_db:
+        #     push_csv_to_db(output_path)
     except Exception as ex:
         print(
             "Error is occured while extract the file {} and the error is {}".format(
@@ -298,44 +300,46 @@ def move_unzipped_files_into_s3(unzip_folder_dir, file_folder):
 
 if __name__ == "__main__":
     newly_unzipped_files = ""
-    unzipped_file_hist = ""
+    s3_zipped_file_hist = ""
+    db_zipped_file_hist = ""
 
     if has_s3_access.upper() == "TRUE":
         get_history_file()
-    else:
-        unzipped_file_hist = get_history_data()
-        if unzipped_file_hist: 
-            unzipped_file_hist = unzipped_file_hist.split("\n")
-
-    # Read the unzipped files history details
-    try:
-        with open(os.path.join(unzip_dir, "history.txt"), mode="r") as h_f:
-            unzipped_file_hist = h_f.read()
-    except Exception as ex:
-        print("An error is occured while read the history file {}".format(ex))
+        # Read the unzipped files history details
+        try:
+            with open(os.path.join(unzip_dir, "history.txt"), mode="r") as h_f:
+                s3_zipped_file_hist = h_f.read()
+                s3_zipped_file_hist = s3_zipped_file_hist.split("~") 
+        except Exception as ex:
+            print("An error is occured while read the history file {}".format(ex))
+    
+    db_zipped_file_hist = get_history_data()
+    if db_zipped_file_hist:
+        db_zipped_file_hist = db_zipped_file_hist.split("~")    
 
     try:
         for bsubdir, bdirs, bfiles in os.walk(backup_src):
             for bf in bfiles:
-                if bf.endswith(".gz") and not bf in unzipped_file_hist:
+                if bf.endswith(".gz"):
                     backup_full_path = os.path.join(bsubdir, bf)
                     file_folder = bf.split(".")[0]
                     unzip_folder_dir = os.path.join(unzip_dir, file_folder)
                     if not os.path.exists(unzip_folder_dir):
                         os.makedirs(unzip_folder_dir)
                     gunzip(backup_full_path, unzip_folder_dir)
-                    if has_s3_access.upper() == "TRUE":
+                    if has_s3_access.upper() == "TRUE" and not bf in s3_zipped_file_hist:
                         moved_files_count = move_unzipped_files_into_s3(
                             unzip_folder_dir, file_folder)
-                    newly_unzipped_files = "{}{}\n".format(
+                    if not bf in db_zipped_file_hist:
+                        push_csv_to_db(unzip_folder_dir)
+
+                    newly_unzipped_files = "{}~{}".format(
                         newly_unzipped_files, bf)
+
                     shutil.rmtree(unzip_folder_dir)
 
     except Exception as ex:
-        print(
-            "An error is occured while unzip the files into unzip directory {}".format(
-                ex)
-        )
+        print("An error is occured while unzip the files into unzip directory {}".format(ex))
     if has_s3_access.upper() == "TRUE":
         try:
             with open(os.path.join(unzip_dir, "history.txt"), mode="a+") as h_f:
@@ -349,6 +353,6 @@ if __name__ == "__main__":
         except Exception as ex:
             print(
                 "Error is occured while push the updated history files into s3 {}".format(ex))
-    else:
-        query = "INSERT INTO HISTORY VALUES ('{}')".format(newly_unzipped_files)
+    if newly_unzipped_files !="":
+        query = "UPDATE HISTORY set file_names='{}{}'".format("~".join(db_zipped_file_hist), newly_unzipped_files)
         update_history_data(query)
