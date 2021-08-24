@@ -7,18 +7,17 @@ import tarfile
 from botocore.exceptions import ClientError
 import psycopg2
 import csv
-
+import time
 
 #get all the environment variables
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")  
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 BUCKET_NAME= os.environ.get("BUCKET_NAME")
-S3_HOST_NAME= os.environ.get("S3_HOST_NAME")
 
 
 
 conn = boto.s3.connection.S3Connection(aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, port=443,
-                                       host=S3_HOST_NAME, is_secure=True, calling_format=boto.s3.connection.OrdinaryCallingFormat())
+                                       host="kzn-swift.massopen.cloud", is_secure=True, calling_format=boto.s3.connection.OrdinaryCallingFormat())
 bucket = conn.get_bucket(BUCKET_NAME)
 
 
@@ -29,7 +28,7 @@ unzip_dir =  os.environ.get("UNZIP_DIR")
 database_name = os.environ.get("DATABASE_NAME")
 database_user=os.environ.get("DATABASE_USER")
 database_password=os.environ.get("DATABASE_PASSWORD")
-database_host_name=os.environ.get("DATABASE_HOST_NAME")
+host_name=os.environ.get("HOST_NAME")
 port=os.environ.get("PORT_NUMBER")
 
 
@@ -59,24 +58,71 @@ except ClientError as ex:
 
 
 #Push all data to database
-
-def add_csv_data(sql_query):
+def postgres_execute(sql_query, data=None) -> int:
     """
         Add the csv rows into database
     """
     try:
         conn = psycopg2.connect(database=database_name, user=database_user,
-                                password=database_password, host=database_host_name, port=port) #postgres database connection string
-
+                                password=database_password, host=host_name, port=port) #postgres database connection string
 
         cursor = conn.cursor()
-
-        cursor.execute(sql_query)
+        if data:
+            records_list = ','.join(['%s'] * len(data))
+            sql_query = sql_query.format(records_list)
+            cursor.execute(sql_query, data)
+        else:
+            cursor.execute(sql_query)
         conn.commit()
         count = cursor.rowcount
         print(count, "Record inserted successfully into table")
+        return count
     except Exception as ex:
         print(ex)
+        return 0
+
+
+class BatchUpdatePostgres:
+    def __init__(self, update_sql="", batch_size=1000, std_log=True, sleep_interval=10):
+        self.sql = update_sql
+        self.rows = []
+        self.batch_size = batch_size
+        self.std_log = std_log
+        self.sleep_interval = sleep_interval
+
+    def sql_isempty(self):
+        return len(self.sql) == 0
+
+    def set_sql(self, update_sql):
+        self.sql = update_sql
+
+    def add(self, single_row):
+        self.rows.append(single_row)
+        if len(self.rows) >= self.batch_size:
+            self.update()
+
+    def clean(self):  # don't forget to call clean to flush changes into db after gathering all data
+        self.update()
+
+    def update(self, show_success=True) -> int:
+        row_cnt = 0
+        if not self.rows:
+            return row_cnt
+        write_success = False
+        while not write_success:
+            try:
+                row_cnt = postgres_execute(self.sql, self.rows)
+                write_success = True
+            except Exception as e:
+                if self.std_log:
+                    print('when %s' % self.sql, e)
+                time.sleep(self.sleep_interval)
+        if self.std_log and not write_success:
+            print("write failed")
+        elif show_success:
+            print("successfully updated %d items" % len(self.rows))
+        self.rows = []
+        return row_cnt
 
 
 #Iterating to all csv files in unzipped folder and pusing them to it's respective database table.
@@ -88,13 +134,11 @@ def push_csv_to_db(extracted_csv_path):
                 table_name_local = os.path.splitext(csv_full_path)
                 table_name_local = table_name_local[0][-1]
 
-                table_name_sql = "logs_0"
-
+                batch_executor = BatchUpdatePostgres()
                 with open(csv_full_path, 'r') as f:
                     # Notice that we don't need the `csv` module.
                     next(f)  # Skip the header row.
                     reader = csv.reader(f)
-
                     for row in reader:
                         report_period_start = row[0].replace(" +0000 UTC", "")
                         report_period_end = row[1].replace(" +0000 UTC", "")
@@ -105,15 +149,17 @@ def push_csv_to_db(extracted_csv_path):
                             table_name_sql = "logs_0"
                             namespace = row[4]
                             namespace_labels = row[5]
-                            query = """INSERT INTO {}(report_period_start, report_period_end, interval_start, interval_end, namespace, namespace_labels) VALUES('{}','{}','{}','{}','{}','{}')""".format(
-                                table_name_sql, report_period_start, report_period_end, interval_start, interval_end, namespace, namespace_labels)
+                            if batch_executor.sql_isempty():
+                                batch_executor.set_sql("""INSERT INTO """ + table_name_sql + """(report_period_start, report_period_end, interval_start, interval_end, namespace, namespace_labels) VALUES {}""")
+                            batch_executor.add((report_period_start, report_period_end, interval_start, interval_end, namespace, namespace_labels))
 
                         elif table_name_local == "1":
                             table_name_sql = "logs_1"
                             node = row[4]
                             node_labels = row[5]
-                            query = """INSERT INTO {}(report_period_start, report_period_end, interval_start, interval_end, node, node_labels) VALUES('{}','{}','{}','{}','{}','{}')""".format(
-                                table_name_sql, report_period_start, report_period_end, interval_start, interval_end, node, node_labels)
+                            if batch_executor.sql_isempty():
+                                batch_executor.set_sql("""INSERT INTO """ + table_name_sql + """(report_period_start, report_period_end, interval_start, interval_end, node, node_labels) VALUES {}""")
+                            batch_executor.add((report_period_start, report_period_end, interval_start, interval_end, node, node_labels))
                         elif table_name_local == "2":
                             table_name_sql = "logs_2"
                             node = row[4]
@@ -131,8 +177,9 @@ def push_csv_to_db(extracted_csv_path):
                             node_capacity_memory_byte_seconds = row[16]
                             resource_id = row[17]
                             pod_labels = row[18]
-                            query = """INSERT INTO {}(report_period_start, report_period_end, interval_start, interval_end, node, namespace, pod, pod_usage_cpu_core_seconds, pod_request_cpu_core_seconds, pod_limit_cpu_core_seconds,	pod_usage_memory_byte_seconds, pod_request_memory_byte_seconds, pod_limit_memory_byte_seconds, node_capacity_cpu_cores, node_capacity_cpu_core_seconds, node_capacity_memory_bytes, node_capacity_memory_byte_seconds, resource_id, pod_labels) VALUES('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')""".format(
-                                table_name_sql, report_period_start, report_period_end, interval_start, interval_end, node, namespace, pod, pod_usage_cpu_core_seconds, pod_request_cpu_core_seconds, pod_limit_cpu_core_seconds,	pod_usage_memory_byte_seconds, pod_request_memory_byte_seconds, pod_limit_memory_byte_seconds, node_capacity_cpu_cores, node_capacity_cpu_core_seconds, node_capacity_memory_bytes, node_capacity_memory_byte_seconds, resource_id, pod_labels)
+                            if batch_executor.sql_isempty():
+                                batch_executor.set_sql("""INSERT INTO """ + table_name_sql + """(report_period_start, report_period_end, interval_start, interval_end, node, namespace, pod, pod_usage_cpu_core_seconds, pod_request_cpu_core_seconds, pod_limit_cpu_core_seconds,	pod_usage_memory_byte_seconds, pod_request_memory_byte_seconds, pod_limit_memory_byte_seconds, node_capacity_cpu_cores, node_capacity_cpu_core_seconds, node_capacity_memory_bytes, node_capacity_memory_byte_seconds, resource_id, pod_labels) VALUES {}""")
+                            batch_executor.add((report_period_start, report_period_end, interval_start, interval_end, node, namespace, pod, pod_usage_cpu_core_seconds, pod_request_cpu_core_seconds, pod_limit_cpu_core_seconds,	pod_usage_memory_byte_seconds, pod_request_memory_byte_seconds, pod_limit_memory_byte_seconds, node_capacity_cpu_cores, node_capacity_cpu_core_seconds, node_capacity_memory_bytes, node_capacity_memory_byte_seconds, resource_id, pod_labels))
                         elif table_name_local == "3":
                             table_name_sql = "logs_3"
                             namespace = row[4]
@@ -146,10 +193,11 @@ def push_csv_to_db(extracted_csv_path):
                             persistentvolumeclaim_usage_byte_seconds = row[12]
                             persistentvolume_labels = row[13]
                             persistentvolumeclaim_labels = row[14]
-                            query = """INSERT INTO {}(report_period_start, report_period_end, interval_start, interval_end, namespace, pod, persistentvolumeclaim, persistentvolume, storageclass, persistentvolumeclaim_capacity_bytes, persistentvolumeclaim_capacity_byte_seconds, volume_request_storage_byte_seconds, persistentvolumeclaim_usage_byte_seconds, persistentvolume_labels, persistentvolumeclaim_labels) VALUES('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')""".format(
-                                table_name_sql, report_period_start, report_period_end, interval_start, interval_end, namespace, pod, persistentvolumeclaim, persistentvolume, storageclass, persistentvolumeclaim_capacity_bytes, persistentvolumeclaim_capacity_byte_seconds, volume_request_storage_byte_seconds, persistentvolumeclaim_usage_byte_seconds, persistentvolume_labels, persistentvolumeclaim_labels)
+                            if batch_executor.sql_isempty():
+                                batch_executor.set_sql("""INSERT INTO """ + table_name_sql + """(report_period_start, report_period_end, interval_start, interval_end, namespace, pod, persistentvolumeclaim, persistentvolume, storageclass, persistentvolumeclaim_capacity_bytes, persistentvolumeclaim_capacity_byte_seconds, volume_request_storage_byte_seconds, persistentvolumeclaim_usage_byte_seconds, persistentvolume_labels, persistentvolumeclaim_labels) VALUES {}""")
+                            batch_executor.add((report_period_start, report_period_end, interval_start, interval_end, namespace, pod, persistentvolumeclaim, persistentvolume, storageclass, persistentvolumeclaim_capacity_bytes, persistentvolumeclaim_capacity_byte_seconds, volume_request_storage_byte_seconds, persistentvolumeclaim_usage_byte_seconds, persistentvolume_labels, persistentvolumeclaim_labels))
 
-                        add_csv_data(query)
+                    batch_executor.update()
 
 
 def gunzip(file_path, output_path):
