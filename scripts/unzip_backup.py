@@ -13,11 +13,11 @@ import time
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")  
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 BUCKET_NAME= os.environ.get("BUCKET_NAME")
-
+S3_HOST_NAME= os.environ.get("S3_HOST_NAME")
 
 
 conn = boto.s3.connection.S3Connection(aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, port=443,
-                                       host="kzn-swift.massopen.cloud", is_secure=True, calling_format=boto.s3.connection.OrdinaryCallingFormat())
+                                       host=S3_HOST_NAME, is_secure=True, calling_format=boto.s3.connection.OrdinaryCallingFormat())
 bucket = conn.get_bucket(BUCKET_NAME)
 
 
@@ -28,7 +28,7 @@ unzip_dir =  os.environ.get("UNZIP_DIR")
 database_name = os.environ.get("DATABASE_NAME")
 database_user=os.environ.get("DATABASE_USER")
 database_password=os.environ.get("DATABASE_PASSWORD")
-host_name=os.environ.get("HOST_NAME")
+database_host_name=os.environ.get("DATABASE_HOST_NAME")
 port=os.environ.get("PORT_NUMBER")
 
 
@@ -64,7 +64,7 @@ def postgres_execute(sql_query, data=None) -> int:
     """
     try:
         conn = psycopg2.connect(database=database_name, user=database_user,
-                                password=database_password, host=host_name, port=port) #postgres database connection string
+                                password=database_password, host=database_host_name, port=port) #postgres database connection string
 
         cursor = conn.cursor()
         if data:
