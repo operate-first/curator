@@ -90,7 +90,7 @@ def get_history_data():
             database=database_name,
             user=database_user,
             password=database_password,
-            host=host_name,
+            host=database_host_name,
             port=port,
         )
 
@@ -117,7 +117,7 @@ def add_csv_data(sql_query):
             database=database_name,
             user=database_user,
             password=database_password,
-            host=host_name,
+            host=database_host_name,
             port=port,
         )
 
