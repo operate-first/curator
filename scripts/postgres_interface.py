@@ -49,8 +49,17 @@ def get_history_data():
 
         cursor.execute("select file_names from history")
         history = cursor.fetchone()
-        history=history[0]
-
+​
+        if not history is None:
+            history=history[0]
+        else:
+            cursor.execute("INSERT INTO HISTORY (file_names) VALUES ('test.tar.gz')")
+            conn.commit() 
+            cursor.execute("select file_names from history")
+            history = cursor.fetchone()
+            history=history[0]
+​
+​
         cursor.close()
         conn.close()
     except Exception as ex:
