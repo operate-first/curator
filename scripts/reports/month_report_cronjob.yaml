@@ -12,8 +12,13 @@ spec:
           - name: dayreport
             image: docker.io/library/postgres:latest
             imagePullPolicy: IfNotPresent
+            envFrom:
+              - secretRef:
+                  name: backup-credentials
+              - configMapRef:
+                  name: backup-config
             command:
               - sh
               - -c
-              - psql -d 'postgresql://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST_NAME:$PORT_NUMBER/$DATABASE_NAME' -c "SELECT generate_report('month');"
+              - psql -d "postgresql://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST_NAME:$PORT_NUMBER/$DATABASE_NAME" -c "SELECT generate_report('month');"
           restartPolicy: OnFailure
