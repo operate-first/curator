@@ -15,9 +15,9 @@ configMapGenerator:
       - scripts/postgres_interface.py
   - name: backup-config
     envs:
-      - Documentation/config/config.env  #Path to your configuration file
+      - Documentation/config/config.env  # Path to your configuration file
 
 secretGenerator:
   - name: backup-credentials
     envs:
-      - Documentation/credentials/credentials_example.env  #/path to your credentials.env file 
+      - Documentation/credentials/credentials.env  # /path to your credentials.env file

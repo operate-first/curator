@@ -40,7 +40,8 @@ spec:
                     name: backup-config
               command:
                 - sh
-                - /scripts/run-backup.sh
+              args:
+                ['-c', '[ "$HAS_S3_ACCESS" ] || exit 1; if [[ $HAS_S3_ACCESS == true ]]; then sh ./scripts/run-backup.sh; else echo no S3 bucket provided; exit 0; fi;']
               volumeMounts:
                 - name: backup-scripts
                   mountPath: /scripts

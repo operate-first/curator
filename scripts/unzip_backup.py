@@ -22,7 +22,7 @@ bucket = conn.get_bucket(BUCKET_NAME)
 backup_src = os.environ.get("BACKUP_SRC")  # dir of the metrics files
 unzip_dir = os.environ.get("UNZIP_DIR")  # dir of the metrics files
 
-has_s3_access = os.environ.get("HAS_S3_ACCESS")
+has_s3_access = os.environ.get("HAS_S3_ACCESS").lower() in ('true', 't', 'y', 'yes')
 
 if not os.path.exists(unzip_dir):
     os.makedirs(unzip_dir)
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     s3_zipped_file_hist = ""
     db_zipped_file_hist = ""
 
-    if has_s3_access.upper() == "TRUE":
+    if has_s3_access:
         get_history_file()
         # Read the unzipped files history details
         try:
@@ -214,7 +214,7 @@ if __name__ == "__main__":
                     if not os.path.exists(unzip_folder_dir):
                         os.makedirs(unzip_folder_dir)
                     gunzip(backup_full_path, unzip_folder_dir)
-                    if has_s3_access.upper() == "TRUE" and not bf in s3_zipped_file_hist:
+                    if has_s3_access and not bf in s3_zipped_file_hist:
                         moved_files_count = move_unzipped_files_into_s3(
                             unzip_folder_dir, file_folder)
                     if not bf in db_zipped_file_hist:
@@ -227,7 +227,7 @@ if __name__ == "__main__":
 
     except Exception as ex:
         print("An error is occured while unzip the files into unzip directory {}".format(ex))
-    if has_s3_access.upper() == "TRUE":
+    if has_s3_access:
         try:
             with open(os.path.join(unzip_dir, "history.txt"), mode="a+") as h_f:
                 h_f.write(newly_unzipped_files)
