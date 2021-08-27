@@ -6,7 +6,7 @@
 # It also moves the correct cronjob file into the root
 
 echo 'Welcome to Curator!'
-echo 'Warning: this will overwrite existing configuration at \nDocumentation/config/config.env and Documentation/credentials/credentials_example.env'
+echo 'Warning: this will overwrite existing configuration at \nDocumentation/config/config.env and Documentation/credentials/credentials.env'
 
 echo '== S3 Configuration =='
 HAS_S3_ACCESS=false
@@ -55,9 +55,9 @@ then
 BUCKET_NAME=${bucket_name}
 S3_HOST_NAME=${s3_host_name}" >> ./Documentation/config/config.env;
     echo "AWS_ACCESS_KEY_ID=${aws_access_key_id}
-AWS_SECRET_ACCESS_KEY=${aws_secret_access_key}" > ./Documentation/credentials/credentials_example.env;
+AWS_SECRET_ACCESS_KEY=${aws_secret_access_key}" > ./Documentation/credentials/credentials.env;
 fi
 
 echo ''
 echo 'Curator configuration complete!'
-echo '-> Note: to update the configuration, edit Documentation/config/config.env and Documentation/credentials/credentials_example.env'
+echo '-> Note: to update the configuration, edit Documentation/config/config.env and Documentation/credentials/credentials.env'
