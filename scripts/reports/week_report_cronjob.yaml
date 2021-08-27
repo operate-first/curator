@@ -1,17 +1,19 @@
-apiVersion: batch/v1
+apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: weekreport
 spec:
-  schedule: "0 0 * * 0"
+  schedule: "0 0 * * 0"  # At 00:00 on Sunday
   jobTemplate:
     spec:
       template:
         spec:
           containers:
-          - name: weekreport
-            image: busybox
+          - name: dayreport
+            image: docker.io/library/postgres:latest
             imagePullPolicy: IfNotPresent
             command:
-            - psql -U user50S -d sampledb -c 'SELECT generate_report(\'week\');'
+              - sh
+              - -c
+              - psql -d 'postgresql://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST_NAME:$PORT_NUMBER/$DATABASE_NAME' -c "SELECT generate_report('week');"
           restartPolicy: OnFailure

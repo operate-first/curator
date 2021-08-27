@@ -60,4 +60,14 @@ fi
 
 echo ''
 echo 'Curator configuration complete!'
-echo '-> Note: to update the configuration, edit Documentation/config/config.env and Documentation/credentials/credentials.env'
+echo '-> Note: to update the configuration, edit Documentation/config/config.env and Documentation/credentials/credentials.env\n'
+
+while true; do
+    read -p "How frequent do you wish to generate report [day/week/month] ? " freq
+    case ${freq} in
+        day )   cp scripts/reports/day_report_cronjob.yaml scripts/report_cronjob.yaml; break;;
+        week )  cp scripts/reports/week_report_cronjob.yaml scripts/report_cronjob.yaml; break;;
+        month ) cp scripts/reports/month_report_cronjob.yaml scripts/report_cronjob.yaml; break;;
+        * ) echo "Please answer day/week/month.";;
+    esac
+done
