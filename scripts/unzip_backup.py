@@ -14,15 +14,16 @@ AWS_ACCESS_KEY_ID = os.environ.get(
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
 S3_HOST_NAME= os.environ.get("S3_HOST_NAME")
+has_s3_access = os.environ.get("HAS_S3_ACCESS").lower() in ('true', 't', 'y', 'yes')
 
-conn = boto.s3.connection.S3Connection(aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, port=443,
-                                       host=S3_HOST_NAME, is_secure=True, calling_format=boto.s3.connection.OrdinaryCallingFormat())
-bucket = conn.get_bucket(BUCKET_NAME)
+if has_s3_access:
+    conn = boto.s3.connection.S3Connection(aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, port=443,
+                                           host=S3_HOST_NAME, is_secure=True, calling_format=boto.s3.connection.OrdinaryCallingFormat())
+    bucket = conn.get_bucket(BUCKET_NAME)
 
 backup_src = os.environ.get("BACKUP_SRC")  # dir of the metrics files
 unzip_dir = os.environ.get("UNZIP_DIR")  # dir of the metrics files
 
-has_s3_access = os.environ.get("HAS_S3_ACCESS").lower() in ('true', 't', 'y', 'yes')
 
 if not os.path.exists(unzip_dir):
     os.makedirs(unzip_dir)
