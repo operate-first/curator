@@ -3,10 +3,5 @@
 
 # VSCode
 .vscode
-.idea/codeStyles/Project.xml
-.idea/curator.iml
-.idea/dbnavigator.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/vcs.xml
-.idea/workspace.xml
+.idea/*
+

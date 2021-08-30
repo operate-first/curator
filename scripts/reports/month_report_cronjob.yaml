@@ -1,17 +1,24 @@
-apiVersion: batch/v1
+apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: monthreport
 spec:
-  schedule: "0 0 1 * *"
+  schedule: "0 0 1 * *"  # At 00:00 on day-of-month 1
   jobTemplate:
     spec:
       template:
         spec:
           containers:
-          - name: monthreport
-            image: busybox
+          - name: dayreport
+            image: docker.io/library/postgres:latest
             imagePullPolicy: IfNotPresent
+            envFrom:
+              - secretRef:
+                  name: backup-credentials
+              - configMapRef:
+                  name: backup-config
             command:
-            - psql -U databaseUser -d sampledb -c 'SELECT generate_report(\'month\');'
+              - sh
+              - -c
+              - psql -d "postgresql://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST_NAME:$PORT_NUMBER/$DATABASE_NAME" -c "SELECT generate_report('month');"
           restartPolicy: OnFailure
