@@ -23,4 +23,4 @@ configMapGenerator:
 secretGenerator:
   - name: backup-credentials
     envs:
-      - credentials/credentials_example.env
+      - credentials/credentials.env

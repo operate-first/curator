@@ -1,6 +1,8 @@
 #!/bin/sh
+mkdir -p testing/config
 cp Documentation/config/config.env testing/config/config.env
-cp Documentation/credentials/credentials_example.env testing/credentials/credentials_example.env
+mkdir -p testing/credentials
+cp Documentation/credentials/credentials.env testing/credentials/credentials.env
 kustomize build testing | oc apply -f- > /dev/null 2>&1
 
 echo '=== S3 connection testing ==='
