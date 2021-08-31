@@ -5,8 +5,8 @@ CREATE OR REPLACE FUNCTION generate_report (frequency report_frequency)
   returns integer
   as $$
   declare
-    interval_start_date timestamp;
-    interval_end_date timestamp;
+    interval_start_date timestamp with time zone;
+    interval_end_date timestamp with time zone;
   begin
   	if frequency = 'day' then
     	interval_start_date := date_trunc('day', current_date);
