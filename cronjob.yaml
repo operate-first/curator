@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: backup-to-bucket
 spec:
-  schedule: '* */6 * * *'  # This job will run a minute past 6 hours. You can also use " schedule: '* * * * *' " to run this cron job instantly
+  schedule: '0 */6 * * *'  # This job will run every 6 hours. You can also use " schedule: '* * * * *' " to run this cron job instantly
   jobTemplate:
     spec:
       template:

@@ -71,10 +71,10 @@ def push_csv_to_db(extracted_csv_path):
                         reader = csv.reader(f)
 
                         for row in reader:
-                            report_period_start = row[0].replace(" +0000 UTC", "")
-                            report_period_end = row[1].replace(" +0000 UTC", "")
-                            interval_start = row[2].replace(" +0000 UTC", "")
-                            interval_end = row[3].replace(" +0000 UTC", "")
+                            report_period_start = row[0].replace(" UTC", "")
+                            report_period_end = row[1].replace(" UTC", "")
+                            interval_start = row[2].replace(" UTC", "")
+                            interval_end = row[3].replace(" UTC", "")
 
                             if table_name_local == "0":
                                 table_name_sql = "logs_0"
@@ -102,16 +102,16 @@ def push_csv_to_db(extracted_csv_path):
                                 node = row[4]
                                 namespace = row[5]
                                 pod = row[6]
-                                pod_usage_cpu_core_seconds = row[7]
-                                pod_request_cpu_core_seconds = row[8]
-                                pod_limit_cpu_core_seconds = row[9]
-                                pod_usage_memory_byte_seconds = row[10]
-                                pod_request_memory_byte_seconds = row[11]
-                                pod_limit_memory_byte_seconds = row[12]
-                                node_capacity_cpu_cores = row[13]
-                                node_capacity_cpu_core_seconds = row[14]
-                                node_capacity_memory_bytes = row[15]
-                                node_capacity_memory_byte_seconds = row[16]
+                                pod_usage_cpu_core_seconds = row[7] if row[7].strip() !="" else 0.0
+                                pod_request_cpu_core_seconds = row[8] if row[8].strip() !="" else 0.0
+                                pod_limit_cpu_core_seconds = row[9] if row[9].strip() !="" else 0.0
+                                pod_usage_memory_byte_seconds = row[10] if row[10].strip() !="" else 0.0
+                                pod_request_memory_byte_seconds = row[11] if row[11].strip() !="" else 0.0
+                                pod_limit_memory_byte_seconds = row[12] if row[12].strip() !="" else 0.0
+                                node_capacity_cpu_cores = row[13] if row[13].strip() !="" else 0.0
+                                node_capacity_cpu_core_seconds = row[14] if row[14].strip() !="" else 0.0
+                                node_capacity_memory_bytes = row[15] if row[15].strip() !="" else 0.0
+                                node_capacity_memory_byte_seconds = row[16] if row[16].strip() !="" else 0.0
                                 resource_id = row[17]
                                 pod_labels = row[18]
                                 if batch_executor.sql_isempty():
@@ -132,10 +132,10 @@ def push_csv_to_db(extracted_csv_path):
                                 persistentvolumeclaim = row[6]
                                 persistentvolume = row[7]
                                 storageclass = row[8]
-                                persistentvolumeclaim_capacity_bytes = row[9]
-                                persistentvolumeclaim_capacity_byte_seconds = row[10]
-                                volume_request_storage_byte_seconds = row[11]
-                                persistentvolumeclaim_usage_byte_seconds = row[12]
+                                persistentvolumeclaim_capacity_bytes = row[9] if row[9].strip() !="" else 0.0
+                                persistentvolumeclaim_capacity_byte_seconds = row[10] if row[10].strip() !="" else 0.0
+                                volume_request_storage_byte_seconds = row[11] if row[11].strip() !="" else 0.0
+                                persistentvolumeclaim_usage_byte_seconds = row[12] if row[12].strip() !="" else 0.0
                                 persistentvolume_labels = row[13]
                                 persistentvolumeclaim_labels = row[14]
                                 if batch_executor.sql_isempty():
