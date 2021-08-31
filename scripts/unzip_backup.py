@@ -1,6 +1,4 @@
 import os
-from typing import Tuple
-import boto
 from boto.s3.key import Key
 import boto.s3.connection
 import shutil
@@ -56,7 +54,7 @@ def get_history_file():
 def push_csv_to_db(extracted_csv_path):
     rowcount = 0
     try:
-        for bsubdir, bdirs, csvfiles in os.walk(extracted_csv_path):
+        for bsubdir, _, csvfiles in os.walk(extracted_csv_path):
             for csvf in csvfiles:
                 if csvf.endswith(".csv"):
                     csv_full_path = os.path.join(bsubdir, csvf)
@@ -174,13 +172,13 @@ def gunzip(file_path, output_path, is_push_db=True):
 def move_unzipped_files_into_s3(unzip_folder_dir, file_folder):
     moved_files_count = 0
     try:
-        for usubdir, udirs, ufiles in os.walk(unzip_folder_dir):
+        for usubdir, _, ufiles in os.walk(unzip_folder_dir):
             for uf in ufiles:
                 unzip_full_path = os.path.join(usubdir, uf)
                 uk = bucket.new_key(os.path.join(file_folder, uf))
                 uk.set_contents_from_filename(unzip_full_path)
                 print(unzip_full_path)
-                moved_files_count = +1
+                moved_files_count += 1
     except Exception as exp:
         print("An error is occured while move files into s3 {0}".format(exp))
     return moved_files_count
@@ -206,7 +204,7 @@ if __name__ == "__main__":
         db_zipped_file_hist = db_zipped_file_hist.split("~")    
 
     try:
-        for bsubdir, bdirs, bfiles in os.walk(backup_src):
+        for bsubdir, _, bfiles in os.walk(backup_src):
             for bf in bfiles:
                 if bf.endswith(".gz"):
                     backup_full_path = os.path.join(bsubdir, bf)

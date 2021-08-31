@@ -1,0 +1,14 @@
+{
+ "uuid": "a5186c28-6b78-44eb-af59-d739aeaca676",
+ "cluster_id": "73a74a3e-afb2-47ea-8431-0b490a4f5234",
+ "version": "d37e6d6fd90d65b0d6794347f5fe00a472ce9d33",
+ "date": "2021-06-16T12:54:40.059469368Z",
+ "files": [
+  "a5186c28-6b78-44eb-af59-d739aeaca676_openshift_usage_report.3.csv",
+  "a5186c28-6b78-44eb-af59-d739aeaca676_openshift_usage_report.0.csv",
+  "a5186c28-6b78-44eb-af59-d739aeaca676_openshift_usage_report.1.csv",
+  "a5186c28-6b78-44eb-af59-d739aeaca676_openshift_usage_report.2.csv"
+ ],
+ "start": "2021-06-16T11:00:00Z",
+ "end": "2021-06-16T11:59:59Z"
+}
