@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: s3-connectivity-test
+spec:
+  volumes:
+    - name: koku-metrics-operator-data
+      persistentVolumeClaim:
+        claimName: koku-metrics-operator-data
+    - name: backup-scripts
+      configMap:
+        name: backup-scripts
+  containers:
+# # run python testcase locally
+#    - name: s3sync
+#      image: quay.io/operate-first/curator-s3-sync:latest
+#      envFrom:
+#        - secretRef:
+#            name: backup-credentials
+#        - configMapRef:
+#            name: backup-config
+#      command:
+#        - python3
+#        - /scripts/curator-test.py
+#      volumeMounts:
+#        - name: backup-scripts
+#          mountPath: /scripts
+#        - name: testcase
+#          mountPath: /tmp/koku-metrics-operator-data/upload  #koku meterics operator storage path
+    - name: postgres
+      image: docker.io/library/postgres:13.0
+      envFrom:
+        - secretRef:
+            name: backup-credentials
+        - configMapRef:
+            name: backup-config
+      command:
+        - sh
+        - /scripts/test-database.sh
+      volumeMounts:
+        - name: backup-scripts
+          mountPath: /scripts
+    - name: mc
+      image: docker.io/minio/mc
+      envFrom:
+        - secretRef:
+            name: backup-credentials
+        - configMapRef:
+            name: backup-config
+      command:
+        - sh
+        - /scripts/test-backup.sh
+      volumeMounts:
+        - name: backup-scripts
+          mountPath: /scripts
+        - name: koku-metrics-operator-data
+          mountPath: /tmp/koku-metrics-operator-data
+  restartPolicy: Never
