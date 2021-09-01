@@ -6,7 +6,7 @@ commonLabels:
 
 resources:
   - cronjob.yaml
-  - scripts/report_cronjob.yaml
+  - scripts/reports/report_cronjob.yaml
 
 configMapGenerator:
   - name: backup-scripts
