@@ -18,9 +18,9 @@ to an S3 bucket using the [MinIO Client][] (`mc`).
 To generate a report manually, run the `generate_report()` PostgreSQL function on the database. The function takes a single argument specifying the time period over which to aggregate the collected data, which can be either *day*, *week*, or *month*. For instance, to generate a report for the current week, run `generate_report('week')`.
 
 ### Installation and Configuration
-1. To install Curator, run `install.sh`. This will first prompt you to opt-in or opt-out S3, and then prompt you to enter the configuration variables needed.
+1. To install Curator, run `install.sh`. This will first prompt you to opt-in or opt-out of S3 back-up option and then prompt you to enter the configuration variables needed to run the project.
 
-      a. At any time you can change the configuration by edit `Documentation/config/config.env` and `Documentation/credentials/credentials.env`
+      a. At any time you can change the configuration by editing `Documentation/config/config.env` and `Documentation/credentials/credentials.env`
  
    Optionally, you may set:
 
@@ -60,8 +60,8 @@ repository and accidentally expose your credentials.
 
 
 ### Development being considered
-+ Access for the end-users to view the system generated reports of the projects they are running on OCP through the OCP console. (Late August 2021)
-+ Access for the end-users to run SQL queries on the infrastructure utilization data of the projects they are running on OCP through the OCP console. (Late August 2021)
++ Access for the end-users to view the system generated reports of the projects they are running on OCP through the OCP console. 
++ Access for the end-users to run SQL queries on the infrastructure utilization data of the projects they are running on OCP through the OCP console. 
 + Utilization notification system. 
 + Synchronized data backup. 
 + CSV format sharable reports. 
