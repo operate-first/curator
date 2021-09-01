@@ -48,8 +48,12 @@ class TestUnzipBackup(unittest.TestCase):
         """
         Calls: unzip_backup.move_unzipped_files_into_s3. Tests: the number of files uploaded
         """
-        moved_files_count = move_unzipped_files_into_s3(self.unzip_dir_golden, self.file_folder)
-        self.assertEqual(len(os.listdir(self.unzip_dir_golden)), moved_files_count)
+        if os.environ.get("HAS_S3_ACCESS").lower() in ('true', 't', 'y', 'yes'):
+            moved_files_count = move_unzipped_files_into_s3(self.unzip_dir_golden, self.file_folder)
+            self.assertEqual(len(os.listdir(self.unzip_dir_golden)), moved_files_count)
+        else:
+            print('Skipping S3 testcase')
+
 
 
 # Run the unit tests.
