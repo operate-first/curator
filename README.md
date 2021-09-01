@@ -1,25 +1,11 @@
 # **Curator**
 
-## Release Information
-Version 0.4 07/30/2021
-+ Dowload raw data of OCP infrastructure utilization.
-+ Automation of storing infrastructure utilization data in an S3-compatible persistent volume.
-+ Unzipped metrics are being stored in an S3-compatible volume.
-+ Pre-defined SQL query support for the infrastructure utilization data. 
-+ Custom SQL query support for the infrastructure utilization data. 
-
 ## About
 An infrastructure consumption showback project for OCP. The curator project retrieves infrastructure utilization as raw data using [koku-metrics-operator](https://github.com/project-koku/koku-metrics-operator).
 
 You need administrator access to an OpenShift v.4.5+ cluster. 
 
 The project is being incubated in the [Operate First](https://www.operate-first.cloud/) environment. To submit an issue or a feature request, please raise an issue at https://github.com/operate-first/curator/issues. 
-
-### Functionalities
-+ Download raw data of OCP infrastructure utilization. (v0.1 - 05/26/2021)
-+ Automation of storing infrastructure utilization data in an S3-compatible persistent volume. (v0.2 - 06/09/2021)
-+ Pre-defined SQL query support for the infrastructure utilization data. (v0.4 - 07/30/2021)
-+ Custom SQL query support for the infrastructure utilization data. (v0.4 - 07/30/2021)
 
 
 ### Backup a directory to an S3 bucket
@@ -32,19 +18,9 @@ to an S3 bucket using the [MinIO Client][] (`mc`).
 To generate a report manually, run the `generate_report()` PostgreSQL function on the database. The function takes a single argument specifying the time period over which to aggregate the collected data, which can be either *day*, *week*, or *month*. For instance, to generate a report for the current week, run `generate_report('week')`.
 
 ### Installation and Configuration
-1. To install Curator, run `install.sh`. This will prompt you to enter the configuration variables.
+1. To install Curator, run `install.sh`. This will first prompt you to opt-in or opt-out S3, and then prompt you to enter the configuration variables needed.
 
-      a. To update the configuration later, edit `config.env`. The following configuration variables are
-   required:
-
-     - `BACKUP_SRC` -- the path to the directory you want to back up
-     - `BACKUP_DST` -- the bucket name and path for backup destination
-     - `S3_ENDPOINT` -- your S3 API endpoint
-     - `BUCKET_NAME` -- the bucket name for unzipped files
-
-    Also provide information for all database related variable in `config.env` listed below.
-
-       `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, `HOST_NAME`, `PORT_NUMBER`
+      a. At any time you can change the configuration by edit `Documentation/config/config.env` and `Documentation/credentials/credentials.env`
  
    Optionally, you may set:
 
@@ -52,10 +28,8 @@ To generate a report manually, run the `generate_report()` PostgreSQL function o
        `mc` command
      - `MC_MIRROR_FLAGS` -- flags passed only to the `mc mirror`
        command
-2. Copy `credentials-example.env` to `credentials.env`
-   and update it with your bucket credentials. 
 
-3. Deploy the application to OpenShift.
+2. Deploy the application to OpenShift.
 
     - Run `oc apply -k .` to deploy this application into the
       namespace defined by the `namespace:` setting in
