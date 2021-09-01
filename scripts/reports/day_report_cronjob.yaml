@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
           - name: dayreport
-            image: docker.io/library/postgres:latest
+            image: docker.io/library/postgres:13.0
             imagePullPolicy: IfNotPresent
             envFrom:
               - secretRef:
