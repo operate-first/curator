@@ -46,6 +46,21 @@ To generate a report manually, run the `generate_report()` PostgreSQL function o
     ```
     kustomize build | oc delete -f-
     ```
+    
+### Testing
+
+Before deploying the application, you can run `verify_connection.sh` to test your S3 bucket and PostgreSQL database connectivity. 
+
+To run database/S3 connectivity check: (OC cluster access required)
+```shell
+sh verify_connection.sh
+```
+
+To run test case with provided example test data: (Testing at local python environments. Some package required)
+```shell
+cd testing; python -m unittest curator-test.py
+```
+
 
 **WARNING** Make sure you don't add `credentials.env` to a Git
 repository and accidentally expose your credentials.
