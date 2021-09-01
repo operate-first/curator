@@ -21,6 +21,7 @@ To generate a report manually, run the `generate_report()` PostgreSQL function o
 1. To install Curator, run `install.sh`. This will first prompt you to opt-in or opt-out of S3 back-up option and then prompt you to enter the configuration variables needed to run the project.
 
       a. At any time you can change the configuration by editing `Documentation/config/config.env` and `Documentation/credentials/credentials.env`
+         If you change value for variable `HAS_S3_ACCESS` later, collected files will be either pushed or not depending on the value for variable.
  
    Optionally, you may set:
 
