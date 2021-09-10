@@ -33,9 +33,35 @@ def update_history_data(sql_query):
         print(ex)
     return is_updated
 
+def Add_history_data(data):
+    '''
+        Add the history data
+        List of tuple of newly unzipped files
+    '''
+    is_updated = True
+    try:
+        conn = psycopg2.connect(
+            database=database_name,
+            user=database_user,
+            password=database_password,
+            host=database_host_name,
+            port=port,
+        )
+
+        cursor = conn.cursor()
+
+        cursor.executemany("INSERT INTO history(file_names) VALUES(%s)",data)
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+    except Exception as ex:
+        is_updated = False
+        print(ex)
+    return is_updated
 
 def get_history_data():
-    history = ""
+    history = []
     try:
         conn = psycopg2.connect(
             database=database_name,
@@ -48,15 +74,21 @@ def get_history_data():
         cursor = conn.cursor()
 
         cursor.execute("select file_names from history")
-        history = cursor.fetchone()
-        if not history is None:
-            history = history[0]
-        else:
-            cursor.execute("INSERT INTO HISTORY (file_names) VALUES ('test.tar.gz')")
-            conn.commit() 
-            cursor.execute("select file_names from history")
-            history = cursor.fetchone()
-            history = history[0]
+        # history = cursor.fetchone()
+        rows = cursor.fetchall()
+        for row in rows:
+            history.append(row[0])
+        # if not history is None:
+        #     history = history[0]
+        # else:
+        #     cursor.execute("INSERT INTO HISTORY (file_names) VALUES ('test.tar.gz')")
+        #     conn.commit() 
+        #     cursor.execute("select file_names from history")
+        #     # history = cursor.fetchone()
+        #     rows = cursor.fetchall()
+        #     for row in rows:
+        #         history.append(row[0])
+            # history = history[0]
         cursor.close()
         conn.close()
     except Exception as ex:
