@@ -9,16 +9,16 @@ CREATE OR REPLACE FUNCTION generate_report (frequency text)
     interval_end_date timestamp with time zone;
   begin
   	if frequency = 'day' then
-    	interval_start_date := date_trunc('day', current_date at time zone 'UTC');
-        interval_end_date := date_trunc('day', current_date at time zone 'UTC') + '23 hours 59 minutes';
+    	interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '24 hours';
+        interval_end_date := date_trunc('day', current_date at time zone 'UTC');
     end if;
   	if frequency = 'week' then
-        interval_start_date := (date_trunc('week', current_date at time zone 'UTC') + '-1 days')::date;
-        interval_end_date := (date_trunc('week', current_date at time zone 'UTC') + '5 days')::date;
+        interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '7 days';
+        interval_end_date := date_trunc('day', current_date at time zone 'UTC');
     end if;
     if frequency = 'month' then
-    	interval_start_date := date_trunc('month', current_date at time zone 'UTC');
-        interval_end_date := date_trunc('month', current_date at time zone 'UTC') + '1 month';
+    	interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '1 month';
+        interval_end_date := date_trunc('day', current_date at time zone 'UTC');
     end if;
     EXECUTE '
       INSERT INTO
@@ -52,7 +52,7 @@ CREATE OR REPLACE FUNCTION generate_report (frequency text)
         SUM(node_capacity_memory_bytes)       as  node_capacity_memory_bytes,
         SUM(node_capacity_memory_byte_seconds)as  node_capacity_memory_byte_seconds
       FROM logs_2
-      WHERE interval_start between ' || quote_literal(interval_start_date) || ' and ' || quote_literal(interval_end_date) || '
+      WHERE interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start < ' || quote_literal(interval_end_date) || '
       GROUP BY namespace
       UNION
       SELECT
@@ -70,6 +70,6 @@ CREATE OR REPLACE FUNCTION generate_report (frequency text)
         SUM(node_capacity_memory_bytes) as  node_capacity_memory_bytes,
         SUM(node_capacity_memory_byte_seconds) as  node_capacity_memory_byte_seconds
       FROM logs_2
-      WHERE interval_start between ' || quote_literal(interval_start_date) || ' and ' || quote_literal(interval_end_date) || '';
+      WHERE interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start <' || quote_literal(interval_end_date) || '';
   return 0;
 end; $$ LANGUAGE plpgsql;
