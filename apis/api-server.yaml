@@ -79,3 +79,7 @@ items:
                   memory: 2Gi
           dnsPolicy: ClusterFirst
           restartPolicy: Always
+          volumes:
+            - name: api-scripts
+              configMap:
+                name: api-scripts
