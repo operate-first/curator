@@ -48,28 +48,34 @@ items:
             name: curator-reports
         spec:
           containers:
-            image: "quay.io/operate-first/curator-s3-sync:latest"
-            imagePullPolicy: IfNotPresent
-            name: curator-reports
-            envFrom:
-              - secretRef:
-                  name: backup-credentials
-            command:
-              - sh
-            args:
-              ['-c', 'pip3 install flask; python3 /scripts/app.py']
-            volumeMounts:
-              - name: backup-scripts
-                mountPath: /scripts
-            ports:
-              - containerPort: 5000
-                protocol: TCP
-            resources:
-              requests:
-                cpu: "1"
-                memory: 2Gi
-              limits:
-                cpu: "1"
-                memory: 2Gi
+            - env:
+                - name: POSTGRESQL_USER
+                  valueFrom:
+                    secretKeyRef:
+                      key: database-user
+                      name: v4
+              image: "quay.io/operate-first/curator-s3-sync:latest"
+              imagePullPolicy: IfNotPresent
+              name: curator-reports
+              envFrom:
+                - secretRef:
+                    name: backup-credentials
+              command:
+                - sh
+              args:
+                ['-c', 'pip3 install flask; python3 /scripts/app.py']
+              volumeMounts:
+                - name: backup-scripts
+                  mountPath: /scripts
+              ports:
+                - containerPort: 5000
+                  protocol: TCP
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 2Gi
+                limits:
+                  cpu: "1"
+                  memory: 2Gi
           dnsPolicy: ClusterFirst
           restartPolicy: Always
