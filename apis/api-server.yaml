@@ -59,13 +59,13 @@ items:
               name: curator-reports
               envFrom:
                 - secretRef:
-                    name: backup-credentials
+                    name: api-credentials
               command:
                 - sh
               args:
                 ['-c', 'pip3 install flask; python3 /scripts/app.py']
               volumeMounts:
-                - name: backup-scripts
+                - name: api-scripts
                   mountPath: /scripts
               ports:
                 - containerPort: 5000
