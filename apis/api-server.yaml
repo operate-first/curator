@@ -13,7 +13,7 @@ items:
         - name: latest
           from:
             kind: DockerImage
-            name: quay.io/operate-first/curator-s3-sync:latest
+            name: docker.io/aaaaazzaa/flask-api
           importPolicy: {}
           referencePolicy:
             type: Local
@@ -32,8 +32,8 @@ items:
         name: curator-reports
       sessionAffinity: None
       type: ClusterIP
-  - apiVersion: apps.openshift.io/v1
-    kind: DeploymentConfig
+  - apiVersion: apps/v1
+    kind: Deployment
     metadata:
       name: curator-reports
     spec:
@@ -47,23 +47,23 @@ items:
           labels:
             name: curator-reports
         spec:
+          volumes:
+            - name: api-scripts
+              configMap:
+                name: api-scripts
           containers:
             - env:
                 - name: POSTGRESQL_USER
-                  valueFrom:
-                    secretKeyRef:
-                      key: database-user
-                      name: v4
-              image: "quay.io/operate-first/curator-s3-sync:latest"
+              image: "docker.io/aaaaazzaa/flask-api"
               imagePullPolicy: IfNotPresent
               name: curator-reports
               envFrom:
-                - secretRef:
-                    name: api-credentials
+                - configMapRef:
+                    name: api-config
               command:
                 - sh
               args:
-                ['-c', 'pip3 install flask; python3 /scripts/app.py']
+                ['-c', 'python3 /scripts/app.py']
               volumeMounts:
                 - name: api-scripts
                   mountPath: /scripts
@@ -79,7 +79,4 @@ items:
                   memory: 2Gi
           dnsPolicy: ClusterFirst
           restartPolicy: Always
-          volumes:
-            - name: api-scripts
-              configMap:
-                name: api-scripts
+
