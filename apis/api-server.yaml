@@ -32,21 +32,20 @@ items:
         name: curator-reports
       sessionAffinity: None
       type: ClusterIP
-  - apiVersion: apps/v1
-    kind: Deployment
+  - apiVersion: apps.openshift.io/v1
+    kind: DeploymentConfig
     metadata:
       name: curator-reports
-      labels:
-        app: curator-reports
     spec:
       replicas: 1
       selector:
-        matchLabels:
-          app: nginxcurator-reports
+        name: curator-reports
+      strategy:
+        type: Recreate
       template:
         metadata:
           labels:
-            app: curator-reports
+            name: curator-reports
         spec:
           containers:
               image: "quay.io/operate-first/curator-s3-sync:latest"
