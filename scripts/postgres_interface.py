@@ -36,39 +36,7 @@ def update_history_data(sql_query):
         if conn is not None:	
             conn.close()
     return is_updated
-
-def Add_history_data(data):
-    '''
-        Add the history data
-        List of tuple of newly unzipped files
-    '''
-    is_updated = True
-    conn = None
-
-    try:
-        conn = psycopg2.connect(
-            database=database_name,
-            user=database_user,
-            password=database_password,
-            host=database_host_name,
-            port=port,
-        )
-
-        cursor = conn.cursor()
-
-        cursor.executemany("INSERT INTO history(file_names) VALUES(%s)",data)
-
-        conn.commit()
-        cursor.close()
-        conn.close()
-    except Exception as ex:
-        is_updated = False
-        print(ex)
-
-    finally:	
-        if conn is not None:	
-            conn.close()
-    return is_updated
+    
 
 def get_history_data():
     history = []
@@ -108,31 +76,6 @@ def get_history_data():
         if conn is not None:	
             conn.close()
     return history
-
-
-def execute_sql_commands(command):	
-    '''	
-        Execute the sql commands for table creation, stored procedures, functions, etc.,	
-        Args:	
-            string commands - sql command	
-    '''	
-    conn = None	
-    try:	
-        conn = psycopg2.connect(database=database_name, user=database_user,	
-                                password=database_password, host=database_host_name, port=port)  # postgres database connection string	
-        cursor = conn.cursor()	
-        	
-        cursor.execute(command)	
-        # close communication with the PostgreSQL database server	
-        cursor.close()	
-        # commit the changes	
-        conn.commit()	
-        print("The schema command is executed successfully")	
-    except Exception as exp:	
-        print("An error is occured while execute the sql commands {}".format(exp))	
-    finally:	
-        if conn is not None:	
-            conn.close()
 
 
 def postgres_execute(sql_query, data=None) -> int:
