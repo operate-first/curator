@@ -5,7 +5,8 @@ import shutil
 import tarfile
 from botocore.exceptions import ClientError
 import csv
-from postgres_interface import update_history_data, get_history_data, BatchUpdatePostgres,Add_history_data
+from postgres_interface import update_history_data, get_history_data, BatchUpdatePostgres,postgres_execute
+
 
 AWS_ACCESS_KEY_ID = os.environ.get(
     "AWS_ACCESS_KEY_ID")  # dir of the metrics files
@@ -189,6 +190,15 @@ if __name__ == "__main__":
     s3_newly_unzipped_file_hist = ""
     db_unzipped_file_hist = []
     db_newly_unzipped_file_hist = []
+    
+    #print(os.listdir(os.path.dirname(__file__)))
+    with open(os.path.join(os.path.dirname(__file__), 'generate_report.psql'), mode='r') as sql_cmd_file: 
+        report = sql_cmd_file.read()
+        postgres_execute(report)     
+    with open(os.path.join(os.path.dirname(__file__), 'create_table.psql'), mode='r') as sql_cmd_file:
+        report = sql_cmd_file.read()
+        postgres_execute(report) 
+        
 
     if has_s3_access:
         get_history_file()
@@ -244,4 +254,4 @@ if __name__ == "__main__":
                 "Error is occured while push the updated history files into s3 {}".format(ex))
     if len(db_newly_unzipped_file_hist) > 0:
         # query = "UPDATE HISTORY set file_names='{}{}'".format("~".join(db_zipped_file_hist), newly_unzipped_files)
-        Add_history_data(list(zip(db_newly_unzipped_file_hist)))
+        postgres_execute("INSERT INTO history(file_names) VALUES{}", list(zip(db_newly_unzipped_file_hist)))
