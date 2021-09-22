@@ -44,6 +44,7 @@ def Add_history_data(data):
     '''
     is_updated = True
     conn = None
+
     try:
         conn = psycopg2.connect(
             database=database_name,
@@ -63,6 +64,7 @@ def Add_history_data(data):
     except Exception as ex:
         is_updated = False
         print(ex)
+
     finally:	
         if conn is not None:	
             conn.close()
