@@ -1,26 +1,40 @@
 -- This function generates a report based on a given frequency
 -- This file should only be run once, in order to register the function
 
-CREATE OR REPLACE FUNCTION generate_report (frequency text)
-  returns integer
+CREATE OR REPLACE FUNCTION generate_report (frequency_ text)
+  returns TABLE (
+	frequency text,
+	interval_start text,
+	pod_usage_cpu_core_seconds double precision,
+	pod_request_cpu_core_seconds double precision,
+	pod_limit_cpu_core_seconds double precision,
+	pod_usage_memory_byte_seconds double precision,
+	pod_request_memory_byte_seconds double precision,
+	pod_limit_memory_byte_seconds double precision,
+	node_capacity_cpu_cores double precision,
+	node_capacity_cpu_core_seconds double precision,
+	node_capacity_memory_bytes double precision,
+	node_capacity_memory_byte_seconds double precision,
+	namespace text
+)
   as $$
   declare
     interval_start_date timestamp with time zone;
     interval_end_date timestamp with time zone;
   begin
-  	if frequency = 'day' then
-    	interval_start_date := date_trunc('day', current_date at time zone 'UTC');
-        interval_end_date := date_trunc('day', current_date at time zone 'UTC') + '23 hours 59 minutes';
+  	if frequency_ = 'day' then
+    	interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '24 hours';
+        interval_end_date := date_trunc('day', current_date at time zone 'UTC');
     end if;
-  	if frequency = 'week' then
-        interval_start_date := (date_trunc('week', current_date at time zone 'UTC') + '-1 days')::date;
-        interval_end_date := (date_trunc('week', current_date at time zone 'UTC') + '5 days')::date;
+  	if frequency_ = 'week' then
+        interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '7 days';
+        interval_end_date := date_trunc('day', current_date at time zone 'UTC');
     end if;
-    if frequency = 'month' then
-    	interval_start_date := date_trunc('month', current_date at time zone 'UTC');
-        interval_end_date := date_trunc('month', current_date at time zone 'UTC') + '1 month';
+    if frequency_ = 'month' then
+    	interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '1 month';
+        interval_end_date := date_trunc('day', current_date at time zone 'UTC');
     end if;
-    EXECUTE '
+    RETURN QUERY EXECUTE '
       INSERT INTO
         reports (
           frequency,
@@ -38,7 +52,7 @@ CREATE OR REPLACE FUNCTION generate_report (frequency text)
           node_capacity_memory_byte_seconds
         )
       SELECT
-        ' || quote_literal(frequency) || ' as frequency,
+        ' || quote_literal(frequency_) || ' as frequency,
         ' || quote_literal(interval_start_date) ||' as interval_start,
         namespace,
         SUM(pod_usage_cpu_core_seconds)       as pod_usage_cpu_core_seconds,
@@ -52,11 +66,11 @@ CREATE OR REPLACE FUNCTION generate_report (frequency text)
         SUM(node_capacity_memory_bytes)       as  node_capacity_memory_bytes,
         SUM(node_capacity_memory_byte_seconds)as  node_capacity_memory_byte_seconds
       FROM logs_2
-      WHERE interval_start between ' || quote_literal(interval_start_date) || ' and ' || quote_literal(interval_end_date) || '
+      WHERE interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start < ' || quote_literal(interval_end_date) || '
       GROUP BY namespace
       UNION
       SELECT
-        ' || quote_literal(frequency) || ' as frequency,
+        ' || quote_literal(frequency_) || ' as frequency,
         ' || quote_literal(interval_start_date) ||' as interval_start,
         ''TOTAL'' as namespace,
         SUM(pod_usage_cpu_core_seconds) as pod_usage_cpu_core_seconds,
@@ -70,6 +84,5 @@ CREATE OR REPLACE FUNCTION generate_report (frequency text)
         SUM(node_capacity_memory_bytes) as  node_capacity_memory_bytes,
         SUM(node_capacity_memory_byte_seconds) as  node_capacity_memory_byte_seconds
       FROM logs_2
-      WHERE interval_start between ' || quote_literal(interval_start_date) || ' and ' || quote_literal(interval_end_date) || '';
-  return 0;
+      WHERE interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start <' || quote_literal(interval_end_date) || ' returning *';
 end; $$ LANGUAGE plpgsql;
