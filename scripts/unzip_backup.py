@@ -5,7 +5,7 @@ import shutil
 import tarfile
 from botocore.exceptions import ClientError
 import csv
-from postgres_interface import update_history_data, get_history_data, BatchUpdatePostgres
+from postgres_interface import update_history_data, get_history_data, BatchUpdatePostgres,Add_history_data
 
 AWS_ACCESS_KEY_ID = os.environ.get(
     "AWS_ACCESS_KEY_ID")  # dir of the metrics files
@@ -184,27 +184,29 @@ def move_unzipped_files_into_s3(unzip_folder_dir, file_folder):
     return moved_files_count
 
 
-if __name__ == "__main__":
-    newly_unzipped_files = ""
-    s3_zipped_file_hist = ""
-    db_zipped_file_hist = ""
+if __name__ == "__main__":    
+    s3_unzipped_file_hist = ""
+    s3_newly_unzipped_file_hist = ""
+    db_unzipped_file_hist = []
+    db_newly_unzipped_file_hist = []
 
     if has_s3_access:
         get_history_file()
         # Read the unzipped files history details
         try:
             with open(os.path.join(unzip_dir, "history.txt"), mode="r") as h_f:
-                s3_zipped_file_hist = h_f.read()
-                s3_zipped_file_hist = s3_zipped_file_hist.split("~") 
+                s3_unzipped_file_hist = h_f.readlines()
+                # s3_zipped_file_hist = s3_zipped_file_hist.split("\n") 
         except Exception as ex:
             print("An error is occured while read the history file {}".format(ex))
     
-    db_zipped_file_hist = get_history_data()
-    if db_zipped_file_hist:
-        db_zipped_file_hist = db_zipped_file_hist.split("~")    
+    db_unzipped_file_hist = get_history_data()
+    # if db_zipped_file_hist:
+    #     db_zipped_file_hist = db_zipped_file_hist.split("~")    
 
     try:
         for bsubdir, _, bfiles in os.walk(backup_src):
+            
             for bf in bfiles:
                 if bf.endswith(".gz"):
                     backup_full_path = os.path.join(bsubdir, bf)
@@ -213,14 +215,15 @@ if __name__ == "__main__":
                     if not os.path.exists(unzip_folder_dir):
                         os.makedirs(unzip_folder_dir)
                     gunzip(backup_full_path, unzip_folder_dir)
-                    if has_s3_access and not bf in s3_zipped_file_hist:
+                    if has_s3_access and not bf in s3_unzipped_file_hist:
                         moved_files_count = move_unzipped_files_into_s3(
                             unzip_folder_dir, file_folder)
-                    if not bf in db_zipped_file_hist:
+                        
+                        s3_newly_unzipped_file_hist = "{}\n{}".format(s3_newly_unzipped_file_hist, bf)
+                    if not bf in db_unzipped_file_hist:
                         push_csv_to_db(unzip_folder_dir)
 
-                    newly_unzipped_files = "{}~{}".format(
-                        newly_unzipped_files, bf)
+                        db_newly_unzipped_file_hist.append(bf)
 
                     shutil.rmtree(unzip_folder_dir)
 
@@ -229,7 +232,7 @@ if __name__ == "__main__":
     if has_s3_access:
         try:
             with open(os.path.join(unzip_dir, "history.txt"), mode="a+") as h_f:
-                h_f.write(newly_unzipped_files)
+                h_f.write(s3_newly_unzipped_file_hist)
 
             hk = bucket.new_key("history.txt")
             # # upload the history files with newly unzipped folders
@@ -239,6 +242,6 @@ if __name__ == "__main__":
         except Exception as ex:
             print(
                 "Error is occured while push the updated history files into s3 {}".format(ex))
-    if newly_unzipped_files !="":
-        query = "UPDATE HISTORY set file_names='{}{}'".format("~".join(db_zipped_file_hist), newly_unzipped_files)
-        update_history_data(query)
+    if len(db_newly_unzipped_file_hist) > 0:
+        # query = "UPDATE HISTORY set file_names='{}{}'".format("~".join(db_zipped_file_hist), newly_unzipped_files)
+        Add_history_data(list(zip(db_newly_unzipped_file_hist)))
