@@ -254,4 +254,4 @@ if __name__ == "__main__":
                 "Error is occured while push the updated history files into s3 {}".format(ex))
     if len(db_newly_unzipped_file_hist) > 0:
         # query = "UPDATE HISTORY set file_names='{}{}'".format("~".join(db_zipped_file_hist), newly_unzipped_files)
-        postgres_execute("INSERT INTO history(file_names) VALUES(%s)", list(zip(db_newly_unzipped_file_hist)))
+        postgres_execute("INSERT INTO history(file_names) VALUES{}", list(zip(db_newly_unzipped_file_hist)))
