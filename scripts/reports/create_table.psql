@@ -1,0 +1,83 @@
+CREATE TABLE IF NOT EXISTS public.logs_0
+(
+  report_period_start timestamp with time zone,
+  report_period_end timestamp with time zone,
+  interval_start timestamp with time zone,
+  interval_end timestamp with time zone,
+  namespace text,
+  namespace_labels text
+);
+    
+CREATE TABLE IF NOT EXISTS public.logs_1
+(
+  report_period_start timestamp with time zone,
+  report_period_end timestamp with time zone,
+  interval_start timestamp with time zone,
+  interval_end timestamp with time zone,
+  node text,
+  node_labels text
+);
+
+CREATE TABLE IF NOT EXISTS public.logs_2
+(
+  report_period_start timestamp with time zone,
+  report_period_end timestamp with time zone,
+  interval_start timestamp with time zone,
+  interval_end timestamp with time zone,
+  node text,
+  namespace text,
+  pod text,
+  pod_usage_cpu_core_seconds text,
+  pod_request_cpu_core_seconds text,
+  pod_limit_cpu_core_seconds text,
+  pod_usage_memory_byte_seconds text,
+  pod_request_memory_byte_seconds text,
+  pod_limit_memory_byte_seconds text,
+  node_capacity_cpu_cores text,
+  node_capacity_cpu_core_seconds text,
+  node_capacity_memory_bytes text,
+  node_capacity_memory_byte_seconds text,
+  resource_id text,
+  pod_labels text
+);
+
+CREATE TABLE IF NOT EXISTS public.logs_3
+(
+  report_period_start timestamp with time zone,
+  report_period_end timestamp with time zone,
+  interval_start timestamp with time zone,
+  interval_end timestamp with time zone,
+  namespace text,
+  pod text,
+  persistentvolumeclaim text,
+  persistentvolume text,
+  storageclass text,
+  persistentvolumeclaim_capacity_bytes text,
+  persistentvolumeclaim_capacity_byte_seconds text,
+  volume_request_storage_byte_seconds text,
+  persistentvolumeclaim_usage_byte_seconds text,
+  persistentvolume_labels text,
+  persistentvolumeclaim_labels text
+);
+
+CREATE TABLE IF NOT EXISTS public.history
+(
+  file_names text
+);
+
+CREATE TABLE IF NOT EXISTS public.reports
+(
+  frequency text,
+  interval_start text,
+  pod_usage_cpu_core_seconds double precision,
+  pod_request_cpu_core_seconds double precision,
+  pod_limit_cpu_core_seconds double precision,
+  pod_usage_memory_byte_seconds double precision,
+  pod_request_memory_byte_seconds double precision,
+  pod_limit_memory_byte_seconds double precision,
+  node_capacity_cpu_cores double precision,
+  node_capacity_cpu_core_seconds double precision,
+  node_capacity_memory_bytes double precision,
+  node_capacity_memory_byte_seconds double precision,
+  namespace text
+);
