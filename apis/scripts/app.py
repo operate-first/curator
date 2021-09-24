@@ -11,7 +11,7 @@ app = Flask(__name__)
 def report():
     resp = get_report(request.args)  # TODO status code
     print(resp)
-    sql = "select * from reports where namespace={} and frequency= '{}'".format(resp['spec']['namespace'],
+    sql = "select * from reports where namespace='{}' and frequency= '{}'".format(resp['spec']['namespace'],
                                                                                 resp['spec']['reportPeriod'].lower())
     # for k, v in request.args.items():
     #     sql += " AND {} = '{}' ".format(k, v)
