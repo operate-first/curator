@@ -15,7 +15,7 @@ def report():
     resp = report.get(name=request.args['reportName'], namespace=request.args['reportNamespace'])
     print(resp)
     sql = "select * from reports where namespace={} and frequency= '{}'".format(resp['spec']['namespace'],
-                                                                                resp['spec']['reportPeriod'])
+                                                                                resp['spec']['reportPeriod'].lower())
     # for k, v in request.args.items():
     #     sql += " AND {} = '{}' ".format(k, v)
     # print(sql)

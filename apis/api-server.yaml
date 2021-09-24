@@ -47,6 +47,7 @@ items:
           labels:
             name: curator-reports
         spec:
+          serviceAccountName: report-controller-manager
           volumes:
             - name: api-scripts
               configMap:
@@ -54,8 +55,8 @@ items:
           containers:
             - env:
                 - name: POSTGRESQL_USER
-              image: "docker.io/aaaaazzaa/flask-api"
-              imagePullPolicy: IfNotPresent
+              image: "docker.io/aaaaazzaa/flask-api:latest"
+              imagePullPolicy: Always
               name: curator-reports
               envFrom:
                 - configMapRef:
@@ -63,7 +64,7 @@ items:
               command:
                 - sh
               args:
-                ['-c', 'python3 /scripts/app.py']
+                ['-c', 'export FLASK_ENV=development; cd scripts; flask run;']
               volumeMounts:
                 - name: api-scripts
                   mountPath: /scripts
