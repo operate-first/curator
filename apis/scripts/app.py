@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/report')
 def report():
-    resp = get_report(request.args)
+    resp = get_report(request.args)  # TODO status code
     print(resp)
     sql = "select * from reports where namespace={} and frequency= '{}'".format(resp['spec']['namespace'],
                                                                                 resp['spec']['reportPeriod'].lower())
