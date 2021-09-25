@@ -1,0 +1,10 @@
+apiVersion: batch.curator.openshift.io/v1
+kind: Report
+metadata:
+  name: report-sample
+spec:
+  # Add fields here
+  schedule: "*/1 * * * *"
+  reportPeriod: Day
+  runImmediately: true
+  namespace: koku-metrics-operator
