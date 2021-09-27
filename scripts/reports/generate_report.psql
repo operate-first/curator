@@ -88,7 +88,7 @@ CREATE OR REPLACE FUNCTION generate_report (frequency_ text)
 end; $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION generate_report_api (frequency_ text, reportingEnd timestamp with time zone default current_date)
+CREATE OR REPLACE FUNCTION generate_report_api (frequency_ text, reportingEnd timestamp with time zone default current_date - interval '1 day')
   returns TABLE (
 	frequency text,
 	interval_start timestamp with time zone,
@@ -108,19 +108,19 @@ CREATE OR REPLACE FUNCTION generate_report_api (frequency_ text, reportingEnd ti
   as $$
   declare
     interval_start_date timestamp with time zone;
-    interval_end_date timestamp with time zone := date_trunc('day', reportingEnd);
-    valid_end_date timestamp with time zone := date_trunc('day', current_date);
+    interval_end_date timestamp with time zone := date_trunc('day', reportingEnd) + interval '1 day' - interval '1 second';
+    valid_end_date timestamp with time zone := date_trunc('day', current_date) ;
   begin
   	if frequency_ = 'day' then
-    	interval_start_date := date_trunc('day', reportingEnd) - interval '24 hours';
+    	interval_start_date := date_trunc('day', reportingEnd);
     end if;
   	if frequency_ = 'week' then
-        interval_start_date := date_trunc('day', reportingEnd) - interval '7 days';
+        interval_start_date := date_trunc('day', reportingEnd) - interval '6 days';
     end if;
     if frequency_ = 'month' then
-    	interval_start_date := date_trunc('day', reportingEnd) - interval '30 days';
+    	interval_start_date := date_trunc('day', reportingEnd) - interval '29 days';
     end if;
-    if reportingEnd > valid_end_date then
+    if reportingEnd >= valid_end_date then
     RAISE EXCEPTION 'Querying future timestamp reportingEnd = (%). To get complete result, reportingEnd <= (%)', reportingEnd, valid_end_date;
     end if;
     RETURN QUERY EXECUTE '
@@ -140,7 +140,7 @@ CREATE OR REPLACE FUNCTION generate_report_api (frequency_ text, reportingEnd ti
         SUM(node_capacity_memory_bytes)       as  node_capacity_memory_bytes,
         SUM(node_capacity_memory_byte_seconds)as  node_capacity_memory_byte_seconds
       FROM logs_2
-      WHERE interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start < ' || quote_literal(interval_end_date) || '
+      WHERE logs_2.interval_start >= ' || quote_literal(interval_start_date) || ' and logs_2.interval_end <= ' || quote_literal(interval_end_date) || '
       GROUP BY namespace
       UNION
       SELECT
@@ -159,5 +159,5 @@ CREATE OR REPLACE FUNCTION generate_report_api (frequency_ text, reportingEnd ti
         SUM(node_capacity_memory_bytes) as  node_capacity_memory_bytes,
         SUM(node_capacity_memory_byte_seconds) as  node_capacity_memory_byte_seconds
       FROM logs_2
-      WHERE interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start <' || quote_literal(interval_end_date) ;
+      WHERE logs_2.interval_start >= ' || quote_literal(interval_start_date) || ' and logs_2.interval_end <= ' || quote_literal(interval_end_date) ;
 end; $$ LANGUAGE plpgsql;
