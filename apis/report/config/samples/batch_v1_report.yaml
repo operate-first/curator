@@ -1,10 +1,14 @@
 apiVersion: batch.curator.openshift.io/v1
 kind: Report
+namespace: report-system
 metadata:
   name: report-sample
 spec:
   # Add fields here
-  schedule: "*/1 * * * *"
-  reportPeriod: Day
-  runImmediately: true
+  reportPeriod: Month
   namespace: koku-metrics-operator
+  reportingEnd: "2021-08-10T00:00:00Z"
+  schedule: "*/1 * * * *"  # schedule a time to generate and email report
+#  emailConfig: {user1:{cc: []}}  # email configuration to receive this report
+#  runImmediately: true  # overrides schedule, generate and email immediately
+
