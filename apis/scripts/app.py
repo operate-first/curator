@@ -11,12 +11,9 @@ app = Flask(__name__)
 def report():
     resp = get_report(request.args)  # TODO status code
     print(resp)
-    sql = "select * from reports where namespace='{}' and frequency= '{}' and interval_start = '{}'".format(resp['spec']['namespace'],
-                                                                                resp['spec']['reportPeriod'].lower(),
-                                                                                       dateutil.parser.isoparse(resp['spec']['reportingEnd']).strftime('%Y-%m-%d' + ' 00:00:00+00'))
-    # for k, v in request.args.items():
-    #     sql += " AND {} = '{}' ".format(k, v)
-    # print(sql)
+    sql = "select * from generate_report_api('{}', '{}') where namespace='{}'".format(resp['spec']['reportPeriod'].lower(),
+                                                              resp['spec']['reportingEnd'],
+                                                              resp['spec']['namespace'])
     table = postgres_execute(sql, result=True)
     print(table)
     return jsonify(table)

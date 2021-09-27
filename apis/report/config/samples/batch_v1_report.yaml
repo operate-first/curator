@@ -5,9 +5,9 @@ metadata:
   name: report-sample
 spec:
   # Add fields here
-  reportPeriod: Month
+  reportPeriod: Week
   namespace: koku-metrics-operator
-  reportingEnd: "2021-08-10T00:00:00Z"
+  reportingEnd: "2021-08-26T00:00:00Z"
   schedule: "*/1 * * * *"  # schedule a time to generate and email report
 #  emailConfig: {user1:{cc: []}}  # email configuration to receive this report
 #  runImmediately: true  # overrides schedule, generate and email immediately
