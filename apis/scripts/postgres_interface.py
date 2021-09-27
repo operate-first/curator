@@ -73,32 +73,27 @@ def postgres_execute(sql_query, data=None, result=False):
         when Not None, sql_query is contains formatting string {}
     :return: Number of rows successfully inserted
     """
-    print(database_user)
-    try:
-        conn = psycopg2.connect(database=database_name, user=database_user,
-                                password=database_password, host=database_host_name, port=port) #postgres database connection string
+    conn = psycopg2.connect(database=database_name, user=database_user,
+                            password=database_password, host=database_host_name, port=port) #postgres database connection string
 
-        cursor = conn.cursor()
-        if data:
-            records_list = ','.join(['%s'] * len(data))
-            sql_query = sql_query.format(records_list)
-            cursor.execute(sql_query, data)
-        else:
-            cursor.execute(sql_query)
-        conn.commit()
-        count = cursor.rowcount
-        if not result:
-            print(count, "Record inserted successfully into table")
-            return count
-        else:
-            result_list = []
-            for i in range(count):
-                record = cursor.fetchone()
-                result_list.append(record)
-            return result_list
-    except Exception as ex:
-        print(ex)
-        return 0
+    cursor = conn.cursor()
+    if data:
+        records_list = ','.join(['%s'] * len(data))
+        sql_query = sql_query.format(records_list)
+        cursor.execute(sql_query, data)
+    else:
+        cursor.execute(sql_query)
+    conn.commit()
+    count = cursor.rowcount
+    if not result:
+        print(count, "Record inserted successfully into table")
+        return count
+    else:
+        result_list = []
+        for i in range(count):
+            record = cursor.fetchone()
+            result_list.append(record)
+        return result_list
 
 
 class BatchUpdatePostgres:

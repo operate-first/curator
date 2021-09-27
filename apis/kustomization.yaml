@@ -13,6 +13,7 @@ configMapGenerator:
       - scripts/app.py
       - scripts/postgres_interface.py
       - scripts/report_interface.py
+      - http_test.py
   - name: api-config
     envs:
       - config/config.env  # Path to your configuration file
