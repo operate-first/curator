@@ -1,7 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from postgres_interface import postgres_execute
 from report_interface import get_report
 from kubernetes import client, config
+from jinja2 import Template
 from openshift.dynamic import DynamicClient
 import dateutil.parser
 import json
@@ -10,7 +11,24 @@ from werkzeug import exceptions
 import psycopg2
 from psycopg2 import errors
 import openshift
+import pandas as pd
 app = Flask(__name__)
+# TEMPLATE_CONTENT = """
+# <!DOCTYPE html>
+# <html lang="en">
+# <head>
+#     <meta charset="UTF-8">
+#     <title>Title</title>
+# </head>
+# <body>
+#
+# {% for table in tables %}
+#             {{titles[loop.index]}}
+#             {{ table|safe }}
+# {% endfor %}
+# </body>
+# </html>
+# """
 
 
 @app.route('/report')
@@ -20,9 +38,12 @@ def report():
     sql = "select * from generate_report_api('{}', '{}') where namespace='{}'".format(resp['spec']['reportPeriod'].lower(),
                                                               resp['spec']['reportingEnd'],
                                                               resp['spec']['namespace'])
-    table = postgres_execute(sql, result=True)
-    print(table)
+    table = postgres_execute(sql, result=True, header=True)
     return jsonify(table)
+    # df = pd.DataFrame(table[1:])
+    # df.columns = table[0]
+    # html_template = Template(TEMPLATE_CONTENT)
+    # return html_template.render(**{"tables": [df.to_html(classes='data')], "titles": df.columns.values})
 
 
 

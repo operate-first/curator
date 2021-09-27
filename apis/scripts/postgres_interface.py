@@ -64,7 +64,7 @@ def get_history_data():
     return history
 
 
-def postgres_execute(sql_query, data=None, result=False):
+def postgres_execute(sql_query, data=None, result=False, header=False):
     """
 
     :param sql_query: query to be run
@@ -85,11 +85,14 @@ def postgres_execute(sql_query, data=None, result=False):
         cursor.execute(sql_query)
     conn.commit()
     count = cursor.rowcount
+    colnames = [desc[0] for desc in cursor.description]
     if not result:
         print(count, "Record inserted successfully into table")
         return count
     else:
         result_list = []
+        if header:
+            result_list.append(colnames)
         for i in range(count):
             record = cursor.fetchone()
             result_list.append(record)
