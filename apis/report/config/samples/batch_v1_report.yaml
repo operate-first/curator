@@ -4,11 +4,23 @@ namespace: report-system
 metadata:
   name: report-sample
 spec:
-  # Add fields here
+  # Report displaying
   reportPeriod: Week
   namespace: koku-metrics-operator
-  reportingEnd: "2021-08-26T00:00:00Z"
-  schedule: "*/1 * * * *"  # schedule a time to generate and email report
-#  emailConfig: {user1:{cc: []}}  # email configuration to receive this report
-#  runImmediately: true  # overrides schedule, generate and email immediately
+  reportingEnd: "2021-08-26T00:00:00Z"  # prevents Reports targeting future time
+
+#  # 1. deployment config (automated Report generation)
+#  schedule: "*/1 * * * *"              # schedule a future Report and email delivery
+#  emailConfig: {user1:{cc: []}}        # email configuration to receive this Report
+#  runImmediately: true                 # overrides schedule, generate and email immediately
+#
+#  # 2. sql config (Trino/Hive data analysis abstraction)
+#  resourceType: Cpu, Memory, PV
+#  aggregation:
+#    groupBy: Pod, Namespace, Node
+#    accumulator: X-hour-sum (X = 1~24)
+#
+#  # 3. access control
+#  ???           # reject unauthorized Report generation
+
 
