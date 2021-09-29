@@ -47,7 +47,36 @@ To generate a report manually, run the `generate_report()` PostgreSQL function o
     ```
     kustomize build | oc delete -f-
     ```
-    
+
+3. Deploy the API to Openshift
+    - Copy configuration file:
+    ``` shell
+    mkdir -p apis/config; cp Documentation/config/config.env apis/config/config.env
+    ```
+    - Install CRD
+    ``` shell
+    cd apis/report
+    make install
+    make docker-build docker-push IMG=<some-registry>/<project-name>:tag
+    make deploy IMG=<some-registry>/<project-name>:tag
+    cd ../..
+    ```
+    - Create a example `Report` to define specification of report
+        - reportingEnd: [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) Datetime. Create reports for the past N days until reportingEnd (includes reportingEnd).
+        - reportPeriod: String, one of Day,Week,Month. Report period N = 1, 7, 30 days. 
+        - namespace: String. Show report for namespace only. (Report metrics are grouped by namespace and accumulated by taking sum over the N days reportPeriod.)
+    ``` shell 
+    oc apply -f apis/report/config/samples/batch_v1_report.yaml
+    ```
+    - Deploy the HTTP API
+    ``` shell
+    kustomize build apis | oc apply -f-
+    ```
+    - Access `Report` data base on namespace and name of `Report` you just created. For example:
+    ```shell
+    curl -XGET "<service_route>/report?reportName=report-sample&reportNamespace=report-system"
+    ```
+
 ### Testing
 
 Before deploying the application, you can run `verify_connection.sh` to test your S3 bucket and PostgreSQL database connectivity. 

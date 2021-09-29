@@ -30,6 +30,7 @@ type ReportSpec struct {
 
 	//+kubebuilder:validation:MinLength=0
 	// The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
+	// +optional
 	Schedule string `json:"schedule"`
 
 	// ReportingStart specifies the time this Report should start from
@@ -43,7 +44,6 @@ type ReportSpec struct {
 	// - "Day" (default): daily (24 hrs) report ends on ReportingEnd;
 	// - "Week": weekly (7 days) report ends on ReportingEnd;
 	// - "Month": monthly (30 calendar days) report ends on ReportingEnd
-	// +optional
 	ReportPeriod ReportPeriod `json:"reportPeriod,omitempty"`
 
 	//+kubebuilder:validation:MinLength=0
