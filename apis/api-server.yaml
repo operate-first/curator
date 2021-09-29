@@ -55,7 +55,7 @@ items:
           containers:
             - env:
                 - name: POSTGRESQL_USER
-              image: "docker.io/aaaaazzaa/flask-api:latest"
+              image: "quay.io/operate-first/curator-s3-sync:latest"
               imagePullPolicy: Always
               name: curator-reports
               envFrom:
