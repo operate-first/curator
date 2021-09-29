@@ -85,7 +85,8 @@ To generate a report manually, run the `generate_report()` PostgreSQL function o
     ```
     - Access `Report` data base on namespace and name of `Report` you just created. For example:
     ```shell
-    curl -XGET "<service_route>/report?reportName=report-sample&reportNamespace=report-system"
+    oc port-forward $(oc get pods -l=app=curator-api -o name) 5000:5000
+    curl -XGET "http://localhost:5000/report?reportName=report-sample&reportNamespace=report-system"
     ```
 
 ### Testing

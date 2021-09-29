@@ -37,7 +37,7 @@ type ReportSpec struct {
 	// instead of the current time.
 	// This is intended for allowing a Report to start from the past
 	// and report on data collected before the Report was created.
-	ReportingEnd *metav1.Time `json:"reportingEnd,omitempty"`
+	ReportingEnd *metav1.Time `json:"reportingEnd"`
 
 	// Specifies how to treat concurrent executions of a Job.
 	// Valid values are:
