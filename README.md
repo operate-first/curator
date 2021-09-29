@@ -22,7 +22,7 @@ To generate a report manually, run the `generate_report()` PostgreSQL function o
 
       a. At any time you can change the configuration by editing `Documentation/config/config.env` and `Documentation/credentials/credentials.env`
          If you change value for variable `HAS_S3_ACCESS` later, collected files will be either pushed or not depending on the value for variable.
- 
+
    Optionally, you may set:
 
      - `MC_GLOBAL_FLAGS` -- flags passed to all invocations of the
@@ -54,6 +54,17 @@ To generate a report manually, run the `generate_report()` PostgreSQL function o
     mkdir -p apis/config; cp Documentation/config/config.env apis/config/config.env
     ```
     - Install CRD
+
+        To use prebuilt image: 
+
+    ```shell
+    cd apis/report
+    make deploy IMG=quay.io/operate-first/curator-crd
+    cd ../..
+    ```
+
+    ​	If you would like to build CRD from scratch or you made change to the apis/report scource code:
+
     ``` shell
     cd apis/report
     make install
