@@ -14,6 +14,8 @@ configMapGenerator:
       - scripts/unzip_backup.py
       - scripts/run-backup.sh
       - scripts/postgres_interface.py
+      - scripts/reports/generate_report.psql
+      - scripts/reports/create_table.psql
   - name: backup-config
     envs:
       - Documentation/config/config.env  # Path to your configuration file
