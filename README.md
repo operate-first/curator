@@ -61,6 +61,7 @@ To generate a report manually, run the `generate_report()` PostgreSQL function o
 
     ```shell
     cd apis/report
+    make install
     make deploy IMG=quay.io/operate-first/curator-crd
     cd ../..
     ```
