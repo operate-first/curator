@@ -54,7 +54,9 @@ To generate a report manually, run the `generate_report()` PostgreSQL function o
     mkdir -p apis/config; cp Documentation/config/config.env apis/config/config.env
     ```
     - Install CRD
-
+	
+	This part was generated using [kubebuilder](https://github.com/kubernetes-sigs/kubebuilder), which requires go v1.16+.
+	
         To use prebuilt image: 
 
     ```shell
