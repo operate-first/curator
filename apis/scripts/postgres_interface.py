@@ -12,7 +12,6 @@ def update_history_data(sql_query):
         Update the history data
     '''
     is_updated = True
-    conn = None
     try:
         conn = psycopg2.connect(
             database=database_name,
@@ -32,15 +31,11 @@ def update_history_data(sql_query):
     except Exception as ex:
         is_updated = False
         print(ex)
-    finally:	
-        if conn is not None:	
-            conn.close()
     return is_updated
-    
+
 
 def get_history_data():
-    history = []
-    conn = None
+    history = ""
     try:
         conn = psycopg2.connect(
             database=database_name,
@@ -53,32 +48,23 @@ def get_history_data():
         cursor = conn.cursor()
 
         cursor.execute("select file_names from history")
-        # history = cursor.fetchone()
-        rows = cursor.fetchall()
-        for row in rows:
-            history.append(row[0])
-        # if not history is None:
-        #     history = history[0]
-        # else:
-        #     cursor.execute("INSERT INTO HISTORY (file_names) VALUES ('test.tar.gz')")
-        #     conn.commit() 
-        #     cursor.execute("select file_names from history")
-        #     # history = cursor.fetchone()
-        #     rows = cursor.fetchall()
-        #     for row in rows:
-        #         history.append(row[0])
-            # history = history[0]
+        history = cursor.fetchone()
+        if not history is None:
+            history = history[0]
+        else:
+            cursor.execute("INSERT INTO HISTORY (file_names) VALUES ('test.tar.gz')")
+            conn.commit() 
+            cursor.execute("select file_names from history")
+            history = cursor.fetchone()
+            history = history[0]
         cursor.close()
         conn.close()
     except Exception as ex:
         print(ex)
-    finally:	
-        if conn is not None:	
-            conn.close()
     return history
 
 
-def postgres_execute(sql_query, data=None, result=False):
+def postgres_execute(sql_query, data=None, result=False, header=False):
     """
 
     :param sql_query: query to be run
@@ -87,38 +73,30 @@ def postgres_execute(sql_query, data=None, result=False):
         when Not None, sql_query is contains formatting string {}
     :return: Number of rows successfully inserted
     """
+    conn = psycopg2.connect(database=database_name, user=database_user,
+                            password=database_password, host=database_host_name, port=port) #postgres database connection string
 
-    conn = None	
-    count = 0
-
-    try:
-        conn = psycopg2.connect(database=database_name, user=database_user,
-                                password=database_password, host=database_host_name, port=port) #postgres database connection string
-
-        cursor = conn.cursor()
-        if data:
-            records_list = ','.join(['%s'] * len(data))
-            sql_query = sql_query.format(records_list)
-            cursor.execute(sql_query, data)
-        else:
-            cursor.execute(sql_query)
-        conn.commit()
-        count = cursor.rowcount
-        if not result:
-            print(count, "Record inserted successfully into table")
-            return count
-        else:
-            result_list = []
-            for i in range(count):
-                record = cursor.fetchone()
-                result_list.append(record)
-            return result_list
-    except Exception as ex:
-        print(ex)
-    finally:	
-        if conn is not None:	
-            conn.close()	
-    return count
+    cursor = conn.cursor()
+    if data:
+        records_list = ','.join(['%s'] * len(data))
+        sql_query = sql_query.format(records_list)
+        cursor.execute(sql_query, data)
+    else:
+        cursor.execute(sql_query)
+    conn.commit()
+    count = cursor.rowcount
+    colnames = [desc[0] for desc in cursor.description]
+    if not result:
+        print(count, "Record inserted successfully into table")
+        return count
+    else:
+        result_list = []
+        if header:
+            result_list.append(colnames)
+        for i in range(count):
+            record = cursor.fetchone()
+            result_list.append(record)
+        return result_list
 
 
 class BatchUpdatePostgres:

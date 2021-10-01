@@ -22,7 +22,7 @@ To generate a report manually, run the `generate_report()` PostgreSQL function o
 
       a. At any time you can change the configuration by editing `Documentation/config/config.env` and `Documentation/credentials/credentials.env`
          If you change value for variable `HAS_S3_ACCESS` later, collected files will be either pushed or not depending on the value for variable.
- 
+
    Optionally, you may set:
 
      - `MC_GLOBAL_FLAGS` -- flags passed to all invocations of the
@@ -47,7 +47,51 @@ To generate a report manually, run the `generate_report()` PostgreSQL function o
     ```
     kustomize build | oc delete -f-
     ```
-    
+
+3. Deploy the API to Openshift
+    - Copy configuration file:
+    ``` shell
+    mkdir -p apis/config; cp Documentation/config/config.env apis/config/config.env
+    ```
+    - Install CRD
+	
+	This part was generated using [kubebuilder](https://github.com/kubernetes-sigs/kubebuilder), which requires go v1.16+.
+	
+        To use prebuilt image: 
+
+    ```shell
+    cd apis/report
+    make install
+    make deploy IMG=quay.io/operate-first/curator-crd
+    cd ../..
+    ```
+
+    ​	If you would like to build CRD from scratch or you made change to the apis/report scource code:
+
+    ``` shell
+    cd apis/report
+    make install
+    make docker-build docker-push IMG=<some-registry>/<project-name>:tag
+    make deploy IMG=<some-registry>/<project-name>:tag
+    cd ../..
+    ```
+    - Create a example `Report` to define specification of report
+        - reportingEnd: [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) Datetime. Create reports for the past N days until reportingEnd (includes reportingEnd).
+        - reportPeriod: String, one of Day,Week,Month. Report period N = 1, 7, 30 days. 
+        - namespace: String. Show report for namespace only. (Report metrics are grouped by namespace and accumulated by taking sum over the N days reportPeriod.)
+    ``` shell 
+    oc apply -f apis/report/config/samples/batch_v1_report.yaml
+    ```
+    - Deploy the HTTP API
+    ``` shell
+    kustomize build apis | oc apply -f-
+    ```
+    - Access `Report` data base on namespace and name of `Report` you just created. For example:
+    ```shell
+    oc port-forward $(oc get pods -l=app=curator-api -o name) 5000:5000
+    curl -XGET "http://localhost:5000/report?reportName=report-sample&reportNamespace=report-system"
+    ```
+
 ### Testing
 
 Before deploying the application, you can run `verify_connection.sh` to test your S3 bucket and PostgreSQL database connectivity. 
