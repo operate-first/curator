@@ -10,4 +10,3 @@ For more information, check out the [Curator Documentation](https://curator-doc.
 Bugs and feature requests can be raised [here](https://github.com/operate-first/curator/issues).
 
 
-
