@@ -14,9 +14,16 @@ configMapGenerator:
       - scripts/unzip_backup.py
       - scripts/run-backup.sh
       - scripts/postgres_interface.py
+      - scripts/reports/generate_report.psql
+      - scripts/reports/create_table.psql
+      - scripts/costemailer/resources/CostEmailTemplate.html
+      - scripts/costemailer/resources/Logo-Red_Hat-cost-management-RGB.png
+      - scripts/costemailer/config.py
+      - scripts/send_email.py
   - name: backup-config
     envs:
       - Documentation/config/config.env  # Path to your configuration file
+      - Documentation/config/email.env
 
 secretGenerator:
   - name: backup-credentials
