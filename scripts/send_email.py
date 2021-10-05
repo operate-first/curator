@@ -103,7 +103,7 @@ if __name__ == "__main__":
         print('empty result on {}, {}'.format(midnight_today, freq))
         exit(-1)
     table = DataFrame(table[1:], columns=table[0])
-    report_path = 'tmp/report-{}-{}.csv'.format(freq, midnight_today)
+    report_path = '/tmp/report-{}-{}.csv'.format(freq, midnight_today)
     table.to_csv(report_path)
     with open(report_path, 'r') as fd:
         if not fd.read():
