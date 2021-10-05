@@ -1,6 +1,7 @@
 import sys
 import smtplib
 import time
+import ssl
 from datetime import date, timedelta
 # from email.encoders import encode_base64
 # from email.mime.base import MIMEBase
@@ -32,15 +33,9 @@ def email(recipients, content=EMAIL_TEMPLATE_CONTENT, attachments=None, img=None
         return
     gmail_user = Config.EMAIL_USER
     gmail_password = Config.EMAIL_PASSWORD
-    print('***', gmail_user, gmail_password)
-    s = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    s.ehlo()
-    try:
-        s.login(gmail_user, gmail_password)
-    except smtplib.SMTPAuthenticationError as e:
-        print(e, ' ===== retry in 30 seconds =====')
-        time.sleep(30)
-        s.login(gmail_user, gmail_password)
+    context = ssl.create_default_context()
+    s = smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context)
+    s.login(gmail_user, gmail_password)
 
 
     today = date.today().strftime("%Y-%m-%d")
@@ -96,10 +91,10 @@ if __name__ == "__main__":
         print('Need argument report frequency')
         exit(-1)
     midnight_today = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + ' 00:00:00'
-    midnight_today = '2021-06-16 00:00:00'
+    # midnight_today = '2021-06-16 00:00:00'
 
     table = postgres_execute("select * from reports where interval_start = '{}' and frequency = '{}'".format(midnight_today, freq), result=True, header=True)
-    if not table:
+    if len(table) <= 1:
         print('empty result on {}, {}'.format(midnight_today, freq))
         exit(-1)
     table = DataFrame(table[1:], columns=table[0])
