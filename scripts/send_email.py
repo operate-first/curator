@@ -90,7 +90,7 @@ if __name__ == "__main__":
     except IndexError:
         print('Need argument report frequency')
         exit(-1)
-    midnight_today = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + ' 00:00:00'
+    midnight_today = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + ' 00:00:00+00'
     # midnight_today = '2021-06-16 00:00:00'
 
     table = postgres_execute("select * from reports where interval_start = '{}' and frequency = '{}'".format(midnight_today, freq), result=True, header=True)
