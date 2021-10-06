@@ -17,8 +17,6 @@ spec:
             image: docker.io/library/postgres:13.0
             imagePullPolicy: IfNotPresent
             envFrom:
-              - secretRef:
-                  name: backup-credentials
               - configMapRef:
                   name: backup-config
             command:
@@ -31,7 +29,7 @@ spec:
               imagePullPolicy: IfNotPresent
               envFrom:
                 - secretRef:
-                    name: backup-credentials
+                    name: email-credentials
                 - configMapRef:
                     name: backup-config
               command:
@@ -42,3 +40,4 @@ spec:
                 - name: backup-scripts
                   mountPath: /scripts
           restartPolicy: Never
+          backoffLimit: 1

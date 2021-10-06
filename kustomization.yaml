@@ -23,9 +23,11 @@ configMapGenerator:
   - name: backup-config
     envs:
       - Documentation/config/config.env  # Path to your configuration file
-      - Documentation/config/email.env
 
 secretGenerator:
   - name: backup-credentials
     envs:
       - Documentation/credentials/credentials.env  # /path to your credentials.env file
+  - name: email-credentials
+    envs:
+      - Documentation/config/email.env  # /path to your credentials.env file
