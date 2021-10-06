@@ -40,4 +40,4 @@ spec:
                 - name: backup-scripts
                   mountPath: /scripts
           restartPolicy: Never
-          backoffLimit: 1
+          backoffLimit: 0
