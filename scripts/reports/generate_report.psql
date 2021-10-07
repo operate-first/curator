@@ -3,88 +3,84 @@
 
 CREATE OR REPLACE FUNCTION generate_report (frequency_ text)
   returns TABLE (
-	frequency text,
-	interval_start text,
-	pod_usage_cpu_core_seconds double precision,
-	pod_request_cpu_core_seconds double precision,
-	pod_limit_cpu_core_seconds double precision,
-	pod_usage_memory_byte_seconds double precision,
-	pod_request_memory_byte_seconds double precision,
-	pod_limit_memory_byte_seconds double precision,
-	node_capacity_cpu_cores double precision,
-	node_capacity_cpu_core_seconds double precision,
-	node_capacity_memory_bytes double precision,
-	node_capacity_memory_byte_seconds double precision,
-	namespace text
+          frequency text ,
+          interval_start timestamp with time zone,
+          interval_end timestamp with time zone,
+          namespace text,
+          pod text,
+          node text,
+          "pod_avg_usage_cpu_core[millicore]" numeric,
+          "pod_peak_usage_cpu_core[millicore]" numeric,
+          "pod_request_cpu_core[millicore]" numeric,
+          "pod_limit_cpu_core[millicore]" numeric,
+          "pod_avg_usage_memory[byte]" text,
+          "pod_peak_usage_memory[byte]" text,
+          "pod_request_memory[byte]" text,
+          "pod_limit_memory[byte]" text,
+          "node_capacity_cpu_cores[millicore]" numeric,
+          "node_capacity_memory[byte]" text
 )
   as $$
   declare
     interval_start_date timestamp with time zone;
     interval_end_date timestamp with time zone;
+    total_seconds double precision;
   begin
-  	if frequency_ = 'day' then
-    	interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '24 hours';
+    if frequency_ = 'day' then
+      interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '24 hours';
         interval_end_date := date_trunc('day', current_date at time zone 'UTC');
+      total_seconds := 24 * 3600;
     end if;
-  	if frequency_ = 'week' then
+    if frequency_ = 'week' then
         interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '7 days';
         interval_end_date := date_trunc('day', current_date at time zone 'UTC');
+        total_seconds := 7 * 24 * 3600;
     end if;
     if frequency_ = 'month' then
-    	interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '1 month';
+      interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '1 month';
         interval_end_date := date_trunc('day', current_date at time zone 'UTC');
+        total_seconds := 30 * 24 * 3600;
     end if;
     RETURN QUERY EXECUTE '
       INSERT INTO
-        reports (
+        reports_human (
           frequency,
           interval_start,
+          interval_end,
           namespace,
-          pod_usage_cpu_core_seconds,
-          pod_request_cpu_core_seconds,
-          pod_limit_cpu_core_seconds,
-          pod_usage_memory_byte_seconds,
-          pod_request_memory_byte_seconds,
-          pod_limit_memory_byte_seconds,
-          node_capacity_cpu_cores,
-          node_capacity_cpu_core_seconds,
-          node_capacity_memory_bytes,
-          node_capacity_memory_byte_seconds
+          pod,
+          node,
+          "pod_avg_usage_cpu_core[millicore]", -- granularity = minute
+          "pod_peak_usage_cpu_core[millicore]", -- granularity = hour
+          "pod_request_cpu_core[millicore]", -- granularity = minute
+          "pod_limit_cpu_core[millicore]", -- granularity = minute
+          "pod_avg_usage_memory[byte]", -- granularity = minute
+          "pod_peak_usage_memory[byte]", -- granularity = hour
+          "pod_request_memory[byte]", -- granularity = minute
+          "pod_limit_memory[byte]", -- granularity = minute
+          "node_capacity_cpu_cores[millicore]", -- constant
+          "node_capacity_memory[byte]" -- constant
         )
       SELECT
         ' || quote_literal(frequency_) || ' as frequency,
-        ' || quote_literal(interval_start_date) ||' as interval_start,
+        ' || quote_literal(interval_start_date) || '::timestamp with time zone  as interval_start,
+        ' || quote_literal(interval_end_date) || '::timestamp with time zone  as interval_end,
         namespace,
-        SUM(pod_usage_cpu_core_seconds)       as pod_usage_cpu_core_seconds,
-        SUM(pod_request_cpu_core_seconds)     as pod_request_cpu_core_seconds,
-        SUM(pod_limit_cpu_core_seconds)       as pod_limit_cpu_core_seconds,
-        SUM(pod_usage_memory_byte_seconds)    as pod_usage_memory_byte_seconds,
-        SUM(pod_request_memory_byte_seconds)  as pod_request_memory_byte_seconds,
-        SUM(pod_limit_memory_byte_seconds)    as pod_limit_memory_byte_seconds,
-        SUM(node_capacity_cpu_cores)          as node_capacity_cpu_cores,
-        SUM(node_capacity_cpu_core_seconds)   as  node_capacity_cpu_core_seconds,
-        SUM(node_capacity_memory_bytes)       as  node_capacity_memory_bytes,
-        SUM(node_capacity_memory_byte_seconds)as  node_capacity_memory_byte_seconds
+        pod,
+        node,
+        round((SUM(pod_usage_cpu_core_seconds) / ' || quote_literal(total_seconds) || ' * 1000 )::numeric, 2)      as pod_avg_usage_cpu_core,
+        round((MAX(pod_usage_cpu_core_seconds) / 3600 * 1000 )::numeric, 2)      as pod_peak_usage_cpu_core,
+        round((MAX(pod_request_cpu_core_seconds) / 3600 * 1000 )::numeric, 2)    as pod_request_cpu_core,
+        round((MAX(pod_limit_cpu_core_seconds) / 3600 * 1000 )::numeric, 2)      as pod_limit_cpu_core,
+        pg_size_pretty((SUM(pod_usage_memory_byte_seconds)   / ' || quote_literal(total_seconds) || ')::numeric) as pod_avg_usage_memory,
+        pg_size_pretty((MAX(pod_usage_memory_byte_seconds)   / 3600 )::numeric) as pod_peak_usage_memory,
+        pg_size_pretty((MAX(pod_request_memory_byte_seconds) / 3600 )::numeric) as pod_request_memory,
+        pg_size_pretty((MAX(pod_limit_memory_byte_seconds)   / 3600 )::numeric) as pod_limit_memory,
+        round((MAX(node_capacity_cpu_cores) * 1000 )::numeric, 2)  as  node_capacity_cpu_core,
+        pg_size_pretty((MAX(node_capacity_memory_bytes))::numeric) as  node_capacity_memory
       FROM logs_2
       WHERE interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start < ' || quote_literal(interval_end_date) || '
-      GROUP BY namespace
-      UNION
-      SELECT
-        ' || quote_literal(frequency_) || ' as frequency,
-        ' || quote_literal(interval_start_date) ||' as interval_start,
-        ''TOTAL'' as namespace,
-        SUM(pod_usage_cpu_core_seconds) as pod_usage_cpu_core_seconds,
-        SUM(pod_request_cpu_core_seconds) as pod_request_cpu_core_seconds,
-        SUM(pod_limit_cpu_core_seconds) as pod_limit_cpu_core_seconds,
-        SUM(pod_usage_memory_byte_seconds) as pod_usage_memory_byte_seconds,
-        SUM(pod_request_memory_byte_seconds) as pod_request_memory_byte_seconds,
-        SUM(pod_limit_memory_byte_seconds) as pod_limit_memory_byte_seconds,
-        SUM(node_capacity_cpu_cores) as node_capacity_cpu_cores,
-        SUM(node_capacity_cpu_core_seconds) as  node_capacity_cpu_core_seconds,
-        SUM(node_capacity_memory_bytes) as  node_capacity_memory_bytes,
-        SUM(node_capacity_memory_byte_seconds) as  node_capacity_memory_byte_seconds
-      FROM logs_2
-      WHERE interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start <' || quote_literal(interval_end_date) || ' returning *';
+      GROUP BY (namespace, pod, node) returning *';
 end; $$ LANGUAGE plpgsql;
 
 

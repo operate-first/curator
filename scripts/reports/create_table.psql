@@ -81,3 +81,22 @@ CREATE TABLE IF NOT EXISTS public.reports
   node_capacity_memory_byte_seconds double precision,
   namespace text
 );
+
+CREATE TABLE IF NOT EXISTS public.reports_human(
+          frequency text ,
+          interval_start timestamp with time zone,
+          interval_end timestamp with time zone,
+          namespace text,
+          pod text,
+          node text,
+          "pod_avg_usage_cpu_core[millicore]" numeric,
+          "pod_peak_usage_cpu_core[millicore]" numeric,
+          "pod_request_cpu_core[millicore]" numeric,
+          "pod_limit_cpu_core[millicore]" numeric,
+          "pod_avg_usage_memory[byte]" text,
+          "pod_peak_usage_memory[byte]" text,
+          "pod_request_memory[byte]" text,
+          "pod_limit_memory[byte]" text,
+          "node_capacity_cpu_cores[millicore]" numeric,
+          "node_capacity_memory[byte]" text
+);
