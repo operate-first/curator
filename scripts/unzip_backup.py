@@ -194,10 +194,10 @@ if __name__ == "__main__":
     #print(os.listdir(os.path.dirname(__file__)))
     with open(os.path.join(os.path.dirname(__file__), 'generate_report.psql'), mode='r') as sql_cmd_file: 
         report = sql_cmd_file.read()
-        postgres_execute(report)     
+        postgres_execute(report, isForSchema=True)     
     with open(os.path.join(os.path.dirname(__file__), 'create_table.psql'), mode='r') as sql_cmd_file:
         report = sql_cmd_file.read()
-        postgres_execute(report) 
+        postgres_execute(report, isForSchema=True) 
         
 
     if has_s3_access:

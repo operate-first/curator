@@ -104,15 +104,19 @@ def postgres_execute(sql_query, data=None, result=False):
             cursor.execute(sql_query)
         conn.commit()
         count = cursor.rowcount
-        if not result:
-            print(count, "Record inserted successfully into table")
-            return count
-        else:
-            result_list = []
-            for i in range(count):
-                record = cursor.fetchone()
-                result_list.append(record)
-            return result_list
+        if(isForSchema): 
+            print ("Schema and function created sucessfully")
+        else: 
+            if not result:
+                if(count>0):
+                    print(count, "Record inserted successfully into table")
+                    return count
+            else:
+                result_list = []
+                for i in range(count):
+                    record = cursor.fetchone()
+                    result_list.append(record)
+                return result_list
     except Exception as ex:
         print(ex)
     finally:	
