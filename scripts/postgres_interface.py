@@ -78,7 +78,7 @@ def get_history_data():
     return history
 
 
-def postgres_execute(sql_query, data=None, result=False):
+def postgres_execute(sql_query, data=None, result=False,isForSchema=False):
     """
 
     :param sql_query: query to be run
