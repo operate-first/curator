@@ -1,0 +1,83 @@
+kind: List
+metadata: {}
+apiVersion: v1
+items:
+#  - apiVersion: image.openshift.io/v1
+#    kind: ImageStream
+#    metadata:
+#      name: curator-s3-sync
+#    spec:
+#      lookupPolicy:
+#        local: true
+#      tags:
+#        - name: latest
+#          from:
+#            kind: DockerImage
+#            name: docker.io/aaaaazzaa/flask-api
+#          importPolicy: {}
+#          referencePolicy:
+#            type: Local
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: curator-reports
+    spec:
+      ports:
+        - name: curator-reports
+          nodePort: 0
+          port: 5000
+          protocol: TCP
+          targetPort: 5000
+      selector:
+        name: curator-reports
+      sessionAffinity: None
+      type: ClusterIP
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: curator-reports
+    spec:
+      replicas: 1
+      selector:
+        name: curator-reports
+      strategy:
+        type: Recreate
+      template:
+        metadata:
+          labels:
+            name: curator-reports
+        spec:
+          serviceAccountName: report-controller-manager
+          volumes:
+            - name: api-scripts
+              configMap:
+                name: api-scripts
+          containers:
+            - env:
+                - name: POSTGRESQL_USER
+              image: "quay.io/operate-first/curator-s3-sync:latest"
+              imagePullPolicy: Always
+              name: curator-reports
+              envFrom:
+                - configMapRef:
+                    name: api-config
+              command:
+                - sh
+              args:
+                ['-c', 'export FLASK_ENV=development; cd scripts; flask run;']
+              volumeMounts:
+                - name: api-scripts
+                  mountPath: /scripts
+              ports:
+                - containerPort: 5000
+                  protocol: TCP
+              resources:
+                requests:
+                  cpu: "1"
+                  memory: 2Gi
+                limits:
+                  cpu: "1"
+                  memory: 2Gi
+          dnsPolicy: ClusterFirst
+          restartPolicy: Always
+
