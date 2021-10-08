@@ -72,12 +72,12 @@ CREATE OR REPLACE FUNCTION generate_report (frequency_ text)
         round((MAX(pod_usage_cpu_core_seconds) / 3600 * 1000 )::numeric, 2)      as pod_peak_usage_cpu_core,
         round((MAX(pod_request_cpu_core_seconds) / 3600 * 1000 )::numeric, 2)    as pod_request_cpu_core,
         round((MAX(pod_limit_cpu_core_seconds) / 3600 * 1000 )::numeric, 2)      as pod_limit_cpu_core,
-        pg_size_pretty((SUM(pod_usage_memory_byte_seconds)   / ' || quote_literal(total_seconds) || ')::numeric) as pod_avg_usage_memory,
-        pg_size_pretty((MAX(pod_usage_memory_byte_seconds)   / 3600 )::numeric) as pod_peak_usage_memory,
-        pg_size_pretty((MAX(pod_request_memory_byte_seconds) / 3600 )::numeric) as pod_request_memory,
-        pg_size_pretty((MAX(pod_limit_memory_byte_seconds)   / 3600 )::numeric) as pod_limit_memory,
+        pg_size_pretty(round((SUM(pod_usage_memory_byte_seconds)   / ' || quote_literal(total_seconds) || ')::numeric, 0)) as pod_avg_usage_memory,
+        pg_size_pretty(round((MAX(pod_usage_memory_byte_seconds)   / 3600 )::numeric, 0)) as pod_peak_usage_memory,
+        pg_size_pretty(round((MAX(pod_request_memory_byte_seconds) / 3600 )::numeric, 0)) as pod_request_memory,
+        pg_size_pretty(round((MAX(pod_limit_memory_byte_seconds)   / 3600 )::numeric, 0)) as pod_limit_memory,
         round((MAX(node_capacity_cpu_cores) * 1000 )::numeric, 2)  as  node_capacity_cpu_core,
-        pg_size_pretty((MAX(node_capacity_memory_bytes))::numeric) as  node_capacity_memory
+        pg_size_pretty(round((MAX(node_capacity_memory_bytes))::numeric, 0)) as  node_capacity_memory
       FROM logs_2
       WHERE interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start < ' || quote_literal(interval_end_date) || '
       GROUP BY (namespace, pod, node) returning *';
