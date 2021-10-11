@@ -93,7 +93,7 @@ if __name__ == "__main__":
     midnight_today = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + ' 00:00:00+00'
     # midnight_today = '2021-06-16 00:00:00'
 
-    table = postgres_execute("select * from reports where interval_start = '{}' and frequency = '{}'".format(midnight_today, freq), result=True, header=True)
+    table = postgres_execute("select * from reports_human where interval_start = '{}' and frequency = '{}'".format(midnight_today, freq), result=True, header=True)
     if len(table) <= 1:
         print('empty result on {}, {}'.format(midnight_today, freq))
         exit(-1)
