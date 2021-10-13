@@ -34,10 +34,23 @@ app = Flask(__name__)
 @app.route('/report')
 def report():
     resp = get_report(request.args)  # TODO status code
-    print(resp)
-    sql = "select * from generate_report_api('{}', '{}') where namespace='{}'".format(resp['spec']['reportPeriod'].lower(),
-                                                              resp['spec']['reportingEnd'],
-                                                              resp['spec']['namespace'])
+    # print(resp, file=sys.stdout)
+    if 'reportingStart' in resp['spec'].keys():
+        sql = "SELECT * FROM logs_2 WHERE interval_start >= '{}'::timestamp with time zone AND interval_end < '{}'::timestamp with time zone "\
+            .format(resp['spec']['reportingStart'],resp['spec']['reportingEnd'])
+    else:
+        offset = 0
+        if resp['spec']['reportPeriod'].lower() == 'day':
+            offset = 1
+        elif resp['spec']['reportPeriod'].lower() == 'week':
+            offset = 7
+        elif resp['spec']['reportPeriod'].lower() == 'month':
+            offset = 30
+        sql = "SELECT * FROM logs_2 WHERE interval_start >= '{0}'::timestamp with time zone - interval '{1} day' AND interval_end < '{0}'::timestamp with time zone".\
+            format(resp['spec']['reportingEnd'], offset)
+    if 'namespace' in resp['spec'].keys():
+        sql += " AND namespace='{}'".format(resp['spec']['namespace'])
+    # print(sql, file=sys.stdout)
     table = postgres_execute(sql, result=True, header=True)
     return jsonify(table)
     # df = pd.DataFrame(table[1:])
