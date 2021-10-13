@@ -97,6 +97,7 @@ if __name__ == "__main__":
     if len(table) <= 1:
         print('empty result on {}, {}'.format(midnight_today, freq))
         exit(-1)
+    table.append([''] * 4 + ['sum of average cpu usages of each pod in namespace', 'sum of maximum cpu requested of each pod in namespace', 'sum of maximum cpu limit of each pod in namespace', 'sum of average memory usages of each pod in namespace', 'sum of maximum memory requested of each pod in namespace', 'sum of maximum memory limit of each pod in namespace'])
     table = DataFrame(table[1:], columns=table[0])
     report_path = '/tmp/report-{}-{}.csv'.format(freq, midnight_today)
     table.to_csv(report_path)
