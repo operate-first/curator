@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS public.reports_human(
           "pods_avg_usage_cpu_core_total[millicore]" numeric,
           "pods_request_cpu_core_total[millicore]" numeric,
           "pods_limit_cpu_core_total[millicore]" numeric,
-          "pods_avg_usage_memory_total[byte]" text,
-          "pods_request_memory_total[byte]" text,
-          "pods_limit_memory_total[byte]" text
+          "pods_avg_usage_memory_total[MB]" numeric,
+          "pods_request_memory_total[MB]" numeric,
+          "pods_limit_memory_total[MB]" numeric
 );
