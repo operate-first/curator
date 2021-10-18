@@ -4,7 +4,8 @@ import boto.s3.connection
 import shutil
 import tarfile
 from botocore.exceptions import ClientError
-import csv
+from datetime import datetime, timezone
+import csv, json
 from postgres_interface import update_history_data, get_history_data, BatchUpdatePostgres,postgres_execute
 
 
@@ -54,6 +55,7 @@ def get_history_file():
 
 def push_csv_to_db(extracted_csv_path):
     rowcount = 0
+    manifest = json.dumps(dict())
     try:
         for bsubdir, _, csvfiles in os.walk(extracted_csv_path):
             for csvf in csvfiles:
@@ -101,16 +103,16 @@ def push_csv_to_db(extracted_csv_path):
                                 node = row[4]
                                 namespace = row[5]
                                 pod = row[6]
-                                pod_usage_cpu_core_seconds = row[7] if row[7].strip() !="" else 0.0
-                                pod_request_cpu_core_seconds = row[8] if row[8].strip() !="" else 0.0
-                                pod_limit_cpu_core_seconds = row[9] if row[9].strip() !="" else 0.0
-                                pod_usage_memory_byte_seconds = row[10] if row[10].strip() !="" else 0.0
-                                pod_request_memory_byte_seconds = row[11] if row[11].strip() !="" else 0.0
-                                pod_limit_memory_byte_seconds = row[12] if row[12].strip() !="" else 0.0
-                                node_capacity_cpu_cores = row[13] if row[13].strip() !="" else 0.0
-                                node_capacity_cpu_core_seconds = row[14] if row[14].strip() !="" else 0.0
-                                node_capacity_memory_bytes = row[15] if row[15].strip() !="" else 0.0
-                                node_capacity_memory_byte_seconds = row[16] if row[16].strip() !="" else 0.0
+                                pod_usage_cpu_core_seconds = row[7] if row[7].strip() !="" else 'NULL'
+                                pod_request_cpu_core_seconds = row[8] if row[8].strip() !="" else 'NULL'
+                                pod_limit_cpu_core_seconds = row[9] if row[9].strip() !="" else 'NULL'
+                                pod_usage_memory_byte_seconds = row[10] if row[10].strip() !="" else 'NULL'
+                                pod_request_memory_byte_seconds = row[11] if row[11].strip() !="" else 'NULL'
+                                pod_limit_memory_byte_seconds = row[12] if row[12].strip() !="" else 'NULL'
+                                node_capacity_cpu_cores = row[13] if row[13].strip() !="" else 'NULL'
+                                node_capacity_cpu_core_seconds = row[14] if row[14].strip() !="" else 'NULL'
+                                node_capacity_memory_bytes = row[15] if row[15].strip() !="" else 'NULL'
+                                node_capacity_memory_byte_seconds = row[16] if row[16].strip() !="" else 'NULL'
                                 resource_id = row[17]
                                 pod_labels = row[18]
                                 if batch_executor.sql_isempty():
@@ -131,10 +133,10 @@ def push_csv_to_db(extracted_csv_path):
                                 persistentvolumeclaim = row[6]
                                 persistentvolume = row[7]
                                 storageclass = row[8]
-                                persistentvolumeclaim_capacity_bytes = row[9] if row[9].strip() !="" else 0.0
-                                persistentvolumeclaim_capacity_byte_seconds = row[10] if row[10].strip() !="" else 0.0
-                                volume_request_storage_byte_seconds = row[11] if row[11].strip() !="" else 0.0
-                                persistentvolumeclaim_usage_byte_seconds = row[12] if row[12].strip() !="" else 0.0
+                                persistentvolumeclaim_capacity_bytes = row[9] if row[9].strip() !="" else 'NULL'
+                                persistentvolumeclaim_capacity_byte_seconds = row[10] if row[10].strip() !="" else 'NULL'
+                                volume_request_storage_byte_seconds = row[11] if row[11].strip() !="" else 'NULL'
+                                persistentvolumeclaim_usage_byte_seconds = row[12] if row[12].strip() !="" else 'NULL'
                                 persistentvolume_labels = row[13]
                                 persistentvolumeclaim_labels = row[14]
                                 if batch_executor.sql_isempty():
@@ -149,10 +151,24 @@ def push_csv_to_db(extracted_csv_path):
                                                    persistentvolumeclaim_usage_byte_seconds, persistentvolume_labels,
                                                    persistentvolumeclaim_labels))
 
-                        rowcount += batch_executor.clean()
+                        batch_rowcount = batch_executor.clean()
+                        if batch_rowcount >= 0 and rowcount >= 0:
+                            rowcount += batch_rowcount
+                        else:
+                            rowcount = -1
+                elif csvf.endswith(".json"):
+                    csv_full_path = os.path.join(bsubdir, csvf)
+                    with open(csv_full_path, 'r') as fd:
+                        try:
+                            manifest = json.dumps(json.load(fd))  # dump into string
+                        except Exception as e:
+                            print('Fail to read manifest.json for ', bsubdir)
+                            print(e)
+
+
     except Exception as ex:
         print("An error is occured {0}".format(ex))
-    return rowcount
+    return rowcount, manifest
 
 
 def gunzip(file_path, output_path, is_push_db=True):
@@ -188,7 +204,6 @@ def move_unzipped_files_into_s3(unzip_folder_dir, file_folder):
 if __name__ == "__main__":    
     s3_unzipped_file_hist = ""
     s3_newly_unzipped_file_hist = ""
-    db_unzipped_file_hist = []
     db_newly_unzipped_file_hist = []
     if has_s3_access:
         get_history_file()
@@ -200,7 +215,7 @@ if __name__ == "__main__":
         except Exception as ex:
             print("An error is occured while read the history file {}".format(ex))
     
-    db_unzipped_file_hist = get_history_data()
+    db_unzipped_file_hist = set(get_history_data())  # list lookup? use set
     # if db_zipped_file_hist:
     #     db_zipped_file_hist = db_zipped_file_hist.split("~")    
 
@@ -221,9 +236,10 @@ if __name__ == "__main__":
                         
                         s3_newly_unzipped_file_hist = "{}\n{}".format(s3_newly_unzipped_file_hist, bf)
                     if not bf in db_unzipped_file_hist:
-                        push_csv_to_db(unzip_folder_dir)
-
-                        db_newly_unzipped_file_hist.append(bf)
+                        push_rowcnt, manifest = push_csv_to_db(unzip_folder_dir)
+                        # update history every time. this prevents data and metadata inconsistency
+                        postgres_execute("INSERT INTO history(file_names, manifest, success, crtime) VALUES {}",
+                                         [(bf, manifest, push_rowcnt > 0, datetime.now(timezone.utc))])
 
                     shutil.rmtree(unzip_folder_dir)
 
@@ -242,6 +258,3 @@ if __name__ == "__main__":
         except Exception as ex:
             print(
                 "Error is occured while push the updated history files into s3 {}".format(ex))
-    if len(db_newly_unzipped_file_hist) > 0:
-        # query = "UPDATE HISTORY set file_names='{}{}'".format("~".join(db_zipped_file_hist), newly_unzipped_files)
-        postgres_execute("INSERT INTO history(file_names) VALUES{}", list(zip(db_newly_unzipped_file_hist)))

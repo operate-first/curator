@@ -88,50 +88,44 @@ def postgres_execute(sql_query, data=None, result=False):
     :return: Number of rows successfully inserted
     """
 
-    conn = None	
-    count = 0
+    conn = psycopg2.connect(database=database_name, user=database_user,
+                            password=database_password, host=database_host_name, port=port) #postgres database connection string
 
-    try:
-        conn = psycopg2.connect(database=database_name, user=database_user,
-                                password=database_password, host=database_host_name, port=port) #postgres database connection string
-
-        cursor = conn.cursor()
-        if data:
-            records_list = ','.join(['%s'] * len(data))
-            sql_query = sql_query.format(records_list)
-            cursor.execute(sql_query, data)
-        else:
-            cursor.execute(sql_query)
-        conn.commit()
-        count = cursor.rowcount
-        if not result:
-            print(count, "Record inserted successfully into table")
-            return count
-        else:
-            result_list = []
-            for i in range(count):
-                record = cursor.fetchone()
-                result_list.append(record)
-            return result_list
-    except Exception as ex:
-        print(ex)
-    finally:	
-        if conn is not None:	
-            conn.close()	
-    return count
+    cursor = conn.cursor()
+    if data:
+        records_list = ','.join(['%s'] * len(data))
+        sql_query = sql_query.format(records_list)
+        cursor.execute(sql_query, data)
+    else:
+        cursor.execute(sql_query)
+    conn.commit()
+    count = cursor.rowcount
+    if not result:
+        print(count, "Record inserted successfully into table")
+        conn.close()
+        return count
+    else:
+        result_list = []
+        for i in range(count):
+            record = cursor.fetchone()
+            result_list.append(record)
+        conn.close()
+        return result_list
 
 
 class BatchUpdatePostgres:
     """
     Batch Execution Buffer
     """
-    def __init__(self, update_sql="", batch_size=1000, std_log=True, sleep_interval=10):
+    def __init__(self, update_sql="", batch_size=1000, std_log=True, test_threshold=10, sleep_interval=10):
         self.sql = update_sql
         self.rows = []
         self.batch_size = batch_size
         self.std_log = std_log
         self.sleep_interval = sleep_interval
+        self.test_threshold = test_threshold
         self.total_row = 0
+        self.success = True
 
     def sql_isempty(self):
         return len(self.sql) == 0
@@ -146,14 +140,15 @@ class BatchUpdatePostgres:
 
     def clean(self) -> int:  # don't forget to call clean to flush changes into db after gathering all data
         self.update()
-        return self.total_row
+        return self.total_row if self.success else -1
 
     def update(self, show_success=True):
         row_cnt = 0
         if not self.rows:
             return
         write_success = False
-        while not write_success:
+        test_cnt = 0
+        while not write_success and test_cnt < self.test_threshold:
             try:
                 row_cnt = postgres_execute(self.sql, self.rows)
                 write_success = True
@@ -161,9 +156,11 @@ class BatchUpdatePostgres:
                 if self.std_log:
                     print('when %s' % self.sql, e)
                 time.sleep(self.sleep_interval)
+                test_cnt += 1
         if self.std_log and not write_success:
             print("write failed")
         elif show_success:
             print("successfully updated %d items" % len(self.rows))
+        self.success &= write_success
         self.rows = []
         self.total_row += row_cnt

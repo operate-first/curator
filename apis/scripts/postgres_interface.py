@@ -64,6 +64,14 @@ def get_history_data():
     return history
 
 
+def postgres_connection():
+    conn = psycopg2.connect(database=database_name, user=database_user,
+                            password=database_password, host=database_host_name, port=port) #postgres database connection string
+
+    cursor = conn.cursor()
+    return conn, cursor
+
+
 def postgres_execute(sql_query, data=None, result=False, header=False):
     """
 
