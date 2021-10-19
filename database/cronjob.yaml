@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: database-execution
+spec:
+  volumes:
+  - name: koku-metrics-operator-data
+    persistentVolumeClaim:
+      claimName: koku-metrics-operator-data
+  - name: backup-scripts
+    configMap:
+      name: backup-scripts
+  containers:
+  - name: database-sync
+    image: quay.io/operate-first/curator-s3-sync:latest
+    envFrom:
+    - configMapRef:
+        name: backup-config
+    command:
+    - python3
+    - "/scripts/schema.py"
+    volumeMounts:
+    - name: backup-scripts
+      mountPath: "/scripts"
+    - name: koku-metrics-operator-data
+      mountPath: "/tmp/koku-metrics-operator-data"
+  restartPolicy: Never

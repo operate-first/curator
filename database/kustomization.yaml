@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: koku-metrics-operator
+commonLabels:
+  app: table-fuction-creation
+
+resources:
+  - cronjob.yaml
+
+configMapGenerator:
+  - name: backup-scripts
+    files:
+      - scripts/schema.py
+      - scripts/psql_queries/generate_report.psql
+      - scripts/psql_queries/create_table.psql
+  - name: backup-config
+    envs:
+      - config/config.env  # Path to your configuration file
