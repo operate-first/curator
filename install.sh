@@ -73,5 +73,4 @@ while true; do
 done
 
 cp Documentation/config/config.env database/config/config.env
-cd database
-kustomize build | oc apply -f-
+kustomize build database | oc apply -f-
