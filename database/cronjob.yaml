@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: database-execution
+spec:
+  volumes:
+  - name: backup-scripts
+    configMap:
+      name: backup-scripts
+  containers:
+  - name: database-sync
+    image: quay.io/operate-first/curator-s3-sync:latest
+    envFrom:
+    - configMapRef:
+        name: backup-config
+    command:
+    - python3
+    - "/scripts/schema.py"
+    volumeMounts:
+    - name: backup-scripts
+      mountPath: "/scripts"
+  restartPolicy: Never
