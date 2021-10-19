@@ -103,16 +103,16 @@ def push_csv_to_db(extracted_csv_path):
                                 node = row[4]
                                 namespace = row[5]
                                 pod = row[6]
-                                pod_usage_cpu_core_seconds = row[7] if row[7].strip() !="" else 'NULL'
-                                pod_request_cpu_core_seconds = row[8] if row[8].strip() !="" else 'NULL'
-                                pod_limit_cpu_core_seconds = row[9] if row[9].strip() !="" else 'NULL'
-                                pod_usage_memory_byte_seconds = row[10] if row[10].strip() !="" else 'NULL'
-                                pod_request_memory_byte_seconds = row[11] if row[11].strip() !="" else 'NULL'
-                                pod_limit_memory_byte_seconds = row[12] if row[12].strip() !="" else 'NULL'
-                                node_capacity_cpu_cores = row[13] if row[13].strip() !="" else 'NULL'
-                                node_capacity_cpu_core_seconds = row[14] if row[14].strip() !="" else 'NULL'
-                                node_capacity_memory_bytes = row[15] if row[15].strip() !="" else 'NULL'
-                                node_capacity_memory_byte_seconds = row[16] if row[16].strip() !="" else 'NULL'
+                                pod_usage_cpu_core_seconds = row[7] if row[7].strip() !="" else None
+                                pod_request_cpu_core_seconds = row[8] if row[8].strip() !="" else None
+                                pod_limit_cpu_core_seconds = row[9] if row[9].strip() !="" else None
+                                pod_usage_memory_byte_seconds = row[10] if row[10].strip() !="" else None
+                                pod_request_memory_byte_seconds = row[11] if row[11].strip() !="" else None
+                                pod_limit_memory_byte_seconds = row[12] if row[12].strip() !="" else None
+                                node_capacity_cpu_cores = row[13] if row[13].strip() !="" else None
+                                node_capacity_cpu_core_seconds = row[14] if row[14].strip() !="" else None
+                                node_capacity_memory_bytes = row[15] if row[15].strip() !="" else None
+                                node_capacity_memory_byte_seconds = row[16] if row[16].strip() !="" else None
                                 resource_id = row[17]
                                 pod_labels = row[18]
                                 if batch_executor.sql_isempty():
@@ -133,10 +133,10 @@ def push_csv_to_db(extracted_csv_path):
                                 persistentvolumeclaim = row[6]
                                 persistentvolume = row[7]
                                 storageclass = row[8]
-                                persistentvolumeclaim_capacity_bytes = row[9] if row[9].strip() !="" else 'NULL'
-                                persistentvolumeclaim_capacity_byte_seconds = row[10] if row[10].strip() !="" else 'NULL'
-                                volume_request_storage_byte_seconds = row[11] if row[11].strip() !="" else 'NULL'
-                                persistentvolumeclaim_usage_byte_seconds = row[12] if row[12].strip() !="" else 'NULL'
+                                persistentvolumeclaim_capacity_bytes = row[9] if row[9].strip() !="" else None
+                                persistentvolumeclaim_capacity_byte_seconds = row[10] if row[10].strip() !="" else None
+                                volume_request_storage_byte_seconds = row[11] if row[11].strip() !="" else None
+                                persistentvolumeclaim_usage_byte_seconds = row[12] if row[12].strip() !="" else None
                                 persistentvolume_labels = row[13]
                                 persistentvolumeclaim_labels = row[14]
                                 if batch_executor.sql_isempty():
