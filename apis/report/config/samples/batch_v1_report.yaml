@@ -7,7 +7,8 @@ spec:
   # Report displaying
   reportPeriod: Week
   namespace: koku-metrics-operator
-  reportingEnd: "2021-08-26T00:00:00Z"  # prevents Reports targeting future time
+  reportingEnd: "2021-10-03T12:00:00Z"  # prevents Reports targeting future time
+  reportingStart: "2021-10-03T00:00:00Z"  # prevents Reports targeting future time
 
 #  # 1. deployment config (automated Report generation)
 #  schedule: "*/1 * * * *"              # schedule a future Report and email delivery
