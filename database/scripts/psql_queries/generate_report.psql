@@ -10,9 +10,9 @@ CREATE OR REPLACE FUNCTION generate_report (frequency_ text)
           "pods_avg_usage_cpu_core_total[millicore]" numeric,
           "pods_request_cpu_core_total[millicore]" numeric,
           "pods_limit_cpu_core_total[millicore]" numeric,
-          "pods_avg_usage_memory_total[byte]" text,
-          "pods_request_memory_total[byte]" text,
-          "pods_limit_memory_total[byte]" text
+          "pods_avg_usage_memory_total[MB]" numeric,
+          "pods_request_memory_total[MB]" numeric,
+          "pods_limit_memory_total[MB]" numeric
 )
   as $$
   declare
@@ -45,9 +45,9 @@ CREATE OR REPLACE FUNCTION generate_report (frequency_ text)
           "pods_avg_usage_cpu_core_total[millicore]", -- granularity = minute
           "pods_request_cpu_core_total[millicore]", -- granularity = minute
           "pods_limit_cpu_core_total[millicore]", -- granularity = minute
-          "pods_avg_usage_memory_total[byte]", -- granularity = minute
-          "pods_request_memory_total[byte]", -- granularity = minute
-          "pods_limit_memory_total[byte]" -- granularity = minute
+          "pods_avg_usage_memory_total[MB]", -- granularity = minute
+          "pods_request_memory_total[MB]", -- granularity = minute
+          "pods_limit_memory_total[MB]" -- granularity = minute
         )
       SELECT
       ' || quote_literal(frequency_) || ' as frequency,
@@ -57,9 +57,9 @@ CREATE OR REPLACE FUNCTION generate_report (frequency_ text)
         round(SUM(pod_avg_usage_cpu_core), 2),
         round(SUM(pod_request_cpu_core), 2),
         round(SUM(pod_limit_cpu_core), 2),
-        pg_size_pretty(round(SUM(pod_avg_usage_memory), 0)),
-        pg_size_pretty(round(SUM(pod_request_memory), 0 )),
-        pg_size_pretty(round(SUM(pod_limit_memory), 0 ))
+        round(SUM(pod_avg_usage_memory) / 1024 / 1024, 0),
+        round(SUM(pod_request_memory) / 1024 / 1024, 0 ),
+        round(SUM(pod_limit_memory) / 1024 / 1024, 0 )
       FROM
         (SELECT
           namespace,
