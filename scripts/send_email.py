@@ -1,3 +1,5 @@
+# Chris Hambridge, project-koku/koku-report-emailer, (2021), GitHub repository
+# https://github.com/project-koku/koku-report-emailer
 import sys
 import smtplib
 import time

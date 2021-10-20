@@ -1,3 +1,5 @@
+# Chris Hambridge, project-koku/koku-report-emailer, (2021), GitHub repository
+# https://github.com/project-koku/koku-report-emailer
 """Configuration loader for application."""
 import json
 import logging
