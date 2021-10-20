@@ -58,83 +58,79 @@ func (r *ReportReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	_ = log.FromContext(ctx)
 
 	// your logic here
-// 	var report batchv1.Report
-// 	if err := r.Get(ctx, req.NamespacedName, &report); err != nil {
-// 		//log.Error(err, "unable to fetch CronJob")
-// 		// we'll ignore not-found errors, since they can't be fixed by an immediate
-// 		// requeue (we'll need to wait for a new notification), and we can get them
-// 		// on deleted requests.
-// 		//return ctrl.Result{}, client.IgnoreNotFound(err)
-// 		return ctrl.Result{}, err
-// 	}
-// 	period := strings.ToLower(string(report.Spec.ReportPeriod))
-// 	fmt.Print("get" + period)
-// 	reportYaml := fmt.Sprintf(`
-// apiVersion: batch/v1beta1
-// kind: CronJob
-// metadata:
-//   name: %[1]vreport
-// spec:
-//   schedule: "05 0 * * *"  #  At 00:00
-//   jobTemplate:
-//     spec:
-//       template:
-//         spec:
-//           volumes:
-//             - name: backup-scripts
-//               configMap:
-//                 name: backup-scripts
-//           initContainers:
-//           - name: %[1]vreport
-//             image: docker.io/library/postgres:13.0
-//             imagePullPolicy: IfNotPresent
-//             envFrom:
-//               - configMapRef:
-//                   name: backup-config
-//             command:
-//               - sh
-//               - -c
-//               - psql -d "postgresql://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST_NAME:$PORT_NUMBER/$DATABASE_NAME" -c "SELECT generate_report('%[1]v');"
-//           containers:
-//             - name: %[1]vemail
-//               image: quay.io/operate-first/curator-s3-sync:latest
-//               imagePullPolicy: IfNotPresent
-//               envFrom:
-//                 - secretRef:
-//                     name: email-credentials
-//                 - configMapRef:
-//                     name: backup-config
-//               command:
-//                 - python3
-//                 - /scripts/send_email.py
-//                 - %[1]v
-//               volumeMounts:
-//                 - name: backup-scripts
-//                   mountPath: /scripts
-//           restartPolicy: Never
-//           backoffLimit: 0`, period)
-// 	decode := scheme.Codecs.UniversalDeserializer().Decode
-// 	obj, _, err := decode([]byte(reportYaml), nil, nil)
-// 	if err != nil {
-// 		fmt.Printf("%#v", err)
-// 		return ctrl.Result{}, err
-// 	}
-//
-// 	cronjob := obj.(*v1beta1.CronJob)
-// 	cronjob.Spec.Schedule = report.Spec.Schedule
-// 	_, err = ctrl.CreateOrUpdate(ctx, r.Client, cronjob, func() error {
-// 		return ctrl.SetControllerReference(&report, cronjob, r.Scheme)
-// 	}) // idempotent
-// 	if err != nil {
-// 		fmt.Printf("%#v", err)
-// 		return ctrl.Result{}, err
-// 	}
-// 	fmt.Print("finished")
-// 	//var childJobs kbatch.JobList
-// 	//if err := r.List(ctx, &childJobs, client.InNamespace(req.Namespace), client.MatchingFields{jobOwnerKey: req.Name}); err != nil {
-// 	//	log.Error(err, "unable to list child Jobs")
-// 	//	return ctrl.Result{}, err
-// 	//}
+	var report batchv1.Report
+	if err := r.Get(ctx, req.NamespacedName, &report); err != nil {
+		//log.Error(err, "unable to fetch CronJob")
+		// we'll ignore not-found errors, since they can't be fixed by an immediate
+		// requeue (we'll need to wait for a new notification), and we can get them
+		// on deleted requests.
+		//return ctrl.Result{}, client.IgnoreNotFound(err)
+		return ctrl.Result{}, err
+	}
+	period := strings.ToLower(string(report.Spec.ReportPeriod))
+
+	reportYaml := fmt.Sprintf(`
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: %[1]vreport
+spec:
+  schedule: "05 0 * * *"  #  At 00:00
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          volumes:
+            - name: backup-scripts
+              configMap:
+                name: backup-scripts
+          initContainers:
+          - name: %[1]vreport
+            image: docker.io/library/postgres:13.0
+            imagePullPolicy: IfNotPresent
+            envFrom:
+              - configMapRef:
+                  name: backup-config
+            command:
+              - sh
+              - -c
+              - psql -d "postgresql://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST_NAME:$PORT_NUMBER/$DATABASE_NAME" -c "SELECT generate_report('%[1]v');"
+          containers:
+            - name: %[1]vemail
+              image: quay.io/operate-first/curator-s3-sync:latest
+              imagePullPolicy: IfNotPresent
+              envFrom:
+                - secretRef:
+                    name: email-credentials
+                - configMapRef:
+                    name: backup-config
+              command:
+                - python3
+                - /scripts/send_email.py
+                - %[1]v
+              volumeMounts:
+                - name: backup-scripts
+                  mountPath: /scripts
+          restartPolicy: Never
+          backoffLimit: 0`, period)
+	decode := scheme.Codecs.UniversalDeserializer().Decode
+	obj, _, err := decode([]byte(reportYaml), nil, nil)
+	if err != nil {
+		fmt.Printf("%#v", err)
+		return ctrl.Result{}, err
+	}
+
+	cronjob := obj.(*v1beta1.CronJob)
+	cronjob.Spec.Schedule = report.Spec.Schedule
+	_, err = ctrl.CreateOrUpdate(ctx, r.Client, cronjob, func() error {
+		return ctrl.SetControllerReference(&report, cronjob, r.Scheme)
+	}) // idempotent
+	fmt.Print("finished")
+	//var childJobs kbatch.JobList
+	//if err := r.List(ctx, &childJobs, client.InNamespace(req.Namespace), client.MatchingFields{jobOwnerKey: req.Name}); err != nil {
+	//	log.Error(err, "unable to list child Jobs")
+	//	return ctrl.Result{}, err
+	//}
 	return ctrl.Result{}, nil
 }
 
