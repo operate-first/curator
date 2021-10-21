@@ -18,20 +18,15 @@ package controllers
 
 import (
 	"context"
-	"fmt"
-	//v1 "k8s.io/api/batch/v1"
-	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"strings"
 
 	"github.com/go-logr/logr"
+	//kbatch "k8s.io/api/batch/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	batchv1 "curator.openshift.io/guestbook/api/v1"
-	v1beta1 "k8s.io/api/batch/v1beta1"
-	"k8s.io/client-go/kubernetes/scheme"
 )
 
 // ReportReconciler reconciles a Report object
