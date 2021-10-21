@@ -32,11 +32,11 @@ def update_history_data(sql_query):
     except Exception as ex:
         is_updated = False
         print(ex)
-    finally:	
-        if conn is not None:	
+    finally:
+        if conn is not None:
             conn.close()
     return is_updated
-    
+
 
 def get_history_data():
     history = []
@@ -61,7 +61,7 @@ def get_history_data():
         #     history = history[0]
         # else:
         #     cursor.execute("INSERT INTO HISTORY (file_names) VALUES ('test.tar.gz')")
-        #     conn.commit() 
+        #     conn.commit()
         #     cursor.execute("select file_names from history")
         #     # history = cursor.fetchone()
         #     rows = cursor.fetchall()
@@ -72,13 +72,13 @@ def get_history_data():
         conn.close()
     except Exception as ex:
         print(ex)
-    finally:	
-        if conn is not None:	
+    finally:
+        if conn is not None:
             conn.close()
     return history
 
 
-def postgres_execute(sql_query, data=None, result=False):
+def postgres_execute(sql_query, data=None, result=False, header=False):
     """
 
     :param sql_query: query to be run

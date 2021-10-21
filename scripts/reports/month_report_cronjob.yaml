@@ -8,17 +8,36 @@ spec:
     spec:
       template:
         spec:
-          containers:
+          volumes:
+            - name: backup-scripts
+              configMap:
+                name: backup-scripts
+          initContainers:
           - name: dayreport
             image: docker.io/library/postgres:13.0
             imagePullPolicy: IfNotPresent
             envFrom:
-              - secretRef:
-                  name: backup-credentials
               - configMapRef:
                   name: backup-config
             command:
               - sh
               - -c
               - psql -d "postgresql://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST_NAME:$PORT_NUMBER/$DATABASE_NAME" -c "SELECT generate_report('month');"
-          restartPolicy: OnFailure
+          containers:
+            - name: monthemail
+              image: quay.io/operate-first/curator-s3-sync:latest
+              imagePullPolicy: IfNotPresent
+              envFrom:
+                - secretRef:
+                    name: email-credentials
+                - configMapRef:
+                    name: backup-config
+              command:
+                - python3
+                - /scripts/send_email.py
+                - day
+              volumeMounts:
+                - name: backup-scripts
+                  mountPath: /scripts
+          restartPolicy: Never
+          backoffLimit: 0
