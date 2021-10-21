@@ -71,3 +71,6 @@ while true; do
         * ) echo "Please answer day/week/month.";;
     esac
 done
+
+cp Documentation/config/config.env database/config/config.env
+kustomize build database | oc apply -f-

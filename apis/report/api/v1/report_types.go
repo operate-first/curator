@@ -33,25 +33,30 @@ type ReportSpec struct {
 	// +optional
 	Schedule string `json:"schedule"`
 
-	// ReportingStart specifies the time this Report should start from
-	// instead of the current time.
-	// This is intended for allowing a Report to start from the past
-	// and report on data collected before the Report was created.
+	// ReportingEnd specifies the time this Report should end
 	ReportingEnd *metav1.Time `json:"reportingEnd"`
+
+	// ReportingStart specifies the time this Report should start from
+	// This is intended for allowing a Report to start from the past
+	// +optional
+	ReportingStart *metav1.Time `json:"reportingStart"`
 
 	// Specifies how to treat concurrent executions of a Job.
 	// Valid values are:
 	// - "Day" (default): daily (24 hrs) report ends on ReportingEnd;
 	// - "Week": weekly (7 days) report ends on ReportingEnd;
 	// - "Month": monthly (30 calendar days) report ends on ReportingEnd
+	// +optional
 	ReportPeriod ReportPeriod `json:"reportPeriod,omitempty"`
 
 	//+kubebuilder:validation:MinLength=0
+	// +optional
+
 	Namespace string `json:"namespace"`
 
 	// RunImmediately will run the report immediately, ignoring ReportingStart
 	// and, ReportingEnd.
-	RunImmediately bool `json:"runImmediately,omitempty"`
+	//RunImmediately bool `json:"runImmediately,omitempty"`
 }
 
 // Only one of the following choice may be specified.
