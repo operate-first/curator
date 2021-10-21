@@ -132,3 +132,4 @@ CREATE OR REPLACE FUNCTION generate_report_api (frequency_ text, reportingEnd ti
       WHERE logs_2.interval_start >= ' || quote_literal(interval_start_date) || ' and logs_2.interval_end <= ' || quote_literal(interval_end_date) || '
       GROUP BY namespace';
 end; $$ LANGUAGE plpgsql;
+
