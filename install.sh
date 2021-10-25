@@ -72,5 +72,6 @@ while true; do
     esac
 done
 
+cp Documentation/config/config.env apis/config/config.env
 cp Documentation/config/config.env database/config/config.env
 kustomize build database | oc apply -f-
