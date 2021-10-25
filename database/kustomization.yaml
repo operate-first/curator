@@ -5,7 +5,7 @@ commonLabels:
   app: table-fuction-creation
 
 resources:
-  - cronjob.yaml
+  - database_pod.yaml
 
 configMapGenerator:
   - name: backup-scripts
