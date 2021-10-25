@@ -3,9 +3,11 @@ kind: CronJob
 metadata:
   name: backup-to-bucket
 spec:
+  concurrencyPolicy: Forbid
   schedule: '0 */6 * * *'  # This job will run every 6 hours. You can also use " schedule: '* * * * *' " to run this cron job instantly
   jobTemplate:
     spec:
+      backoffLimit: 0
       template:
         spec:
           volumes:
@@ -48,4 +50,3 @@ spec:
                 - name: koku-metrics-operator-data
                   mountPath: /tmp/koku-metrics-operator-data
           restartPolicy: Never
-          concurrencyPolicy: Forbidden

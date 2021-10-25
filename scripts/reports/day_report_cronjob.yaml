@@ -3,9 +3,11 @@ kind: CronJob
 metadata:
   name: dayreport
 spec:
+  concurrencyPolicy: Forbid
   schedule: "05 0 * * *"  #  At 00:05
   jobTemplate:
     spec:
+      backoffLimit: 0
       template:
         spec:
           volumes:
@@ -40,4 +42,3 @@ spec:
                 - name: backup-scripts
                   mountPath: /scripts
           restartPolicy: Never
-          backoffLimit: 0
