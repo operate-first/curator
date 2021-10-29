@@ -5,7 +5,7 @@ items:
   - apiVersion: image.openshift.io/v1
     kind: ImageStream
     metadata:
-      name: postgresql-10-rhel7
+      name: postgresql-13-rhel7
     spec:
       lookupPolicy:
         local: true
@@ -13,7 +13,7 @@ items:
         - name: latest
           from:
             kind: DockerImage
-            name: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest
+            name: registry.redhat.io/rhscl/postgresql-13-rhel7:latest
           importPolicy: {}
           referencePolicy:
             type: Local
@@ -32,14 +32,14 @@ items:
   - kind: PersistentVolumeClaim
     apiVersion: v1
     metadata:
-      name: pgsql-data
+      name: pgsql-data-2
     spec:
       accessModes:
         - ReadWriteOnce
       resources:
         requests:
           storage: 1Gi
-      storageClassName: ocs-storagecluster-cephfs
+      storageClassName: hostpath-provisioner
       volumeMode: Filesystem
   - apiVersion: apps.openshift.io/v1
     kind: DeploymentConfig
@@ -64,7 +64,7 @@ items:
                   value: <password>
                 - name: POSTGRESQL_DATABASE
                   value: <database-name>
-              image: "postgresql-10-rhel7:latest"
+              image: "postgresql-13-rhel7:latest"
               imagePullPolicy: IfNotPresent
               livenessProbe:
                 exec:
@@ -92,10 +92,10 @@ items:
                   memory: 2Gi
               volumeMounts:
                 - mountPath: /var/lib/pgsql/data
-                  name: postgresql-data
+                  name: postgresql-data-2
           dnsPolicy: ClusterFirst
           restartPolicy: Always
           volumes:
-            - name: postgresql-data
+            - name: postgresql-data-2
               persistentVolumeClaim:
-                claimName: pgsql-data
+                claimName: pgsql-data-2
