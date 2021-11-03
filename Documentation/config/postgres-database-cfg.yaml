@@ -2,21 +2,21 @@ kind: List
 metadata: {}
 apiVersion: v1
 items:
-  - apiVersion: image.openshift.io/v1
-    kind: ImageStream
-    metadata:
-      name: postgresql-13-rhel7
-    spec:
-      lookupPolicy:
-        local: true
-      tags:
-        - name: latest
-          from:
-            kind: DockerImage
-            name: registry.redhat.io/rhscl/postgresql-13-rhel7:latest
-          importPolicy: {}
-          referencePolicy:
-            type: Local
+  # - apiVersion: image.openshift.io/v1
+  #   kind: ImageStream
+  #   metadata:
+  #     name: postgresql-13-rhel7
+  #   spec:
+  #     lookupPolicy:
+  #       local: true
+  #     tags:
+  #       - name: latest
+  #         from:
+  #           kind: DockerImage
+  #           name: registry.redhat.io/rhscl/postgresql-13-rhel7:latest
+  #         importPolicy: {}
+  #         referencePolicy:
+  #           type: Local
   - apiVersion: v1
     kind: Service
     metadata:
@@ -65,6 +65,9 @@ items:
                 - name: POSTGRESQL_DATABASE
                   value: <database-name>
               image: "postgresql-13-rhel7:latest"
+                - name: PGDATA
+                  value: /var/lib/postgresql/data/pgdata
+              image: "aaaaazzaa/postgres-alpine-extension:11"
               imagePullPolicy: IfNotPresent
               livenessProbe:
                 exec:
@@ -91,7 +94,7 @@ items:
                   cpu: "1"
                   memory: 2Gi
               volumeMounts:
-                - mountPath: /var/lib/pgsql/data
+                - mountPath: /var/lib/postgresql/data
                   name: postgresql-data-2
           dnsPolicy: ClusterFirst
           restartPolicy: Always
