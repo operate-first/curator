@@ -58,12 +58,12 @@ items:
         spec:
           containers:
             - env:
-                - name: POSTGRESQL_USER
-                  value: <user-name>
-                - name: POSTGRESQL_PASSWORD
-                  value: <password>
-                - name: POSTGRESQL_DATABASE
-                  value: <database-name>
+                - name: POSTGRES_USER
+                  value: user5OS
+                - name: POSTGRES_PASSWORD
+                  value: M5rBgWkN8LfjeyI8
+                - name: POSTGRES_DATABASE
+                  value: curatordb
                 - name: PGDATA
                   value: /var/lib/postgresql/data/pgdata
               image: "aaaaazzaa/postgres-alpine-extension:11"
