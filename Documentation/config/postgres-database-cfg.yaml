@@ -64,7 +64,6 @@ items:
                   value: <password>
                 - name: POSTGRESQL_DATABASE
                   value: <database-name>
-              image: "postgresql-13-rhel7:latest"
                 - name: PGDATA
                   value: /var/lib/postgresql/data/pgdata
               image: "aaaaazzaa/postgres-alpine-extension:11"
