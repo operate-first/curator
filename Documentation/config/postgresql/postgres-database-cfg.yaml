@@ -58,9 +58,9 @@ items:
         spec:
           containers:
             - env:
-                - name: POSTGRESQL_USER
+                - name: POSTGRES_USER
                   value: <user-name>
-                - name: POSTGRESQL_PASSWORD
+                - name: POSTGRES_PASSWORD
                   value: <password>
                 - name: POSTGRES_DB
                   value: <database-name>
