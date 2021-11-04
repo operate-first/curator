@@ -1,5 +1,5 @@
 # Based on https://github.com/andreaswachowski/docker-postgres/blob/master/initdb.sh
-FROM postgres:11-alpine
+FROM postgres:13-alpine
 
 ENV PG_JOBMON_VERSION v1.3.3
 ENV PG_PARTMAN_VERSION v4.4.0
