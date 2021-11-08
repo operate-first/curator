@@ -90,10 +90,10 @@ CREATE TABLE IF NOT EXISTS public.reports_human(
           interval_start timestamp with time zone,
           interval_end timestamp with time zone,
           namespace text,
-          "pods_avg_usage_cpu_core_total[millicore]" numeric,
-          "pods_request_cpu_core_total[millicore]" numeric,
-          "pods_limit_cpu_core_total[millicore]" numeric,
-          "pods_avg_usage_memory_total[MB]" numeric,
-          "pods_request_memory_total[MB]" numeric,
-          "pods_limit_memory_total[MB]" numeric
+          "pods_avg_usage_cpu_core_total[millicore]" double precision,
+          "pods_request_cpu_core_total[millicore]" double precision,
+          "pods_limit_cpu_core_total[millicore]" double precision,
+          "pods_avg_usage_memory_total[mb]" double precision,
+          "pods_request_memory_total[mb]" double precision,
+          "pods_limit_memory_total[mb]" double precision
 );
