@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import csv, json
 from postgres_interface import update_history_data, get_history_data, BatchUpdatePostgres,postgres_execute
 
-
+EXCEPTION = None
 AWS_ACCESS_KEY_ID = os.environ.get(
     "AWS_ACCESS_KEY_ID")  # dir of the metrics files
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
@@ -162,11 +162,15 @@ def push_csv_to_db(extracted_csv_path):
                         try:
                             manifest = json.dumps(json.load(fd))  # dump into string
                         except Exception as e:
+                            global EXCEPTION
+                            EXCEPTION = e
                             print('Fail to read manifest.json for ', bsubdir)
                             print(e)
 
 
     except Exception as ex:
+        global EXCEPTION
+        EXCEPTION = ex
         print("An error is occured {0}".format(ex))
     return rowcount, manifest
 
@@ -179,6 +183,8 @@ def gunzip(file_path, output_path, is_push_db=True):
         # if is_push_db:
         #     push_csv_to_db(output_path)
     except Exception as ex:
+        global EXCEPTION
+        EXCEPTION = ex
         print(
             "Error is occured while extract the file {} and the error is {}".format(
                 file_path, ex
@@ -197,6 +203,8 @@ def move_unzipped_files_into_s3(unzip_folder_dir, file_folder):
                 print(unzip_full_path)
                 moved_files_count += 1
     except Exception as exp:
+        global EXCEPTION
+        EXCEPTION = exp
         print("An error is occured while move files into s3 {0}".format(exp))
     return moved_files_count
 
@@ -213,6 +221,8 @@ if __name__ == "__main__":
                 s3_unzipped_file_hist = h_f.readlines()
                 # s3_zipped_file_hist = s3_zipped_file_hist.split("\n") 
         except Exception as ex:
+            global EXCEPTION
+            EXCEPTION = ex
             print("An error is occured while read the history file {}".format(ex))
     
     db_unzipped_file_hist = set(get_history_data())  # list lookup? use set
@@ -244,6 +254,8 @@ if __name__ == "__main__":
                     shutil.rmtree(unzip_folder_dir)
 
     except Exception as ex:
+        global EXCEPTION
+        EXCEPTION = ex
         print("An error is occured while unzip the files into unzip directory {}".format(ex))
     if has_s3_access:
         try:
@@ -256,5 +268,10 @@ if __name__ == "__main__":
                 os.path.join(unzip_dir, "history.txt"))
             os.remove(os.path.join(unzip_dir, "history.txt"))
         except Exception as ex:
+            global EXCEPTION
+            EXCEPTION = ex
             print(
                 "Error is occured while push the updated history files into s3 {}".format(ex))
+
+if EXCEPTION:
+    raise EXCEPTION
