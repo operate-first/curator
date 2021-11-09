@@ -90,12 +90,12 @@ CREATE TABLE IF NOT EXISTS public.reports_human(
           interval_start timestamp with time zone,
           interval_end timestamp with time zone,
           namespace text,
-          "pods_avg_usage_cpu_core_total[millicore]" numeric,
-          "pods_request_cpu_core_total[millicore]" numeric,
-          "pods_limit_cpu_core_total[millicore]" numeric,
-          "pods_avg_usage_memory_total[MB]" numeric,
-          "pods_request_memory_total[MB]" numeric,
-          "pods_limit_memory_total[MB]" numeric
+          "pods_avg_usage_cpu_core_total[millicore]" double precision,
+          "pods_request_cpu_core_total[millicore]" double precision,
+          "pods_limit_cpu_core_total[millicore]" double precision,
+          "pods_avg_usage_memory_total[mb]" double precision,
+          "pods_request_memory_total[mb]" double precision,
+          "pods_limit_memory_total[mb]" double precision
 ) PARTITION BY RANGE (interval_start);
 
 SELECT partman.create_parent( p_parent_table => 'public.logs_0',
@@ -133,3 +133,4 @@ SET infinite_time_partitions = true,
     retention = '1 day',
     retention_keep_table=true
 WHERE parent_table IN ('public.logs_0', 'public.logs_1', 'public.logs_2', 'public.logs_3', 'public.history', 'public.reports_human');
+
