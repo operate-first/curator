@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS public.logs_0
   interval_end timestamp with time zone,
   namespace text,
   namespace_labels text
-);
+) PARTITION BY RANGE (interval_start);
     
 CREATE TABLE IF NOT EXISTS public.logs_1
 (
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS public.logs_1
   interval_end timestamp with time zone,
   node text,
   node_labels text
-);
+) PARTITION BY RANGE (interval_start);
 
 CREATE TABLE IF NOT EXISTS public.logs_2
 (
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS public.logs_2
 	node_capacity_memory_byte_seconds double precision,
 	resource_id text,
 	pod_labels text
-);
+) PARTITION BY RANGE (interval_start);
 
 CREATE TABLE IF NOT EXISTS public.logs_3
 (
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS public.logs_3
 	persistentvolumeclaim_usage_byte_seconds double precision,
 	persistentvolume_labels text,
 	persistentvolumeclaim_labels text
-);
+) PARTITION BY RANGE (interval_start);
 
 CREATE TABLE IF NOT EXISTS public.history
 (
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS public.history
   manifest jsonb,
   success boolean,
   crtime timestamp with time zone
-);
+) PARTITION BY RANGE (crtime);
 
 CREATE TABLE IF NOT EXISTS public.reports
 (
@@ -96,4 +96,41 @@ CREATE TABLE IF NOT EXISTS public.reports_human(
           "pods_avg_usage_memory_total[mb]" double precision,
           "pods_request_memory_total[mb]" double precision,
           "pods_limit_memory_total[mb]" double precision
-);
+) PARTITION BY RANGE (interval_start);
+
+SELECT partman.create_parent( p_parent_table => 'public.logs_0',
+ p_control => 'report_period_start',
+ p_type => 'native',
+ p_interval=> 'monthly');
+
+SELECT partman.create_parent( p_parent_table => 'public.logs_1',
+ p_control => 'report_period_start',
+ p_type => 'native',
+ p_interval=> 'monthly');
+
+SELECT partman.create_parent( p_parent_table => 'public.logs_2',
+ p_control => 'report_period_start',
+ p_type => 'native',
+ p_interval=> 'monthly');
+
+SELECT partman.create_parent( p_parent_table => 'public.logs_3',
+ p_control => 'report_period_start',
+ p_type => 'native',
+ p_interval=> 'monthly');
+
+SELECT partman.create_parent( p_parent_table => 'public.history',
+ p_control => 'crtime',
+ p_type => 'native',
+ p_interval=> 'monthly');
+
+SELECT partman.create_parent( p_parent_table => 'public.reports_human',
+ p_control => 'interval_start',
+ p_type => 'native',
+ p_interval=> 'monthly');
+
+UPDATE partman.part_config
+SET infinite_time_partitions = true,
+    retention = '3 months',
+    retention_keep_table=true
+WHERE parent_table IN ('public.logs_0', 'public.logs_1', 'public.logs_2', 'public.logs_3', 'public.history', 'public.reports_human');
+

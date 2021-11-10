@@ -2,21 +2,21 @@ kind: List
 metadata: {}
 apiVersion: v1
 items:
-  - apiVersion: image.openshift.io/v1
-    kind: ImageStream
-    metadata:
-      name: postgresql-10-rhel7
-    spec:
-      lookupPolicy:
-        local: true
-      tags:
-        - name: latest
-          from:
-            kind: DockerImage
-            name: registry.access.redhat.com/rhscl/postgresql-10-rhel7:latest
-          importPolicy: {}
-          referencePolicy:
-            type: Local
+#   - apiVersion: image.openshift.io/v1
+#     kind: ImageStream
+#     metadata:
+#       name: postgresql-13-rhel7
+#     spec:
+#       lookupPolicy:
+#         local: true
+#       tags:
+#         - name: latest
+#           from:
+#             kind: DockerImage
+#             name: registry.redhat.io/rhscl/postgresql-13-rhel7:latest
+#           importPolicy: {}
+#           referencePolicy:
+#             type: Local
   - apiVersion: v1
     kind: Service
     metadata:
@@ -32,14 +32,14 @@ items:
   - kind: PersistentVolumeClaim
     apiVersion: v1
     metadata:
-      name: pgsql-data
+      name: pgsql-data-2
     spec:
       accessModes:
         - ReadWriteOnce
       resources:
         requests:
           storage: 1Gi
-      storageClassName: ocs-storagecluster-cephfs
+      storageClassName: hostpath-provisioner
       volumeMode: Filesystem
   - apiVersion: apps.openshift.io/v1
     kind: DeploymentConfig
@@ -58,31 +58,33 @@ items:
         spec:
           containers:
             - env:
-                - name: POSTGRESQL_USER
+                - name: POSTGRES_USER
                   value: <user-name>
-                - name: POSTGRESQL_PASSWORD
+                - name: POSTGRES_PASSWORD
                   value: <password>
-                - name: POSTGRESQL_DATABASE
+                - name: POSTGRES_DB
                   value: <database-name>
-              image: "postgresql-10-rhel7:latest"
+                - name: PGDATA
+                  value: /var/lib/postgresql/data/pgdata
+              image: "quay.io/leihaochen/curator-postgresql-extension:13"
               imagePullPolicy: IfNotPresent
-              livenessProbe:
-                exec:
-                  command:
-                    - /usr/libexec/check-container
-                    - --live
-                initialDelaySeconds: 120
-                timeoutSeconds: 10
+#              livenessProbe:
+#                exec:
+#                  command:
+#                    - /usr/libexec/check-container
+#                    - --live
+#                initialDelaySeconds: 120
+#                timeoutSeconds: 10
               name: postgresql
               ports:
                 - containerPort: 5432
                   protocol: TCP
-              readinessProbe:
-                exec:
-                  command:
-                    - /usr/libexec/check-container
-                initialDelaySeconds: 5
-                timeoutSeconds: 1
+#              readinessProbe:
+#                exec:
+#                  command:
+#                    - /usr/libexec/check-container
+#                initialDelaySeconds: 5
+#                timeoutSeconds: 1
               resources:
                 requests:
                   cpu: "1"
@@ -91,11 +93,11 @@ items:
                   cpu: "1"
                   memory: 2Gi
               volumeMounts:
-                - mountPath: /var/lib/pgsql/data
-                  name: postgresql-data
+                - mountPath: /var/lib/postgresql/data
+                  name: postgresql-data-2
           dnsPolicy: ClusterFirst
           restartPolicy: Always
           volumes:
-            - name: postgresql-data
+            - name: postgresql-data-2
               persistentVolumeClaim:
-                claimName: pgsql-data
+                claimName: pgsql-data-2
