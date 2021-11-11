@@ -99,22 +99,22 @@ CREATE TABLE IF NOT EXISTS public.reports_human(
 ) PARTITION BY RANGE (interval_start);
 
 SELECT partman.create_parent( p_parent_table => 'public.logs_0',
- p_control => 'report_period_start',
+ p_control => 'interval_start',
  p_type => 'native',
  p_interval=> 'monthly');
 
 SELECT partman.create_parent( p_parent_table => 'public.logs_1',
- p_control => 'report_period_start',
+ p_control => 'interval_start',
  p_type => 'native',
  p_interval=> 'monthly');
 
 SELECT partman.create_parent( p_parent_table => 'public.logs_2',
- p_control => 'report_period_start',
+ p_control => 'interval_start',
  p_type => 'native',
  p_interval=> 'monthly');
 
 SELECT partman.create_parent( p_parent_table => 'public.logs_3',
- p_control => 'report_period_start',
+ p_control => 'interval_start',
  p_type => 'native',
  p_interval=> 'monthly');
 
@@ -130,7 +130,7 @@ SELECT partman.create_parent( p_parent_table => 'public.reports_human',
 
 UPDATE partman.part_config
 SET infinite_time_partitions = true,
-    retention = '3 months',
+    retention = '6 months',
     retention_keep_table=true
 WHERE parent_table IN ('public.logs_0', 'public.logs_1', 'public.logs_2', 'public.logs_3', 'public.history', 'public.reports_human');
 
