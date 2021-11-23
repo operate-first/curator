@@ -6,7 +6,7 @@ import tarfile
 from botocore.exceptions import ClientError
 from datetime import datetime, timezone
 import csv, json
-from postgres_interface import update_history_data, get_history_data, BatchUpdatePostgres,postgres_execute
+from postgres_interface import get_history_data, BatchUpdatePostgres,postgres_execute
 
 
 AWS_ACCESS_KEY_ID = os.environ.get(
@@ -207,27 +207,31 @@ if __name__ == "__main__":
     # if db_zipped_file_hist:
     #     db_zipped_file_hist = db_zipped_file_hist.split("~")    
 
-    for bsubdir, _, bfiles in os.walk(backup_src):    
-        for bf in bfiles:
-            if bf.endswith(".gz"):
-                backup_full_path = os.path.join(bsubdir, bf)
-                file_folder = bf.split(".")[0]
-                unzip_folder_dir = os.path.join(unzip_dir, file_folder)
-                if not os.path.exists(unzip_folder_dir):
-                    os.makedirs(unzip_folder_dir)
-                gunzip(backup_full_path, unzip_folder_dir)
-                if has_s3_access and not bf in s3_unzipped_file_hist:
-                    moved_files_count = move_unzipped_files_into_s3(
-                        unzip_folder_dir, file_folder)
-                    
-                    s3_newly_unzipped_file_hist = "{}\n{}".format(s3_newly_unzipped_file_hist, bf)
-                if not bf in db_unzipped_file_hist:
-                    push_rowcnt, manifest = push_csv_to_db(unzip_folder_dir)
-                    # update history every time. this prevents data and metadata inconsistency
-                    postgres_execute("INSERT INTO history(file_names, manifest, success, crtime) VALUES {}",
-                                        [(bf, manifest, push_rowcnt > 0, datetime.now(timezone.utc))])
+    try:
+        for bsubdir, _, bfiles in os.walk(backup_src):
+            for bf in bfiles:
+                if bf.endswith(".gz"):
+                    backup_full_path = os.path.join(bsubdir, bf)
+                    file_folder = bf.split(".")[0]
+                    unzip_folder_dir = os.path.join(unzip_dir, file_folder)
+                    if not os.path.exists(unzip_folder_dir):
+                        os.makedirs(unzip_folder_dir)
+                    gunzip(backup_full_path, unzip_folder_dir)
+                    if has_s3_access and not bf in s3_unzipped_file_hist:
+                        moved_files_count = move_unzipped_files_into_s3(
+                            unzip_folder_dir, file_folder)
 
-                shutil.rmtree(unzip_folder_dir)
+                        s3_newly_unzipped_file_hist = "{}\n{}".format(s3_newly_unzipped_file_hist, bf)
+                    if not bf in db_unzipped_file_hist:
+                        push_rowcnt, manifest = push_csv_to_db(unzip_folder_dir)
+                        # update history every time. this prevents data and metadata inconsistency
+                        postgres_execute("INSERT INTO history(file_names, manifest, success, crtime) VALUES {}",
+                                         [(bf, manifest, push_rowcnt > 0, datetime.now(timezone.utc))])
+
+                    shutil.rmtree(unzip_folder_dir)
+
+    except Exception as ex:
+        print("An error is occured while unzip the files into unzip directory {}".format(ex))
     if has_s3_access:
         try:
             with open(os.path.join(unzip_dir, "history.txt"), mode="a+") as h_f:

@@ -7,30 +7,6 @@ database_host_name = os.environ.get("DATABASE_HOST_NAME")
 port = os.environ.get("PORT_NUMBER")
 
 
-def update_history_data(sql_query):
-    '''
-        Update the history data
-    '''
-    is_updated = True
-    conn = None
-    conn = psycopg2.connect(
-        database=database_name,
-        user=database_user,
-        password=database_password,
-        host=database_host_name,
-        port=port,
-    )
-    cursor = conn.cursor()
-
-    cursor.execute(sql_query)
-
-    conn.commit()
-    cursor.close()
-    conn.close()
-    is_updated = False
-    return is_updated
-
-
 def get_history_data():
     history = []
     conn = None
