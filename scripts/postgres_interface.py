@@ -7,74 +7,21 @@ database_host_name = os.environ.get("DATABASE_HOST_NAME")
 port = os.environ.get("PORT_NUMBER")
 
 
-def update_history_data(sql_query):
-    '''
-        Update the history data
-    '''
-    is_updated = True
-    conn = None
-    try:
-        conn = psycopg2.connect(
-            database=database_name,
-            user=database_user,
-            password=database_password,
-            host=database_host_name,
-            port=port,
-        )
-
-        cursor = conn.cursor()
-
-        cursor.execute(sql_query)
-
-        conn.commit()
-        cursor.close()
-        conn.close()
-    except Exception as ex:
-        is_updated = False
-        print(ex)
-    finally:
-        if conn is not None:
-            conn.close()
-    return is_updated
-
-
 def get_history_data():
     history = []
     conn = None
-    try:
-        conn = psycopg2.connect(
-            database=database_name,
-            user=database_user,
-            password=database_password,
-            host=database_host_name,
-            port=port,
-        )
+    conn = psycopg2.connect(database=database_name, user=database_user,
+                            password=database_password, host=database_host_name, port=port) #postgres database connection string
 
-        cursor = conn.cursor()
+    cursor = conn.cursor()
 
-        cursor.execute("select file_names from history")
-        # history = cursor.fetchone()
-        rows = cursor.fetchall()
-        for row in rows:
-            history.append(row[0])
-        # if not history is None:
-        #     history = history[0]
-        # else:
-        #     cursor.execute("INSERT INTO HISTORY (file_names) VALUES ('test.tar.gz')")
-        #     conn.commit()
-        #     cursor.execute("select file_names from history")
-        #     # history = cursor.fetchone()
-        #     rows = cursor.fetchall()
-        #     for row in rows:
-        #         history.append(row[0])
-            # history = history[0]
-        cursor.close()
-        conn.close()
-    except Exception as ex:
-        print(ex)
-    finally:
-        if conn is not None:
-            conn.close()
+    cursor.execute("select file_names from history")
+    # history = cursor.fetchone()
+    rows = cursor.fetchall()
+    for row in rows:
+        history.append(row[0])
+    cursor.close()
+    conn.close()
     return history
 
 
