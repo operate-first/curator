@@ -48,7 +48,7 @@ def postgres_execute(sql_query, data=None, result=False, header=False):
     conn.commit()
     count = cursor.rowcount
     if not result:
-        print(count, "Record inserted successfully into table")
+        # print(count, "Record inserted successfully into table")
         conn.close()
         return count
     else:
@@ -101,13 +101,13 @@ class BatchUpdatePostgres:
                 write_success = True
             except Exception as e:
                 if self.std_log:
-                    print('when %s' % self.sql, e)
+                    print('[INFO] when %s' % self.sql, e)
                 time.sleep(self.sleep_interval)
                 test_cnt += 1
         if self.std_log and not write_success:
-            print("write failed")
+            print("[ERROR] database write failed: all retry failed")
         elif show_success:
-            print("successfully updated %d items" % len(self.rows))
+            print("[INFO] successfully updated %d items" % len(self.rows))
         self.success &= write_success
         self.rows = []
         self.total_row += row_cnt

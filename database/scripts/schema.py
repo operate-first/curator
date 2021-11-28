@@ -30,9 +30,9 @@ def execute_sql_commands(command):
 
         
         
-        print("The schema command is executed successfully")
+        print("[INFO] The schema command is executed successfully")
     except Exception as exp:
-        print("An error is occured while execute the sql commands {}".format(exp))
+        print("[ERROR] An error is occured while execute the sql commands {}".format(exp))
     finally:
         if conn is not None:
             conn.close()
