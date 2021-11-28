@@ -33,3 +33,8 @@ echo "shared_preload_libraries = 'pg_partman_bgw'" >> $PGDATA/postgresql.conf
 echo "pg_partman_bgw.interval = 3600" >> $PGDATA/postgresql.conf
 echo "pg_partman_bgw.role = '$POSTGRES_USER'" >> $PGDATA/postgresql.conf
 echo "pg_partman_bgw.dbname = '$POSTGRES_DB'" >> $PGDATA/postgresql.conf
+
+sed -i "s/#log_directory = 'log'/log_directory = 'log'/g" postgresql.conf
+sed -i "s/#log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'/log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'/g" postgresql.conf
+sed -i "s/#log_statement = 'none'/log_statement = 'all'/g" postgresql.conf
+sed -i "s/#logging_collector = off/logging_collector = on/g" postgresql.conf
