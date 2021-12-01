@@ -56,6 +56,10 @@ def push_csv_to_db(extracted_csv_path):
     rowcount = 0
     manifest = json.dumps(dict())
     _, _, files = next(os.walk(extracted_csv_path))
+    if len(files) not in (5, 9):
+        print('[ERROR] the number of log tables in uploaded report does not match preset values')
+        print('{} has length {}'.format(files, len(files)))
+        exit(1)
     turn_of_the_month = len(files) > 5
     for bsubdir, _, csvfiles in os.walk(extracted_csv_path):
         for csvf in csvfiles:
