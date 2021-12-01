@@ -47,7 +47,6 @@ def postgres_execute(sql_query, data=None, result=False, header=False):
         cursor.execute(sql_query)
     conn.commit()
     count = cursor.rowcount
-    colnames = [desc[0] for desc in cursor.description]
     if not result:
         print(count, "Record inserted successfully into table")
         conn.close()
@@ -55,7 +54,7 @@ def postgres_execute(sql_query, data=None, result=False, header=False):
     else:
         result_list = []
         if header:
-            result_list.append(colnames)
+            result_list.append([desc[0] for desc in cursor.description])
         for i in range(count):
             record = cursor.fetchone()
             result_list.append(record)
