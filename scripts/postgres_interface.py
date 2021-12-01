@@ -15,7 +15,7 @@ def get_history_data():
 
     cursor = conn.cursor()
 
-    cursor.execute("select file_names from history")
+    cursor.execute("select file_names from history where success")
     # history = cursor.fetchone()
     rows = cursor.fetchall()
     for row in rows:
