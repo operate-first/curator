@@ -8,6 +8,8 @@ from datetime import datetime, timezone
 import csv, json
 from postgres_interface import get_history_data, BatchUpdatePostgres,postgres_execute
 
+TURN_OF_THE_MONTH_REPORT_LEN = 9
+REGULAR_REPORT_LEN = 5
 AWS_ACCESS_KEY_ID = os.environ.get(
     "AWS_ACCESS_KEY_ID")  # dir of the metrics files
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
@@ -56,11 +58,11 @@ def push_csv_to_db(extracted_csv_path):
     rowcount = 0
     manifest = json.dumps(dict())
     _, _, files = next(os.walk(extracted_csv_path))
-    if len(files) not in (5, 9):
+    if len(files) not in (TURN_OF_THE_MONTH_REPORT_LEN, REGULAR_REPORT_LEN):
         print('[ERROR] the number of log tables in uploaded report does not match preset values')
         print('{} has length {}'.format(files, len(files)))
         exit(1)
-    turn_of_the_month = len(files) > 5
+    turn_of_the_month = len(files) == TURN_OF_THE_MONTH_REPORT_LEN
     for bsubdir, _, csvfiles in os.walk(extracted_csv_path):
         for csvf in csvfiles:
             if csvf.endswith(".csv"):
@@ -68,7 +70,7 @@ def push_csv_to_db(extracted_csv_path):
                 table_name_local = os.path.splitext(csv_full_path)
                 table_name_local = int(table_name_local[0][-1])
                 if turn_of_the_month:
-                    table_name_local //= 2
+                    table_name_local //= 2  # map report index [0,2,4,6] and [1,3,5,7] to [0,1,2,3]
                 batch_executor = BatchUpdatePostgres()
 
                 with open(csv_full_path, "r") as f:
