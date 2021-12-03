@@ -33,7 +33,7 @@ def get_history_file():
     try:
         key = bucket.get_key("history.txt")
         if key is None:
-            print("The history file is not found in s3 bucket")
+            print("[INFO] The history file is not found in s3 bucket")
             if not os.path.exists(os.path.join(unzip_dir, "history.txt")):
                 with open(os.path.join(unzip_dir, "history.txt"), mode="w") as hf:
                     hf.write("test")
@@ -49,7 +49,7 @@ def get_history_file():
             key.get_contents_to_filename(
                 os.path.join(unzip_dir, "history.txt"))
     except ClientError as ex:
-        print(ex)
+        print('[ERROR] ', ex)
 
 
 def push_csv_to_db(extracted_csv_path):
@@ -160,7 +160,7 @@ def push_csv_to_db(extracted_csv_path):
                     try:
                         manifest = json.dumps(json.load(fd))  # dump into string
                     except Exception as e:
-                        print('Fail to read manifest.json for ', bsubdir)
+                        print('[ERROR] fail to read manifest.json for ', bsubdir)
                         print(e)
     return rowcount, manifest
 
@@ -181,10 +181,10 @@ def move_unzipped_files_into_s3(unzip_folder_dir, file_folder):
                 unzip_full_path = os.path.join(usubdir, uf)
                 uk = bucket.new_key(os.path.join(file_folder, uf))
                 uk.set_contents_from_filename(unzip_full_path)
-                print(unzip_full_path)
+                print('[DEBUG] ', unzip_full_path)
                 moved_files_count += 1
     except Exception as exp:
-        print("An error is occured while move files into s3 {0}".format(exp))
+        print("[ERROR] An error is occured while move files into s3 {0}".format(exp))
     return moved_files_count
 
 
@@ -200,7 +200,7 @@ if __name__ == "__main__":
                 s3_unzipped_file_hist = h_f.readlines()
                 # s3_zipped_file_hist = s3_zipped_file_hist.split("\n") 
         except Exception as ex:
-            print("An error is occured while read the history file {}".format(ex))
+            print("[ERROR] An error is occured while read the history file {}".format(ex))
     
     db_unzipped_file_hist = set(get_history_data())  # list lookup? use set
     # if db_zipped_file_hist:
@@ -230,7 +230,7 @@ if __name__ == "__main__":
                     shutil.rmtree(unzip_folder_dir)
 
     except Exception as ex:
-        print("An error is occured while unzip the files into unzip directory {}".format(ex))
+        print("[ERROR] An error is occured while unzip the files into unzip directory {}".format(ex))
     if has_s3_access:
         try:
             with open(os.path.join(unzip_dir, "history.txt"), mode="a+") as h_f:
@@ -243,5 +243,5 @@ if __name__ == "__main__":
             os.remove(os.path.join(unzip_dir, "history.txt"))
         except Exception as ex:
             print(
-                "Error is occured while push the updated history files into s3 {}".format(ex))
+                "[ERROR] Error is occured while push the updated history files into s3 {}".format(ex))
 

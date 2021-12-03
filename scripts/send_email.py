@@ -90,14 +90,14 @@ if __name__ == "__main__":
     try:
         freq = sys.argv[1]
     except IndexError:
-        print('Need argument report frequency')
+        print('[ERROR] Need argument report frequency')
         exit(-1)
     midnight_today = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + ' 00:00:00+00'
     # midnight_today = '2021-06-16 00:00:00'
 
     table = postgres_execute("select * from reports_human where interval_start = '{}' and frequency = '{}'".format(midnight_today, freq), result=True, header=True)
     if len(table) <= 1:
-        print('empty result on {}, {}'.format(midnight_today, freq))
+        print('[INFO] empty result on {}, {}'.format(midnight_today, freq))
         exit(-1)
     table.append([''] * 4 + ['sum of average cpu usages of each pod in namespace', 'sum of maximum cpu requested of each pod in namespace', 'sum of maximum cpu limit of each pod in namespace', 'sum of average memory usages of each pod in namespace', 'sum of maximum memory requested of each pod in namespace', 'sum of maximum memory limit of each pod in namespace'])
     table = DataFrame(table[1:], columns=table[0])
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     table.to_csv(report_path)
     with open(report_path, 'r') as fd:
         if not fd.read():
-            print('empty report for {}'.format(report_path))
+            print('[INFO] empty report for {}'.format(report_path))
             exit(1)
     for curr_user_email, email_item in Config.COST_MGMT_RECIPIENTS.items():
         print(f"User info: {curr_user_email, email_item}.")
