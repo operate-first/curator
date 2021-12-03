@@ -53,6 +53,8 @@ def postgres_execute(sql_query, data=None, result=False, header=False):
         return count
     else:
         result_list = []
+        if header:
+            result_list.append([desc[0] for desc in cursor.description])
         for i in range(count):
             record = cursor.fetchone()
             result_list.append(record)
