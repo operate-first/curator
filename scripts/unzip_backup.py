@@ -8,6 +8,8 @@ from datetime import datetime, timezone
 import csv, json
 from postgres_interface import get_history_data, BatchUpdatePostgres,postgres_execute
 
+TURN_OF_THE_MONTH_REPORT_LEN = 9
+REGULAR_REPORT_LEN = 5
 AWS_ACCESS_KEY_ID = os.environ.get(
     "AWS_ACCESS_KEY_ID")  # dir of the metrics files
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
@@ -55,13 +57,20 @@ def get_history_file():
 def push_csv_to_db(extracted_csv_path):
     rowcount = 0
     manifest = json.dumps(dict())
+    _, _, files = next(os.walk(extracted_csv_path))
+    if len(files) not in (TURN_OF_THE_MONTH_REPORT_LEN, REGULAR_REPORT_LEN):
+        print('[ERROR] the number of log tables in uploaded report does not match preset values')
+        print('{} has length {}'.format(files, len(files)))
+        exit(1)
+    turn_of_the_month = len(files) == TURN_OF_THE_MONTH_REPORT_LEN
     for bsubdir, _, csvfiles in os.walk(extracted_csv_path):
         for csvf in csvfiles:
             if csvf.endswith(".csv"):
                 csv_full_path = os.path.join(bsubdir, csvf)
                 table_name_local = os.path.splitext(csv_full_path)
-                table_name_local = table_name_local[0][-1]
-
+                table_name_local = int(table_name_local[0][-1])
+                if turn_of_the_month:
+                    table_name_local //= 2  # map report index [0,2,4,6] and [1,3,5,7] to [0,1,2,3]
                 batch_executor = BatchUpdatePostgres()
 
                 with open(csv_full_path, "r") as f:
@@ -75,7 +84,7 @@ def push_csv_to_db(extracted_csv_path):
                         interval_start = row[2].replace(" UTC", "")
                         interval_end = row[3].replace(" UTC", "")
 
-                        if table_name_local == "0":
+                        if table_name_local == 0:
                             table_name_sql = "logs_0"
                             namespace = row[4]
                             namespace_labels = row[5]
@@ -86,7 +95,7 @@ def push_csv_to_db(extracted_csv_path):
                                                 report_period_start, report_period_end, interval_start, interval_end,
                                                 namespace, namespace_labels))
 
-                        elif table_name_local == "1":
+                        elif table_name_local == 1:
                             table_name_sql = "logs_1"
                             node = row[4]
                             node_labels = row[5]
@@ -96,7 +105,7 @@ def push_csv_to_db(extracted_csv_path):
                             batch_executor.add((
                                                 report_period_start, report_period_end, interval_start, interval_end,
                                                 node, node_labels))
-                        elif table_name_local == "2":
+                        elif table_name_local == 2:
                             table_name_sql = "logs_2"
                             node = row[4]
                             namespace = row[5]
@@ -124,7 +133,7 @@ def push_csv_to_db(extracted_csv_path):
                                                 pod_limit_memory_byte_seconds, node_capacity_cpu_cores,
                                                 node_capacity_cpu_core_seconds, node_capacity_memory_bytes,
                                                 node_capacity_memory_byte_seconds, resource_id, pod_labels))
-                        elif table_name_local == "3":
+                        elif table_name_local == 3:
                             table_name_sql = "logs_3"
                             namespace = row[4]
                             pod = row[5]
