@@ -107,6 +107,15 @@ if __name__ == "__main__":
         if not fd.read():
             print('[INFO] empty report for {}'.format(report_path))
             exit(1)
+    table = postgres_execute(
+        "select * from reports_percentage where interval_start = '{}' and frequency = '{}'".format(midnight_today, freq),
+        result=True, header=True)
+    table = DataFrame(table[1:], columns=table[0])
+    percentage_path = '/tmp/report-percentage-{}-{}.csv'.format(freq, midnight_today)
+    table.to_csv(percentage_path)
+    with open(percentage_path, 'r') as fd:
+        if not fd.read():
+            print('[INFO] empty report for {}'.format(percentage_path))
     for curr_user_email, email_item in Config.COST_MGMT_RECIPIENTS.items():
         print(f"User info: {curr_user_email, email_item}.")
         # curr_user_email = email_item.get("user", {}).get("email")
@@ -117,4 +126,4 @@ if __name__ == "__main__":
             file_name = img_path.split("/")[-1]
             template_variables[file_name] = file_name
         email_msg = email_template.render(**template_variables)
-        email(recipients=email_addrs, content=email_msg, attachments=[report_path], img=img_paths)
+        email(recipients=email_addrs, content=email_msg, attachments=[report_path, percentage_path], img=img_paths)
