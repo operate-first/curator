@@ -98,6 +98,17 @@ CREATE TABLE IF NOT EXISTS public.reports_human(
           "pods_limit_memory_total[mb]" double precision
 ) PARTITION BY RANGE (interval_start);
 
+
+CREATE TABLE IF NOT EXISTS public.reports_percentage(
+          frequency text ,
+          interval_start timestamp with time zone,
+          interval_end timestamp with time zone,
+          namespace text,
+          nodes text[],
+          "pods_avg_usage_cpu_core_consumption_percentage[%]" double precision,
+          "pods_avg_usage_memory_consumption_percentage[%]" double precision
+) PARTITION BY RANGE (interval_start);
+
 SELECT partman.create_parent( p_parent_table => 'public.logs_0',
  p_control => 'interval_start',
  p_type => 'native',
@@ -128,9 +139,14 @@ SELECT partman.create_parent( p_parent_table => 'public.reports_human',
  p_type => 'native',
  p_interval=> 'monthly');
 
+SELECT partman.create_parent( p_parent_table => 'public.reports_percentage',
+ p_control => 'interval_start',
+ p_type => 'native',
+ p_interval=> 'monthly');
+
 UPDATE partman.part_config
 SET infinite_time_partitions = true,
     retention = '6 months',
     retention_keep_table=true
-WHERE parent_table IN ('public.logs_0', 'public.logs_1', 'public.logs_2', 'public.logs_3', 'public.history', 'public.reports_human');
+WHERE parent_table IN ('public.logs_0', 'public.logs_1', 'public.logs_2', 'public.logs_3', 'public.history', 'public.reports_human', 'public.reports_percentage');
 
