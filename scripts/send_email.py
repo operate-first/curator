@@ -94,12 +94,33 @@ if __name__ == "__main__":
         exit(-1)
     midnight_today = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + ' 00:00:00+00'
     # midnight_today = '2021-06-16 00:00:00'
-
-    table = postgres_execute("select * from reports_human where interval_start = '{}' and frequency = '{}'".format(midnight_today, freq), result=True, header=True)
+    sql = '''
+    select t1.namespace, 
+    t2."pods_avg_usage_cpu_core_consumption_percentage[%]", t1."pods_avg_usage_cpu_core_total[millicore]", t1."pods_request_cpu_core_total[millicore]", t1."pods_limit_cpu_core_total[millicore]",
+    t2."pods_avg_usage_memory_consumption_percentage[%]", t1."pods_avg_usage_memory_total[mb]", t1."pods_request_memory_total[mb]", t1."pods_limit_memory_total[mb]", t1.frequency from
+    (select 
+    namespace, "pods_avg_usage_cpu_core_total[millicore]", "pods_request_cpu_core_total[millicore]", "pods_limit_cpu_core_total[millicore]",
+    "pods_avg_usage_memory_total[mb]", "pods_request_memory_total[mb]", "pods_limit_memory_total[mb]", frequency
+    from reports_human 
+    where interval_start = '{0}' and frequency = '{1}') t1 
+        INNER JOIN
+    (select 
+    namespace, "pods_avg_usage_cpu_core_consumption_percentage[%]", "pods_avg_usage_memory_consumption_percentage[%]" 
+    from reports_percentage
+    where interval_start = '{0}' and frequency = '{1}') t2
+    ON (t1.namespace = t2.namespace)
+    '''.format(midnight_today, freq)
+    free_cpu, free_memory = postgres_execute(
+        "select 100-sum(\"pods_avg_usage_cpu_core_consumption_percentage[%]\"), 100-sum(\"pods_avg_usage_memory_consumption_percentage[%]\") from reports_percentage where interval_start = '{}' and frequency = '{}'".format(
+            midnight_today, freq),
+        result=True)[0]
+    table = postgres_execute(
+        sql, result=True, header=True)
     if len(table) <= 1:
         print('[INFO] empty result on {}, {}'.format(midnight_today, freq))
         exit(-1)
-    table.append([''] * 4 + ['sum of average cpu usages of each pod in namespace', 'sum of maximum cpu requested of each pod in namespace', 'sum of maximum cpu limit of each pod in namespace', 'sum of average memory usages of each pod in namespace', 'sum of maximum memory requested of each pod in namespace', 'sum of maximum memory limit of each pod in namespace'])
+    table.append(['comment', '', 'sum of average cpu usages of each pod in namespace', 'sum of maximum cpu requested of each pod in namespace', 'sum of maximum cpu limit of each pod in namespace', '', 'sum of average memory usages of each pod in namespace', 'sum of maximum memory requested of each pod in namespace', 'sum of maximum memory limit of each pod in namespace'])
+    table.append(['free resource summary'] + [free_cpu] + [''] * 3 + [free_memory])
     table = DataFrame(table[1:], columns=table[0])
     report_path = '/tmp/report-{}-{}.csv'.format(freq, midnight_today)
     table.to_csv(report_path)
@@ -107,15 +128,6 @@ if __name__ == "__main__":
         if not fd.read():
             print('[INFO] empty report for {}'.format(report_path))
             exit(1)
-    table = postgres_execute(
-        "select * from reports_percentage where interval_start = '{}' and frequency = '{}'".format(midnight_today, freq),
-        result=True, header=True)
-    table = DataFrame(table[1:], columns=table[0])
-    percentage_path = '/tmp/report-percentage-{}-{}.csv'.format(freq, midnight_today)
-    table.to_csv(percentage_path)
-    with open(percentage_path, 'r') as fd:
-        if not fd.read():
-            print('[INFO] empty report for {}'.format(percentage_path))
     for curr_user_email, email_item in Config.COST_MGMT_RECIPIENTS.items():
         print(f"User info: {curr_user_email, email_item}.")
         # curr_user_email = email_item.get("user", {}).get("email")
@@ -126,4 +138,4 @@ if __name__ == "__main__":
             file_name = img_path.split("/")[-1]
             template_variables[file_name] = file_name
         email_msg = email_template.render(**template_variables)
-        email(recipients=email_addrs, content=email_msg, attachments=[report_path, percentage_path], img=img_paths)
+        email(recipients=email_addrs, content=email_msg, attachments=[report_path], img=img_paths)
