@@ -4,7 +4,7 @@ metadata:
   name: weekreport
 spec:
   concurrencyPolicy: Forbid
-  schedule: "05 0 * * 0"  # At 00:05 on Sunday
+  schedule: "30 12 * * 0"  # At 00:05 on Sunday
   jobTemplate:
     spec:
       backoffLimit: 0
@@ -24,7 +24,7 @@ spec:
             command:
               - sh
               - -c
-              - psql -d "postgresql://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST_NAME:$PORT_NUMBER/$DATABASE_NAME" -c "SELECT generate_report('week');"
+              - psql -d "postgresql://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST_NAME:$PORT_NUMBER/$DATABASE_NAME" -c "SELECT generate_report('week'); SELECT generate_report_percentage('week');"
           containers:
             - name: weekemail
               image: quay.io/operate-first/curator-s3-sync:latest

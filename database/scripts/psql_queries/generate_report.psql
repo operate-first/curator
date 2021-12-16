@@ -73,7 +73,78 @@ CREATE OR REPLACE FUNCTION generate_report (frequency_ text)
         WHERE interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start < ' || quote_literal(interval_end_date) || '
         GROUP BY (namespace, pod, node))
       AS t
-      GROUP BY namespace returning *';
+      GROUP BY namespace ORDER BY (substring(namespace, E''openshift''), "pods_avg_usage_cpu_core_total[millicore]") desc returning *';
+end; $$ LANGUAGE plpgsql;
+
+
+
+CREATE OR REPLACE FUNCTION generate_report_percentage (frequency_ text)
+  returns TABLE (
+          frequency text ,
+          interval_start timestamp with time zone,
+          interval_end timestamp with time zone,
+          namespace text,
+          nodes text[],
+          "pods_avg_usage_cpu_core_consumption_percentage[%]" double precision,
+          "pods_avg_usage_memory_consumption_percentage[%]" double precision
+)
+  as $$
+  declare
+    interval_start_date timestamp with time zone;
+    interval_end_date timestamp with time zone;
+    total_seconds double precision;
+  begin
+    if frequency_ = 'day' then
+      interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '24 hours';
+        interval_end_date := date_trunc('day', current_date at time zone 'UTC');
+      total_seconds := 24 * 3600;
+    end if;
+    if frequency_ = 'week' then
+        interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '7 days';
+        interval_end_date := date_trunc('day', current_date at time zone 'UTC');
+        total_seconds := 7 * 24 * 3600;
+    end if;
+    if frequency_ = 'month' then
+      interval_start_date := date_trunc('day', current_date at time zone 'UTC') - interval '1 month';
+        interval_end_date := date_trunc('day', current_date at time zone 'UTC');
+        total_seconds := 30 * 24 * 3600;
+    end if;
+    RETURN QUERY EXECUTE '
+      INSERT INTO
+        reports_percentage (
+          frequency,
+          interval_start,
+          interval_end,
+          namespace,
+          nodes,
+          "pods_avg_usage_cpu_core_consumption_percentage[%]",
+          "pods_avg_usage_memory_consumption_percentage[%]"
+        )
+      SELECT
+      ' || quote_literal(frequency_) || ' as frequency,
+      ' || quote_literal(interval_start_date) || '::timestamp with time zone  as interval_start,
+      ' || quote_literal(interval_end_date) || '::timestamp with time zone  as interval_end,
+        namespace,
+        ARRAY_AGG(distinct(node)) as nodes,
+        round(SUM(pod_avg_usage_cpu_core) / (select sum(node_cpu)::numeric from (select max(node_capacity_cpu_cores) as node_cpu from logs_2 where interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start < ' || quote_literal(interval_end_date) || ' and length(node) > 0 group by node) tmp) * 100, 2),
+        round(SUM(pod_avg_usage_memory) / (select sum(node_mem)::numeric from (select max(node_capacity_memory_bytes) as node_mem from logs_2 where interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start < ' || quote_literal(interval_end_date) || ' and length(node) > 0 group by node) tmp2) * 100, 2)
+      FROM
+        (SELECT
+          namespace,
+          node,
+          MAX(node_capacity_cpu_cores)::numeric as node_capacity_cpu_cores,  -- assert: trivial agg
+          MAX(node_capacity_memory_bytes)::numeric as node_capacity_memory_bytes,  -- assert: trivial agg
+          (SUM(pod_usage_cpu_core_seconds) / ' || quote_literal(total_seconds) || ' )::numeric      as pod_avg_usage_cpu_core,
+          (MAX(pod_request_cpu_core_seconds) / 3600 )::numeric   as pod_request_cpu_core,
+          (MAX(pod_limit_cpu_core_seconds) / 3600 )::numeric      as pod_limit_cpu_core,
+          (SUM(pod_usage_memory_byte_seconds)   / ' || quote_literal(total_seconds) || ')::numeric as pod_avg_usage_memory,
+          (MAX(pod_request_memory_byte_seconds) / 3600 )::numeric as pod_request_memory,
+          (MAX(pod_limit_memory_byte_seconds)   / 3600 )::numeric as pod_limit_memory
+        FROM logs_2
+        WHERE interval_start >= ' || quote_literal(interval_start_date) || ' and interval_start < ' || quote_literal(interval_end_date) || ' and length(node) > 0
+        GROUP BY (namespace, pod, node))
+      AS t
+      GROUP BY namespace ORDER BY (substring(namespace, E''openshift''), "pods_avg_usage_cpu_core_consumption_percentage[%]") desc returning *';
 end; $$ LANGUAGE plpgsql;
 
 

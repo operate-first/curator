@@ -4,7 +4,7 @@ metadata:
   name: dayreport
 spec:
   concurrencyPolicy: Forbid
-  schedule: "05 0 * * *"  #  At 00:05
+  schedule: "30 12 * * *"  #  At 12:30
   jobTemplate:
     spec:
       backoffLimit: 0
@@ -24,7 +24,7 @@ spec:
             command:
               - sh
               - -c
-              - psql -d "postgresql://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST_NAME:$PORT_NUMBER/$DATABASE_NAME" -c "SELECT generate_report('day');"
+              - psql -d "postgresql://$DATABASE_USER:$DATABASE_PASSWORD@$DATABASE_HOST_NAME:$PORT_NUMBER/$DATABASE_NAME" -c "SELECT generate_report('day'); SELECT generate_report_percentage('day');"
           containers:
             - name: dayemail
               image: quay.io/operate-first/curator-s3-sync:latest
