@@ -109,6 +109,7 @@ if __name__ == "__main__":
     from reports_percentage
     where interval_start = '{0}' and frequency = '{1}') t2
     ON (t1.namespace = t2.namespace)
+    ORDER BY (substring(t1.namespace, E'openshift') desc, t2."pods_avg_usage_cpu_core_consumption_percentage[%]")
     '''.format(midnight_today, freq)
     free_cpu, free_memory = postgres_execute(
         "select 100-sum(\"pods_avg_usage_cpu_core_consumption_percentage[%]\"), 100-sum(\"pods_avg_usage_memory_consumption_percentage[%]\") from reports_percentage where interval_start = '{}' and frequency = '{}'".format(
