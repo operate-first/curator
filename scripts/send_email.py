@@ -93,23 +93,16 @@ if __name__ == "__main__":
         print('[ERROR] Need argument report frequency')
         exit(-1)
     midnight_today = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d") + ' 00:00:00+00'
-    # midnight_today = '2021-06-16 00:00:00'
     sql = '''
-    select t1.namespace, 
-    t2."pods_avg_usage_cpu_core_consumption_percentage[%]", t1."pods_avg_usage_cpu_core_total[millicore]", t1."pods_request_cpu_core_total[millicore]", t1."pods_limit_cpu_core_total[millicore]",
-    t2."pods_avg_usage_memory_consumption_percentage[%]", t1."pods_avg_usage_memory_total[mb]", t1."pods_request_memory_total[mb]", t1."pods_limit_memory_total[mb]", t1.frequency from
-    (select 
-    namespace, "pods_avg_usage_cpu_core_total[millicore]", "pods_request_cpu_core_total[millicore]", "pods_limit_cpu_core_total[millicore]",
+    select * from (select 
+    namespace, 
+    round(("pods_avg_usage_cpu_core_total[millicore]" / (select sum("pods_avg_usage_cpu_core_total[millicore]") from reports_human where interval_start = '{0}' and frequency = '{1}') * 100)::numeric, 2) as "pods_avg_usage_cpu_core_percentage[%]",
+    "pods_avg_usage_cpu_core_total[millicore]", "pods_request_cpu_core_total[millicore]", "pods_limit_cpu_core_total[millicore]",
+    round(("pods_avg_usage_memory_total[mb]" / (select sum("pods_avg_usage_memory_total[mb]") from reports_human where interval_start = '{0}' and frequency = '{1}') * 100)::numeric, 2) as "pods_avg_usage_memory_percentage[%]",
     "pods_avg_usage_memory_total[mb]", "pods_request_memory_total[mb]", "pods_limit_memory_total[mb]", frequency
     from reports_human 
-    where interval_start = '{0}' and frequency = '{1}') t1 
-        INNER JOIN
-    (select 
-    namespace, "pods_avg_usage_cpu_core_consumption_percentage[%]", "pods_avg_usage_memory_consumption_percentage[%]" 
-    from reports_percentage
-    where interval_start = '{0}' and frequency = '{1}') t2
-    ON (t1.namespace = t2.namespace)
-    ORDER BY (substring(t1.namespace, E'openshift'), t2."pods_avg_usage_cpu_core_consumption_percentage[%]") desc
+    where interval_start = '{0}' and frequency = '{1}' and namespace <> '') as t
+    ORDER BY (substring(namespace, E'openshift'), "pods_avg_usage_cpu_core_percentage[%]") desc
     '''.format(midnight_today, freq)
     free_cpu, free_memory = postgres_execute(
         "select 100-sum(\"pods_avg_usage_cpu_core_consumption_percentage[%]\"), 100-sum(\"pods_avg_usage_memory_consumption_percentage[%]\") from reports_percentage where interval_start = '{}' and frequency = '{}'".format(
