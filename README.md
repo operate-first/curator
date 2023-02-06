@@ -1,5 +1,7 @@
 # **Curator**
 
+**This project repository has been archived. Please use the [Curator Operator](https://github.com/operate-first/curator-operator) repository for the latest code and features**
+
 ## About
 Curator is a project to analyze OpenShift infrastructure consumption.
 
